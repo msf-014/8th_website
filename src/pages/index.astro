@@ -1,0 +1,99 @@
+---
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/header.astro";
+
+const contents = [
+  { title: "YAGRUMA RINE", bg: "#fff", hoverBg: "rgb(254, 236, 216)" },
+  { title: "HISTORY", bg: "#fff", hoverBg: "rgb(220, 200, 255)" },
+  { title: "ILLUSTRATION", bg: "#fff", hoverBg: "rgb(200, 220, 255)" },
+  { title: "MESSAGE", bg: "#fff", hoverBg: "rgb(252, 197, 220)" },
+  { title: "CREDIT", bg: "#fff", hoverBg: "rgb(230, 230, 230)" },
+];
+---
+
+<BaseLayout title="Yaguruma Rine 8th Anniv. site">
+  <head>
+    <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
+    />
+  </head>
+  <body>
+    <Header />
+    <!-- メインビジュアル -->
+    <main class="main" id="main-home">
+      <div class="main_container">
+        <div class="content_list">
+          {
+            contents.map((item) => (
+              <div
+                class="contents"
+                style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
+              >
+                <div class="content_texto">
+                  <h2>{item.title}</h2>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </main>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .content_list {
+        display: block;
+        box-shadow: 0 -1px 0 0 #000;
+      }
+
+      .contents {
+        display: block;
+        background: var(--bg);
+        box-shadow:
+          0 -1px 0 0 #000,
+          0 1px 0 0 #000;
+        margin-bottom: -32px;
+        position: relative;
+        z-index: 0;
+        transition:
+          background 0.3s,
+          transform 0.5s;
+      }
+
+      .contents:hover {
+        transform: translateY(-32px);
+        background: var(--hover-bg);
+        transition: background 0.3s transform 0.5s;
+      }
+
+      .main_container {
+        padding-top: 256px;
+      }
+
+      .content_texto {
+        padding: 14px 16px 2px;
+        white-space: nowrap;
+      }
+
+      .content_texto h2 {
+        font-size: 110px;
+        font-family: "acumin-variable", sans-serif;
+        font-variation-settings:
+          "wght" 400,
+          "wdth" 100,
+          "slnt" 0;
+        font-style: normal;
+        align-items: center;
+        line-height: 1;
+      }
+    </style>
+  </body>
+</BaseLayout>
