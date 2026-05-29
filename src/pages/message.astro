@@ -1,0 +1,372 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/header.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<BaseLayout>
+  <head>
+    <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
+    />
+  </head>
+  <Header />
+  <body>
+    <div class="contents-list">
+      <div class="contents_texto">
+        <h2>MESSAGE</h2>
+      </div>
+    </div>
+
+    <div class="board-wrap">
+      <div class="board" id="board"></div>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true">
+        <button class="m-close" id="m-close" aria-label="閉じる">✕</button>
+        <p class="m-from" id="m-from"></p>
+        <p class="m-msg" id="m-msg"></p>
+      </div>
+    </div>
+
+    <!-- is:inline が必須！これがないとAstroがJSを最適化して動かなくなる -->
+    <script is:inline>
+      const messages = [
+        { from: "名前", msg: "これはテストメッセージです。" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        {
+          from: "名前",
+          msg: "これはテストメッセージです。これはテストメッセージです。",
+        },
+        {
+          from: "名前",
+          msg: "これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。",
+        },
+        {
+          from: "名前",
+          msg: "これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。",
+        },
+        { from: "名前", msg: "これはテストメッセージです！" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        { from: "名前", msg: "これはテストメッセージです。" },
+        {
+          from: "名前",
+          msg: "これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。これはテストメッセージです。",
+        },
+        { from: "名前", msg: "これはテストメッセージです。" },
+      ];
+
+      const CARD_W = 156,
+        CARD_H = 120,
+        MARGIN = 10,
+        MAX_TRIES = 120;
+
+      function autoPlace(items, areaW, areaH) {
+        const placed = [];
+        items.forEach((m, i) => {
+          let best = null,
+            bestScore = -Infinity;
+          for (let t = 0; t < MAX_TRIES; t++) {
+            const x = MARGIN + Math.random() * (areaW - CARD_W - MARGIN * 2);
+            const y = MARGIN + Math.random() * (areaH - CARD_H - MARGIN * 2);
+            let overlap = 0;
+            placed.forEach((p) => {
+              const dx = Math.abs(x - p.x),
+                dy = Math.abs(y - p.y);
+              if (dx < CARD_W + 12 && dy < CARD_H + 12) {
+                overlap += (CARD_W + 12 - dx) * (CARD_H + 12 - dy);
+              }
+            });
+            if (-overlap > bestScore) {
+              bestScore = -overlap;
+              best = { x, y };
+            }
+          }
+          placed.push({ ...m, x: best.x, y: best.y, z: 10 + i });
+        });
+        return placed;
+      }
+
+      function buildBoard() {
+        const board = document.getElementById("board");
+        if (!board) return;
+        board.querySelectorAll(".sticky").forEach((el) => el.remove());
+        const W = board.offsetWidth,
+          H = board.offsetHeight;
+        const placed = autoPlace(messages, W, H);
+        placed.forEach((m, i) => {
+          const el = document.createElement("div");
+          el.className = "sticky";
+          el.style.cssText = `left:${m.x}px;top:${m.y}px;z-index:${m.z};opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;`;
+          el.innerHTML = `
+      <span class="s-from">${m.from}</span>
+      <span class="s-msg">${m.msg}</span>
+      <span class="s-num">REMINDER ——— ${String(i + 1).padStart(4, "0")}</span>`;
+          el.addEventListener("click", () => openModal(m));
+          board.appendChild(el);
+          setTimeout(() => {
+            el.style.opacity = "1";
+          }, i * 50);
+        });
+      }
+
+      function openModal(m) {
+        document.getElementById("m-from").textContent = m.from;
+        document.getElementById("m-msg").textContent = m.msg;
+        document.getElementById("modal-backdrop").classList.add("open");
+      }
+
+      function closeModal() {
+        document.getElementById("modal-backdrop").classList.remove("open");
+      }
+
+      document.getElementById("m-close").addEventListener("click", closeModal);
+      document
+        .getElementById("modal-backdrop")
+        .addEventListener("click", (e) => {
+          if (e.target === document.getElementById("modal-backdrop"))
+            closeModal();
+        });
+
+      // DOMが確実に準備できてから実行
+      document.addEventListener("DOMContentLoaded", buildBoard);
+    </script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@700;900&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: rgb(252, 226, 237);
+      }
+
+      .contents-list {
+        display: block;
+        box-shadow:
+          0 -1px 0 0 #000,
+          0 1px 0 0 #000;
+      }
+
+      .contents_texto {
+        padding: 14px 16px 14px;
+        white-space: nowrap;
+      }
+
+      .contents_texto h2 {
+        font-size: 110px;
+        font-family: "acumin-variable", sans-serif;
+        font-variation-settings:
+          "wght" 400,
+          "wdth" 100,
+          "slnt" 0;
+        font-style: normal;
+        align-items: center;
+        line-height: 1;
+      }
+
+      .board-wrap {
+        width: 100%;
+        max-width: 1900px;
+        padding: 20px 24px 40px;
+        margin: 0 auto;
+      }
+
+      .board {
+        position: relative; /* ← 付箋の absolute 配置の基準点 */
+        width: 100%;
+        height: 1000px; /* ← 高さが必須！ないと付箋が見えない */
+        background: #e8eef5;
+        border: 1.5px solid #c5cdd8;
+        overflow: hidden;
+      }
+
+      :global(.sticky) {
+        position: absolute; /* ← これが効かないと一覧になる */
+        width: 156px;
+        min-height: 120px;
+        background: #fff;
+        border: 2px solid #c42222;
+        padding: 10px 12px 16px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        clip-path: polygon(
+          0 0,
+          calc(100% - 16px) 0,
+          100% 16px,
+          100% 100%,
+          0 100%
+        );
+        box-shadow: 2px 2px 0 #c42222;
+        transition:
+          box-shadow 0.14s ease,
+          transform 0.14s ease;
+      }
+      :global(.sticky::before) {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 16px;
+        height: 16px;
+        background: #c42222;
+        clip-path: polygon(0 0, 100% 100%, 100% 0);
+        z-index: 2;
+      }
+      :global(.sticky::after) {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 15px;
+        height: 15px;
+        background: #f7c5c5;
+        clip-path: polygon(0 0, 100% 100%, 0 100%);
+        z-index: 1;
+      }
+      :global(.sticky:hover) {
+        box-shadow: 4px 5px 0 #c42222;
+        transform: scale(1.06) translateY(-3px);
+        z-index: 500 !important;
+      }
+      :global(.sticky .s-from) {
+        font-size: 9px;
+        font-weight: 700;
+        color: #c42222;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border-bottom: 1px solid #f7c5c5;
+        padding-bottom: 5px;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+      :global(.sticky .s-msg) {
+        font-size: 15px;
+        font-weight: 900;
+        color: #c42222;
+        line-height: 1.25;
+        flex: 1;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+      :global(.sticky .s-num) {
+        font-family: "Bebas Neue", monospace;
+        font-size: 9px;
+        color: #c42222;
+        opacity: 0.35;
+        letter-spacing: 0.1em;
+        margin-top: 2px;
+      }
+
+      .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-backdrop.open {
+        display: flex;
+      }
+
+      .modal {
+        background: #fff;
+        border: 3px solid #c42222;
+        box-shadow: 7px 7px 0 #c42222;
+        padding: 36px 32px 28px;
+        max-width: 360px;
+        width: 90%;
+        position: relative;
+        clip-path: polygon(
+          0 0,
+          calc(100% - 24px) 0,
+          100% 24px,
+          100% 100%,
+          0 100%
+        );
+        animation: popIn 0.18s ease;
+      }
+      .modal::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 24px;
+        height: 24px;
+        background: #c42222;
+        clip-path: polygon(0 0, 100% 100%, 100% 0);
+        z-index: 2;
+      }
+      .modal::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 23px;
+        height: 23px;
+        background: #f7c5c5;
+        clip-path: polygon(0 0, 100% 100%, 0 100%);
+        z-index: 1;
+      }
+      @keyframes popIn {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .modal .m-close {
+        position: absolute;
+        top: 10px;
+        right: 14px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 700;
+        color: #c42222;
+        z-index: 10;
+        line-height: 1;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+      .modal .m-from {
+        font-size: 10px;
+        font-weight: 700;
+        color: #c42222;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border-bottom: 2px solid #c42222;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+      .modal .m-msg {
+        font-size: 26px;
+        font-weight: 900;
+        color: #c42222;
+        line-height: 1.3;
+        font-family: "Noto Sans JP", sans-serif;
+      }
+    </style>
+  </body>
+</BaseLayout>

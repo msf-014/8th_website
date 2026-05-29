@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お祝いメッセージボード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #dde4ec;
+    min-height: 100vh;
+    font-family: 'Noto Sans JP', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    max-width: 1100px;
+    padding: 32px 24px 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .site-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: #c42222;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .site-title span {
+    display: block;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #c42222;
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding-bottom: 4px;
+  }
+  .filter-btn {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border: 1.5px solid #c42222;
+    background: transparent;
+    color: #c42222;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: background 0.12s, color 0.12s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: #c42222;
+    color: #fff;
+  }
+
+  .board-wrap {
+    width: 100%;
+    max-width: 1100px;
+    padding: 20px 24px 40px;
+  }
+
+  .board {
+    position: relative;
+    width: 100%;
+    height: 640px;
+    background: #e8eef5;
+    border: 1.5px solid #c5cdd8;
+    overflow: hidden;
+  }
+
+  /* 右上の赤い三角アクセント */
+  .board::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 52px 52px 0;
+    border-color: transparent #c42222 transparent transparent;
+  }
+
+  /* ——— 付箋 ——— */
+  .sticky {
+    position: absolute;
+    width: 156px;
+    min-height: 120px;
+    background: #fff;
+    border: 2px solid #c42222;
+    padding: 10px 12px 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    /* ドッグイヤー（右上折り返し） */
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+    box-shadow: 2px 2px 0 #c42222;
+    transition: box-shadow 0.14s ease, transform 0.14s ease;
+  }
+  /* ドッグイヤー — 赤い三角 */
+  .sticky::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 16px; height: 16px;
+    background: #c42222;
+    clip-path: polygon(0 0, 100% 100%, 100% 0);
+    z-index: 2;
+  }
+  /* ドッグイヤー — 折り返し面 */
+  .sticky::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 15px; height: 15px;
+    background: #f7c5c5;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    z-index: 1;
+  }
+  .sticky:hover {
+    box-shadow: 4px 5px 0 #c42222;
+    transform: scale(1.06) translateY(-3px);
+    z-index: 500 !important;
+  }
+
+  .sticky .s-from {
+    font-size: 9px;
+    font-weight: 700;
+    color: #c42222;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f7c5c5;
+    padding-bottom: 5px;
+  }
+  .sticky .s-msg {
+    font-size: 15px;
+    font-weight: 900;
+    color: #c42222;
+    line-height: 1.25;
+    flex: 1;
+  }
+  .sticky .s-num {
+    font-family: 'Bebas Neue', monospace;
+    font-size: 9px;
+    color: #c42222;
+    opacity: 0.35;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  /* ——— モーダル ——— */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border: 3px solid #c42222;
+    box-shadow: 7px 7px 0 #c42222;
+    padding: 36px 32px 28px;
+    max-width: 360px;
+    width: 90%;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+    animation: popIn 0.18s ease;
+  }
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 24px; height: 24px;
+    background: #c42222;
+    clip-path: polygon(0 0, 100% 100%, 100% 0);
+    z-index: 2;
+  }
+  .modal::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 23px; height: 23px;
+    background: #f7c5c5;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    z-index: 1;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .modal .m-close {
+    position: absolute;
+    top: 10px; right: 14px;
+    background: none; border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    color: #c42222;
+    z-index: 10;
+    line-height: 1;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .modal .m-from {
+    font-size: 10px;
+    font-weight: 700;
+    color: #c42222;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 2px solid #c42222;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .modal .m-msg {
+    font-size: 26px;
+    font-weight: 900;
+    color: #c42222;
+    line-height: 1.3;
+  }
+  .modal .m-tag {
+    font-family: 'Bebas Neue', monospace;
+    font-size: 11px;
+    color: #c42222;
+    opacity: 0.45;
+    margin-top: 18px;
+    letter-spacing: 0.12em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="site-title">
+    <span>BJ BALL PAPERS PRESENTS THE</span>
+    お祝い<br>メッセージボード
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-tag="all">ALL</button>
+    <button class="filter-btn" data-tag="仕事">仕事</button>
+    <button class="filter-btn" data-tag="プライベート">プライベート</button>
+    <button class="filter-btn" data-tag="感謝">感謝</button>
+  </div>
+</header>
+
+<div class="board-wrap">
+  <div class="board" id="board"></div>
+</div>
+
+<!-- モーダル -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-msg">
+    <button class="m-close" id="m-close" aria-label="閉じる">✕</button>
+    <p class="m-from" id="m-from"></p>
+    <p class="m-msg"  id="m-msg"></p>
+    <p class="m-tag"  id="m-tag"></p>
+  </div>
+</div>
+
+<script>
+/* ========== データ ========== */
+const messages = [
+  { from:"田中より",   msg:"いつも笑顔をありがとう。おめでとう！",      tag:"感謝" },
+  { from:"鈴木チーム", msg:"新しい挑戦、全力で応援してます！",            tag:"仕事" },
+  { from:"山田より",   msg:"これからも一緒に頑張ろうね。",               tag:"プライベート" },
+  { from:"斉藤より",   msg:"あなたの頑張りは皆の励みです。",             tag:"感謝" },
+  { from:"林より",     msg:"次のステージも輝いて！",                     tag:"仕事" },
+  { from:"渡辺より",   msg:"ずっと応援してるよ！",                       tag:"プライベート" },
+  { from:"加藤より",   msg:"素晴らしい成果、おめでとう！",               tag:"仕事" },
+  { from:"伊藤より",   msg:"一緒にいると元気が出る！",                   tag:"感謝" },
+  { from:"中村より",   msg:"これからもご活躍を。",                       tag:"仕事" },
+  { from:"小林より",   msg:"笑顔が一番の魔法だよ。",                     tag:"プライベート" },
+  { from:"松本より",   msg:"新天地でも必ずうまくいく！",                 tag:"仕事" },
+  { from:"井上より",   msg:"ありがとう、また飲もうね！",                 tag:"プライベート" },
+  { from:"木村より",   msg:"一緒に過ごした時間を大切にするよ。",         tag:"感謝" },
+  { from:"清水より",   msg:"これからが本番！絶対応援する！",             tag:"仕事" },
+];
+
+/* ========== 自動配置（回転なし） ========== */
+const CARD_W = 156, CARD_H = 120, MARGIN = 10, MAX_TRIES = 120;
+
+function autoPlace(items, areaW, areaH) {
+  const placed = [];
+  items.forEach((m, i) => {
+    let best = null, bestScore = -Infinity;
+    for (let t = 0; t < MAX_TRIES; t++) {
+      const x = MARGIN + Math.random() * (areaW - CARD_W - MARGIN * 2);
+      const y = MARGIN + Math.random() * (areaH - CARD_H - MARGIN * 2);
+      let overlap = 0;
+      placed.forEach(p => {
+        const dx = Math.abs(x - p.x), dy = Math.abs(y - p.y);
+        if (dx < CARD_W + 12 && dy < CARD_H + 12) {
+          overlap += (CARD_W + 12 - dx) * (CARD_H + 12 - dy);
+        }
+      });
+      if (-overlap > bestScore) { bestScore = -overlap; best = { x, y }; }
+    }
+    placed.push({ ...m, x: best.x, y: best.y, z: 10 + i });
+  });
+  return placed;
+}
+
+/* ========== 描画 ========== */
+function buildBoard(tag) {
+  const board = document.getElementById('board');
+  board.querySelectorAll('.sticky').forEach(el => el.remove());
+  const items = tag === 'all' ? messages : messages.filter(m => m.tag === tag);
+  const W = board.offsetWidth, H = board.offsetHeight;
+  const placed = autoPlace(items, W, H);
+  placed.forEach((m, i) => {
+    const el = document.createElement('div');
+    el.className = 'sticky';
+    el.style.cssText = `left:${m.x}px;top:${m.y}px;z-index:${m.z};opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;`;
+    el.innerHTML = `
+      <span class="s-from">${m.from}</span>
+      <span class="s-msg">${m.msg}</span>
+      <span class="s-num">REMINDER ——— ${String(i+1).padStart(4,'0')}</span>`;
+    el.addEventListener('click', () => openModal(m));
+    board.appendChild(el);
+    setTimeout(() => { el.style.opacity = '1'; }, i * 50);
+  });
+}
+
+/* ========== モーダル ========== */
+function openModal(m) {
+  document.getElementById('m-from').textContent = m.from;
+  document.getElementById('m-msg').textContent  = m.msg;
+  document.getElementById('m-tag').textContent  = '# ' + m.tag;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+document.getElementById('m-close').addEventListener('click', closeModal);
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+});
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+}
+
+/* ========== フィルター ========== */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    buildBoard(btn.dataset.tag);
+  });
+});
+
+buildBoard('all');
+</script>
+</body>
+</html>

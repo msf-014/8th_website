@@ -1,14 +1,19 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
+import { url } from "astro:schema";
 
 const contents = [
   { title: "YAGRUMA RINE", bg: "#fff", hoverBg: "rgb(254, 236, 216)" },
   { title: "HISTORY", bg: "#fff", hoverBg: "rgb(220, 200, 255)" },
   { title: "ILLUSTRATION", bg: "#fff", hoverBg: "rgb(200, 220, 255)" },
-  { title: "MESSAGE", bg: "#fff", hoverBg: "rgb(252, 197, 220)" },
+  {
+    title: "MESSAGE",
+    bg: "#fff",
+    hoverBg: "rgb(252, 226, 237)",
+    url: "/message",
+  },
   { title: "CREDIT", bg: "#fff", hoverBg: "rgb(230, 230, 230)" },
 ];
 ---
@@ -29,14 +34,15 @@ const contents = [
         <div class="content_list">
           {
             contents.map((item) => (
-              <div
+              <a
+                href={item.url}
                 class="contents"
                 style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
               >
                 <div class="content_texto">
                   <h2>{item.title}</h2>
                 </div>
-              </div>
+              </a>
             ))
           }
         </div>
@@ -49,13 +55,25 @@ const contents = [
         padding: 0;
       }
 
+      a,
+      a:visited {
+        color: #000; /*カラーコードは任意*/
+      }
+
       .content_list {
         display: block;
         box-shadow: 0 -1px 0 0 #000;
       }
 
+      a .contents {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
       .contents {
         display: block;
+        text-decoration: none;
         background: var(--bg);
         box-shadow:
           0 -1px 0 0 #000,
@@ -79,7 +97,7 @@ const contents = [
       }
 
       .content_texto {
-        padding: 14px 16px 2px;
+        padding: 14px 16px 14px;
         white-space: nowrap;
       }
 

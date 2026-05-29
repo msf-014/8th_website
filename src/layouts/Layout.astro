@@ -1,5 +1,5 @@
 ---
-
+import { ViewTransitions } from "astro:transitions";
 ---
 
 <link rel="icon" href="/favicon.ico" />
@@ -10,6 +10,9 @@
   href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
   rel="stylesheet"
 />
+<head>
+  <ViewTransitions />
+</head>
 <script
   src="https://unpkg.com/microcms-js-sdk@latest/dist/umd/microcms-js-sdk.js"
 ></script>
