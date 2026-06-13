@@ -1,6 +1,7 @@
 ---
 // Baseayout.astro
 const { title, useTurnstile = false } = Astro.props;
+import { ClientRouter } from "astro:transitions";
 ---
 
 <!doctype html>
@@ -11,6 +12,7 @@ const { title, useTurnstile = false } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+    <ClientRouter />
     <title>{title}</title>
   </head>
   <body>
