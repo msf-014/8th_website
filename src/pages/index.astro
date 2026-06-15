@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import { url } from "astro:schema";
+import Footer from "../components/footer.astro";
 
 const contents = [
   { title: "ABOUT", bg: "#fff", hoverBg: "rgb(254, 236, 216)" },
@@ -48,6 +49,8 @@ const contents = [
         </div>
       </div>
     </main>
+
+    <Footer />
 
     <style>
       * {
