@@ -20,13 +20,14 @@ import Footer from "../components/footer.astro";
   </head>
   <Header />
   <body>
+    <div class="bg_reveal" id="bg_reveal"></div>
     <div class="contents-list">
       <div class="contents_texto">
-        <h2>MESSAGE</h2>
+        <h2 transition:name="title--message">MESSAGE</h2>
       </div>
     </div>
 
-    <div class="board-wrap">
+    <div class="board-wrap" id="board-wrap" style="opacity: 0;">
       <div class="board" id="board"></div>
     </div>
 
@@ -40,6 +41,15 @@ import Footer from "../components/footer.astro";
 
     <!-- is:inline が必須！これがないとAstroがJSを最適化して動かなくなる -->
     <script is:inline>
+      // is:inline スクリプト内、または別の<script>で
+      const originX = sessionStorage.getItem("revealOriginX") || "50%";
+      const originY = sessionStorage.getItem("revealOriginY") || "50%";
+
+      const bgReveal = document.getElementById("bg_reveal");
+      if (bgReveal) {
+        bgReveal.style.transformOrigin = `${originX}px ${originY}px`;
+      }
+
       const messages = [
         { from: "名前", msg: "これはテストメッセージです。" },
         { from: "名前", msg: "これはテストメッセージです。" },
@@ -142,7 +152,7 @@ import Footer from "../components/footer.astro";
         });
 
       // DOMが確実に準備できてから実行
-      document.addEventListener("DOMContentLoaded", buildBoard);
+      document.addEventListener("astro:page-load", buildBoard);
     </script>
 
     <Footer />
@@ -156,7 +166,36 @@ import Footer from "../components/footer.astro";
       }
 
       body {
-        background-color: rgb(252, 226, 237);
+        background-color: #fff;
+        position: relative;
+      }
+
+      :root {
+        --morph-duration: 0.6s;
+      }
+
+      ::view-transition-old(title--message),
+      ::view-transition-new(title--message) {
+        animation-duration: var(--morph-duration);
+      }
+
+      .bg_reveal {
+        position: fixed;
+        inset: 0;
+        background: rgb(252, 226, 237);
+        z-index: -1;
+        transform: scaleY(0);
+        animation: revealBg 0.4s ease forwards;
+        /* transform-origin はJSで動的に設定するため、ここでは指定しない */
+      }
+
+      @keyframes revealBg {
+        from {
+          transform: scaleY(0);
+        }
+        to {
+          transform: scaleY(1);
+        }
       }
 
       .contents-list {
@@ -188,6 +227,21 @@ import Footer from "../components/footer.astro";
         max-width: 1900px;
         padding: 20px 24px 40px;
         margin: 0 auto;
+      }
+
+      #board-wrap {
+        opacity: 0;
+        animation: fadeInContent 0.4s ease forwards;
+        animation-delay: 0.6s; /* モーフィングの再生時間と合わせる */
+      }
+
+      @keyframes fadeInContent {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       .board {
