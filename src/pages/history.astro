@@ -47,6 +47,7 @@ import Footer from "../components/footer.astro";
 
       :root {
         --morph-duration: 0.6s;
+        --bg-reveal-duration: 0.4s;
 
         /* ここから年表用のトークン。配色などはあとで調整可 */
         --timeline-line-color: #d9dce1;
@@ -68,7 +69,7 @@ import Footer from "../components/footer.astro";
         background: rgb(220, 200, 255);
         z-index: -1;
         transform: scaleY(0);
-        animation: revealBg 0.4s ease forwards;
+        animation: revealBg var(--bg-reveal-duration) ease forwards;
         /* transform-origin はJSで動的に設定するため、ここでは指定しない */
       }
 
@@ -115,6 +116,22 @@ import Footer from "../components/footer.astro";
         max-width: var(--timeline-max-width);
         margin: 0 auto;
         padding: 64px 24px;
+        opacity: 0;
+        animation: timelineFadeIn 0.5s ease forwards;
+        animation-delay: var(
+          --bg-reveal-duration
+        ); /* bg_revealの再生後に表示 */
+      }
+
+      @keyframes timelineFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       :global(.timeline) {
