@@ -1,0 +1,501 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/header.astro";
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/footer.astro";
+---
+
+<BaseLayout>
+  <head>
+    <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
+    />
+  </head>
+  <Header />
+  <body>
+    <div class="bg_reveal" id="bg_reveal"></div>
+    <div class="contents-list">
+      <div class="contents_texto">
+        <h2 transition:name="title--history">CHRONOLOGY</h2>
+      </div>
+    </div>
+
+    <div class="timeline-wrap">
+      <div id="timeline" class="timeline"></div>
+    </div>
+
+    <Footer />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #fff;
+        position: relative;
+      }
+
+      :root {
+        --morph-duration: 0.6s;
+        --bg-reveal-duration: 0.4s;
+
+        /* ここから年表用のトークン。配色などはあとで調整可 */
+        --timeline-line-color: #d9dce1;
+        --timeline-circle-bg: #fff;
+        --timeline-circle-border: #2f3b52;
+        --timeline-year-color: #2f3b52;
+        --timeline-text-sub: #6b7280;
+        --timeline-max-width: 720px;
+      }
+
+      ::view-transition-old(title--message),
+      ::view-transition-new(title--message) {
+        animation-duration: var(--morph-duration);
+      }
+
+      .bg_reveal {
+        position: fixed;
+        inset: 0;
+        background: rgb(220, 200, 255);
+        z-index: -1;
+        transform: scaleY(0);
+        animation: revealBg var(--bg-reveal-duration) ease forwards;
+        /* transform-origin はJSで動的に設定するため、ここでは指定しない */
+      }
+
+      @keyframes revealBg {
+        from {
+          transform: scaleY(0);
+        }
+        to {
+          transform: scaleY(1);
+        }
+      }
+
+      .contents-list {
+        display: block;
+        box-shadow:
+          0 -1px 0 0 #000,
+          0 1px 0 0 #000;
+      }
+
+      .contents_texto {
+        padding: 14px 16px 14px;
+        white-space: nowrap;
+      }
+
+      .contents_texto h2 {
+        font-size: 110px;
+        font-family: "acumin-variable", sans-serif;
+        font-variation-settings:
+          "wght" 400,
+          "wdth" 100,
+          "slnt" 0;
+        font-style: normal;
+        align-items: center;
+        line-height: 1;
+      }
+
+      /* ===========================================================
+         年表セクション
+         この中の要素はJSで動的に生成するため、Astroのスコープ付きCSSが
+         効かない（data-astro-cid属性が付かない）。
+         そのため :global() で明示的にスコープ外にしている。
+         =========================================================== */
+      :global(.timeline-wrap) {
+        max-width: var(--timeline-max-width);
+        margin: 0 auto;
+        padding: 64px 24px;
+        opacity: 0;
+        animation: timelineFadeIn 0.5s ease forwards;
+        animation-delay: var(
+          --bg-reveal-duration
+        ); /* bg_revealの再生後に表示 */
+      }
+
+      @keyframes timelineFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      :global(.timeline) {
+        position: relative;
+      }
+
+      /* 最初の丸〜最後の丸を貫通する1本の縦線（top/heightはJSで設定） */
+      :global(.timeline-line) {
+        position: absolute;
+        left: 10px;
+        width: 2px;
+        background: var(--timeline-line-color);
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      :global(.timeline-item) {
+        display: flex;
+        align-items: flex-start;
+        padding-bottom: 48px;
+        position: relative;
+        z-index: 1;
+      }
+      :global(.timeline-item:last-child) {
+        padding-bottom: 0;
+      }
+
+      :global(.marker-col) {
+        width: 20px;
+        flex: 0 0 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      :global(.marker-circle) {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--timeline-circle-bg);
+        border: 3px solid var(--timeline-circle-border);
+        margin-top: 2px;
+      }
+
+      :global(.content-col) {
+        flex: 1 1 auto;
+        padding-left: 24px;
+      }
+
+      :global(.item-year) {
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--timeline-year-color);
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+      }
+
+      :global(.item-title) {
+        margin: 0 0 6px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      :global(.item-desc) {
+        margin: 0;
+        font-size: 14px;
+        color: var(--timeline-text-sub);
+      }
+
+      /* YouTube埋め込み */
+      :global(.item-youtube) {
+        margin-top: 16px;
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #000;
+      }
+      :global(.item-youtube iframe) {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      /* 一言コメント */
+      :global(.item-comment) {
+        margin-top: 14px;
+        padding: 10px 14px;
+        border-left: 3px solid var(--timeline-circle-border);
+        font-size: 13px;
+        font-style: italic;
+        color: var(--timeline-text-sub);
+        background: transparent;
+      }
+
+      /* いいねボタン */
+      :global(.item-footer) {
+        display: flex;
+        align-items: center;
+        margin-top: 14px;
+      }
+      :global(.like-btn) {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border: 1.5px solid #d9dce1;
+        border-radius: 999px;
+        background: transparent;
+        font-size: 13px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+        color: var(--timeline-text-sub);
+        user-select: none;
+      }
+      :global(.like-btn:hover) {
+        border-color: var(--timeline-circle-border);
+        color: var(--timeline-circle-border);
+      }
+      :global(.like-btn.liked) {
+        border-color: #e05a5a;
+        color: #e05a5a;
+      }
+      :global(.like-btn .like-icon) {
+        font-size: 15px;
+        line-height: 1;
+        transition: transform 0.15s;
+      }
+      :global(.like-btn.liked .like-icon) {
+        transform: scale(1.25);
+      }
+    </style>
+
+    <script>
+      /* ===========================================================
+         表示する項目データ
+         各フィールドの説明:
+           year    : 年（数値）
+           title   : 見出し
+           desc    : 概要（本文）
+           comment : 一言コメント。省略するとコメント欄は表示されない
+           youtube : YouTube の動画ID（URLのv=以降の部分）。
+                     省略するとYouTubeエリアは表示されない
+         =========================================================== */
+      const timelineData = [
+        {
+          year: "2018/ 9 / 28",
+          title: "初配信",
+          desc: "Mirrativにて初配信を行う。",
+          comment: "",
+          youtube: "",
+        },
+        {
+          year: "2019 / 6 / 20",
+          title: "【LIVE】スマホをなくした雑談【にじさんじ】",
+          desc: "ライバー用スマホを失くした雑談配信を行う。「Liver Yo Smartphone」はこの時に生まれた。",
+          comment: "この年いちばん印象に残った一言がここに入ります。",
+          youtube: "B9SL-dlO9Zo",
+        },
+        {
+          year: "2020 / 3 / 31",
+          title: "チャンネル登録者数 5万人突破",
+          desc: "",
+          comment: "",
+          youtube: "",
+        },
+        {
+          year: "2023 / 12 / 06",
+          title: "矢車のにじぱぺに自我が芽生える。",
+          desc: "矢車のにじぱぺが2023年11月24日より発売開始。所詮ぱぺに自我など芽生えるはずがないと高を括っていた矢車を排し、ぱぺが配信を乗っ取る。なお、この後毎年エイプリルフールの配信枠にはぱぺが現れ、矢車本体に黙って蛮行を働いている。",
+          comment: "この年いちばん印象に残った一言がここに入ります。",
+          youtube: "hMKc-zWEutI",
+        },
+        {
+          year: "2023 / 12 / 16",
+          title:
+            "【RUST】島のドン（になる予定）のやぐるまちた、初上陸　#にじらす【にじさんじ/矢車りね/町田ちま】",
+          desc: "にじ鯖RUSTに参加、やぐるまちたで大暴れ。「俺らのドリンク汚すなよ」",
+          youtube: "5TsfcoMpS-0",
+        },
+        {
+          year: "2023 / 12/ 31",
+          title: "【雑談】10万人行くまで年を越せない耐久",
+          desc: "10万人達成するまでの耐久配信。極寒の中、登録者メーターをチュッチュベロベロしながら無事に10万人を迎える。",
+          comment: "この年いちばん印象に残った一言がここに入ります。",
+          youtube: "8T0ckiYjBCs",
+        },
+        {
+          year: "2024 / 6 / 20",
+          title:
+            "【#にじGTA】はじめてのGTAだしとりあえず平和にお散歩するか＾＾【にじさんじ/矢車りね/黒井しば】",
+          desc: "にじGTAに参加。黒井しばと共に平和にお散歩を楽しんでいたはずが、衝動的に葛葉を銃撃。後に「矢車事変」「令和のサラエボ事件」と呼ばれるほど本企画のみならず矢車の今後の活動にも大きく影響を及ぼす大きな出来事となった。",
+          youtube: "qYoTp91LxYw",
+        },
+        {
+          year: "2024 / 3 / 10",
+          title:
+            "【謝罪会見】本当にすみません…　やぐるまちた【にじさんじ/矢車りね/町田ちま】",
+          desc: "「Untitled Goose Game 〜いたずらガチョウがやって来た!〜」を二人で配信の予定だったが、オンラインで二人プレイができないゲームだったため、やぐるまちたによる謝罪会見が開かれた。",
+          comment: "謝罪会見という茶番で約45分間配信をやり切った二人に脱帽。",
+          youtube: "mD8roGiO7I8",
+        },
+        {
+          year: "2024 / 9 / 3",
+          title: "【雑談】手動疑似3.0お披露目【にじさんじ/矢車りね】",
+          desc: "3.0が反抗期を迎え、お披露目予定日に動かすことができなくなったため、お手製の3.0を披露。無事に化け物が誕生し、「山に帰れ」「こっちに来るな」などコメントでは散々な言われようだった。「泣きたいのに涙が出ない…」",
+          comment: "この年いちばん印象に残った一言がここに入ります。",
+          youtube: "VdheYHhII-0",
+        },
+        {
+          year: "2024 / 9 / 8",
+          title: "【雑談】手動疑似3.0お披露目【にじさんじ/矢車りね】",
+          desc: "数日前に化け物を生み出した矢車だったが、数日後に万を持して3.0のお披露目配信を決行。キラキラ目や涙を流す、青ざめなど色々な表情ができるようになった＋眼鏡も割れるようになった。",
+          comment: "どの表情もとんでもなく可愛い。",
+          youtube: "3GEGroNyAtI",
+        },
+        {
+          year: "2025 / 8 / 17",
+          title:
+            "【スーパーマリオ ヨッシーアイランド】初見！前に進みたいニチアサマリオ(のはずだった)【にじさんじ/矢車りね】",
+          desc: "ヨッシーアイランド配信中あまりにも回線の悪さからプレイを断念。急遽「回線ザコすぎ雑談」へ切り替えることに。リスナーからサーバー位置は東京かと確認された際、オーストラリア在住であることを白状した。",
+          comment: "この年いちばん印象に残った一言がここに入ります。",
+          youtube: "vWXsdIE9NeE",
+        },
+      ];
+
+      /* --------------------------------------------------
+         いいね数の永続化（localStorage）
+         キー: "likes_<year>_<title のhash>"
+         -------------------------------------------------- */
+      function likeKey(item: { year: number; title: string }) {
+        return `likes_${item.year}_${item.title}`;
+      }
+
+      function getLikes(item: { year: number; title: string }) {
+        const raw = localStorage.getItem(likeKey(item));
+        return raw ? JSON.parse(raw) : { count: 0, liked: false };
+      }
+
+      function saveLikes(
+        item: { year: number; title: string },
+        data: { count: number; liked: boolean },
+      ) {
+        localStorage.setItem(likeKey(item), JSON.stringify(data));
+      }
+
+      /* --------------------------------------------------
+         描画
+         -------------------------------------------------- */
+      function renderTimeline(
+        data: {
+          year: number;
+          title: string;
+          desc: string;
+          comment?: string;
+          youtube?: string;
+        }[],
+      ) {
+        const container = document.getElementById("timeline");
+        if (!container) return;
+        container.innerHTML = "";
+
+        const lineEl = document.createElement("div");
+        lineEl.id = "timelineLine";
+        lineEl.className = "timeline-line";
+        container.appendChild(lineEl);
+
+        data.forEach((item) => {
+          const likeData = getLikes(item);
+
+          // YouTube埋め込みHTML（youtubeフィールドがある場合のみ）
+          const youtubeHTML = item.youtube
+            ? `<div class="item-youtube">
+                <iframe
+                  src="https://www.youtube.com/embed/${item.youtube}"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+               </div>`
+            : "";
+
+          // 一言コメントHTML（commentフィールドがある場合のみ）
+          const commentHTML = item.comment
+            ? `<p class="item-comment">${item.comment}</p>`
+            : "";
+
+          const itemEl = document.createElement("div");
+          itemEl.className = "timeline-item";
+          itemEl.innerHTML = `
+            <div class="marker-col">
+              <div class="marker-circle"></div>
+            </div>
+            <div class="content-col">
+              <span class="item-year">${item.year}</span>
+              <h3 class="item-title">${item.title}</h3>
+              <p class="item-desc">${item.desc}</p>
+              ${commentHTML}
+              ${youtubeHTML}
+              <div class="item-footer">
+                <button
+                  class="like-btn${likeData.liked ? " liked" : ""}"
+                  data-year="${item.year}"
+                  data-title="${item.title}"
+                  aria-label="いいね"
+                >
+                  <span class="like-icon">${likeData.liked ? "♥" : "♡"}</span>
+                  <span class="like-count">${likeData.count}</span>
+                </button>
+              </div>
+            </div>
+          `;
+
+          // いいねボタンのイベント
+          const btn = itemEl.querySelector(".like-btn") as HTMLButtonElement;
+          btn.addEventListener("click", () => {
+            const current = getLikes(item);
+            const next = current.liked
+              ? { count: current.count - 1, liked: false }
+              : { count: current.count + 1, liked: true };
+            saveLikes(item, next);
+
+            btn.classList.toggle("liked", next.liked);
+            btn.querySelector(".like-icon")!.textContent = next.liked
+              ? "♥"
+              : "♡";
+            btn.querySelector(".like-count")!.textContent = String(next.count);
+          });
+
+          container.appendChild(itemEl);
+        });
+
+        updateTimelineLine();
+      }
+
+      function updateTimelineLine() {
+        const container = document.getElementById("timeline");
+        const line = document.getElementById("timelineLine");
+        if (!container || !line) return;
+
+        const circles = container.querySelectorAll(".marker-circle");
+        if (circles.length === 0) return;
+
+        const containerTop = container.getBoundingClientRect().top;
+        const firstRect = circles[0].getBoundingClientRect();
+        const lastRect = circles[circles.length - 1].getBoundingClientRect();
+
+        const top = firstRect.top + firstRect.height / 2 - containerTop;
+        const bottom = lastRect.top + lastRect.height / 2 - containerTop;
+
+        (line as HTMLElement).style.top = `${top}px`;
+        (line as HTMLElement).style.height = `${bottom - top}px`;
+      }
+
+      renderTimeline(timelineData);
+      window.addEventListener("resize", updateTimelineLine);
+
+      document.addEventListener("astro:page-load", () => {
+        renderTimeline(timelineData);
+      });
+    </script>
+  </body>
+</BaseLayout>
