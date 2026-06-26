@@ -23,6 +23,7 @@ import Footer from "../components/footer.astro";
     <div class="bg_reveal" id="bg_reveal"></div>
     <div class="contents-list">
       <div class="contents_texto">
+        <span class="content_label">年表</span>
         <h2 transition:name="title--history">CHRONOLOGY</h2>
       </div>
     </div>
@@ -90,9 +91,25 @@ import Footer from "../components/footer.astro";
           0 1px 0 0 #000;
       }
 
-      .contents_texto {
+      .content_texto {
         padding: 14px 16px 14px;
         white-space: nowrap;
+        position: relative;
+        display: inline-block;
+      }
+
+      .content_label {
+        position: absolute;
+        top: 30px; /* h2の上端に合わせる */
+        left: 100%; /* h2テキストの右端の外側に出す */
+        margin-left: 1px; /* h2との間隔 */
+        font-size: 14px;
+        color: #000;
+        font-family: "游ゴシック", sans-serif;
+        font-weight: 800;
+        border: 2px solid #000000;
+        border-radius: 999px;
+        padding: 6px 14px;
       }
 
       .contents_texto h2 {
