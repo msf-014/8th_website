@@ -6,27 +6,37 @@ import { url } from "astro:schema";
 import Footer from "../components/footer.astro";
 
 const contents = [
-  { title: "ABOUT", bg: "#fff", hoverBg: "rgb(254, 236, 216)", url: "/about" },
+  {
+    title: "ABOUT",
+    label: "矢車りねについて",
+    bg: "#fff",
+    hoverBg: "rgb(254, 236, 216)",
+    url: "/about",
+  },
   {
     title: "CHRONOLOGY",
+    label: "年表",
     bg: "#fff",
     hoverBg: "rgb(220, 200, 255)",
     url: "/chronology",
   },
   {
     title: "ILLUSTRATION",
+    label: "記念イラスト",
     bg: "#fff",
     hoverBg: "rgb(200, 220, 255)",
     url: "/illustration",
   },
   {
     title: "MESSAGE",
+    label: "記念メッセージ",
     bg: "#fff",
     hoverBg: "rgb(252, 226, 237)",
     url: "/message",
   },
   {
     title: "CREDIT",
+    label: "クレジット",
     bg: "#fff",
     hoverBg: "rgb(230, 230, 230)",
     url: "/credit",
@@ -58,6 +68,7 @@ const contents = [
                 transition:name={`title-${item.url.replace(/\//g, "-")}`}
               >
                 <div class="content_texto">
+                  <span class="content_label">{item.label}</span>
                   <h2>{item.title}</h2>
                 </div>
               </a>
@@ -127,7 +138,7 @@ const contents = [
         box-shadow:
           0 -1px 0 0 #000,
           0 1px 0 0 #000;
-        margin-bottom: -32px;
+        margin-bottom: -39px;
         position: relative;
         z-index: 0;
         transition:
@@ -136,7 +147,7 @@ const contents = [
       }
 
       .contents:hover {
-        transform: translateY(-32px);
+        transform: translateY(-39px);
         background: var(--hover-bg);
         transition: background 0.3s transform 0.5s;
       }
@@ -148,8 +159,23 @@ const contents = [
       .content_texto {
         padding: 14px 16px 14px;
         white-space: nowrap;
+        position: relative;
+        display: inline-block;
       }
 
+      .content_label {
+        position: absolute;
+        top: 30px; /* h2の上端に合わせる */
+        left: 100%; /* h2テキストの右端の外側に出す */
+        margin-left: 1px; /* h2との間隔 */
+        font-size: 14px;
+        color: #000;
+        font-family: "游ゴシック", sans-serif;
+        font-weight: 800;
+        border: 2px solid #000000;
+        border-radius: 999px;
+        padding: 6px 14px;
+      }
       .content_texto h2 {
         font-size: 110px;
         font-family: "acumin-variable", sans-serif;
@@ -160,6 +186,7 @@ const contents = [
         font-style: normal;
         align-items: center;
         line-height: 1;
+        letter-spacing: -0.06em;
       }
 
       .slide-down-exit {
