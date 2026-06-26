@@ -26,9 +26,10 @@ import Footer from "../components/footer.astro";
         <h2 transition:name="title--history">CHRONOLOGY</h2>
       </div>
     </div>
-
-    <div class="timeline-wrap">
-      <div id="timeline" class="timeline"></div>
+    <div class="chronology">
+      <div class="timeline-wrap">
+        <div id="timeline" class="timeline"></div>
+      </div>
     </div>
 
     <Footer />
@@ -50,12 +51,12 @@ import Footer from "../components/footer.astro";
         --bg-reveal-duration: 0.4s;
 
         /* ここから年表用のトークン。配色などはあとで調整可 */
-        --timeline-line-color: #d9dce1;
+        --timeline-line-color: #2f3b52;
         --timeline-circle-bg: #fff;
         --timeline-circle-border: #2f3b52;
         --timeline-year-color: #2f3b52;
         --timeline-text-sub: #6b7280;
-        --timeline-max-width: 720px;
+        --timeline-max-width: 1240px;
       }
 
       ::view-transition-old(title--message),
@@ -106,6 +107,11 @@ import Footer from "../components/footer.astro";
         line-height: 1;
       }
 
+      .chronology {
+        margin: 0 auto;
+        padding-top: 24px;
+      }
+
       /* ===========================================================
          年表セクション
          この中の要素はJSで動的に生成するため、Astroのスコープ付きCSSが
@@ -115,8 +121,11 @@ import Footer from "../components/footer.astro";
       :global(.timeline-wrap) {
         max-width: var(--timeline-max-width);
         margin: 0 auto;
-        padding: 64px 24px;
+        padding: 64px 50px;
         opacity: 0;
+        background-color: rgba(238, 220, 253, 0.8);
+        border: 1px solid #000;
+        border-radius: 30px;
         animation: timelineFadeIn 0.5s ease forwards;
         animation-delay: var(
           --bg-reveal-duration
@@ -191,13 +200,13 @@ import Footer from "../components/footer.astro";
 
       :global(.item-title) {
         margin: 0 0 6px;
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 700;
       }
 
       :global(.item-desc) {
         margin: 0;
-        font-size: 14px;
+        font-size: 18px;
         color: var(--timeline-text-sub);
       }
 
@@ -241,7 +250,7 @@ import Footer from "../components/footer.astro";
         align-items: center;
         gap: 6px;
         padding: 6px 14px;
-        border: 1.5px solid #d9dce1;
+        border: 1.5px solid #ffffff;
         border-radius: 999px;
         background: transparent;
         font-size: 13px;
