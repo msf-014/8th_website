@@ -45,161 +45,163 @@ const contents = [
 ---
 
 <BaseLayout title="RineYaguruma 8th Anniv | 矢車りね 8周年記念サイト">
-  <head>
-    <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
-    />
-  </head>
-  <body>
-    <Header />
-    <!-- メインビジュアル -->
-    <main class="main" id="main-home">
-      <div class="main_container">
-        <div class="content_list">
-          {
-            contents.map((item) => (
-              <a
-                href={item.url}
-                class="contents"
-                style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
-                data-href={item.url}
-                transition:name={`title-${item.url.replace(/\//g, "-")}`}
-              >
-                <div class="content_texto">
-                  <span class="content_label">{item.label}</span>
-                  <h2>{item.title}</h2>
-                </div>
-              </a>
-            ))
-          }
+  <Layout>
+    <head>
+      <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
+      <link
+        rel="stylesheet"
+        href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
+      />
+    </head>
+    <body>
+      <Header />
+      <!-- メインビジュアル -->
+      <main class="main" id="main-home">
+        <div class="main_container">
+          <div class="content_list">
+            {
+              contents.map((item) => (
+                <a
+                  href={item.url}
+                  class="contents"
+                  style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
+                  data-href={item.url}
+                  transition:name={`title-${item.url.replace(/\//g, "-")}`}
+                >
+                  <div class="content_texto">
+                    <span class="content_label">{item.label}</span>
+                    <h2>{item.title}</h2>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <script>
-      let clickedHref = null;
+      <script>
+        let clickedHref = null;
 
-      document.querySelectorAll(".contents").forEach((link) => {
-        link.addEventListener("click", () => {
-          clickedHref = link.getAttribute("data-href");
+        document.querySelectorAll(".contents").forEach((link) => {
+          link.addEventListener("click", () => {
+            clickedHref = link.getAttribute("data-href");
+          });
         });
-      });
 
-      document.addEventListener("astro:before-preparation", (event) => {
-        const originalLoader = event.loader;
+        document.addEventListener("astro:before-preparation", (event) => {
+          const originalLoader = event.loader;
 
-        event.loader = async function () {
-          // ここで少し待ってから実際の遷移処理(loader)を呼ぶ
-          await new Promise((resolve) => setTimeout(resolve, 300)); // 300ms の溜め
-          await originalLoader();
-        };
-      });
+          event.loader = async function () {
+            // ここで少し待ってから実際の遷移処理(loader)を呼ぶ
+            await new Promise((resolve) => setTimeout(resolve, 300)); // 300ms の溜め
+            await originalLoader();
+          };
+        });
 
-      document.addEventListener("astro:before-swap", () => {
-        document.querySelectorAll(".contents").forEach((el) => {
-          const elHref = el.getAttribute("data-href");
-          if (elHref !== clickedHref) {
-            el.classList.add("slide-down-exit");
+        document.addEventListener("astro:before-swap", () => {
+          document.querySelectorAll(".contents").forEach((el) => {
+            const elHref = el.getAttribute("data-href");
+            if (elHref !== clickedHref) {
+              el.classList.add("slide-down-exit");
+            }
+          });
+        });
+      </script>
+
+      <Footer />
+
+      <style>
+        * {
+          margin: 0;
+          padding: 0;
+        }
+
+        a,
+        a:visited {
+          color: #000; /*カラーコードは任意*/
+        }
+
+        .content_list {
+          display: block;
+          box-shadow: 0 -1px 0 0 #000;
+        }
+
+        a .contents {
+          text-decoration: none;
+          color: inherit;
+          display: block;
+        }
+
+        .contents {
+          display: block;
+          text-decoration: none;
+          background: var(--bg);
+          box-shadow:
+            0 -1px 0 0 #000,
+            0 1px 0 0 #000;
+          margin-bottom: -39px;
+          position: relative;
+          z-index: 0;
+          transition:
+            background 0.1s,
+            transform 0.5s;
+        }
+
+        .contents:hover {
+          transform: translateY(-39px);
+          background: var(--hover-bg);
+          transition: background 0.3s transform 0.5s;
+        }
+
+        .main_container {
+          padding-top: 1080px;
+        }
+
+        .content_texto {
+          padding: 14px 16px 14px;
+          white-space: nowrap;
+          position: relative;
+        }
+
+        .content_label {
+          position: absolute;
+          top: 14px;
+          right: 16px;
+          font-size: 15px;
+          color: #000;
+          font-family: "游ゴシック", sans-serif;
+          font-weight: 800;
+          padding: 6px 14px;
+          letter-spacing: -0.06em;
+        }
+        .content_texto h2 {
+          font-size: 110px;
+          font-family: "acumin-variable", sans-serif;
+          font-variation-settings:
+            "wght" 400,
+            "wdth" 100,
+            "slnt" 0;
+          font-style: normal;
+          align-items: center;
+          line-height: 1;
+          letter-spacing: -0.06em;
+        }
+
+        .slide-down-exit {
+          animation: slideDown 0.4s ease forwards;
+        }
+
+        @keyframes slideDown {
+          from {
+            transform: translateY(0);
+            opacity: 1;
           }
-        });
-      });
-    </script>
-
-    <Footer />
-
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
-
-      a,
-      a:visited {
-        color: #000; /*カラーコードは任意*/
-      }
-
-      .content_list {
-        display: block;
-        box-shadow: 0 -1px 0 0 #000;
-      }
-
-      a .contents {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-      }
-
-      .contents {
-        display: block;
-        text-decoration: none;
-        background: var(--bg);
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-        margin-bottom: -39px;
-        position: relative;
-        z-index: 0;
-        transition:
-          background 0.1s,
-          transform 0.5s;
-      }
-
-      .contents:hover {
-        transform: translateY(-39px);
-        background: var(--hover-bg);
-        transition: background 0.3s transform 0.5s;
-      }
-
-      .main_container {
-        padding-top: 1080px;
-      }
-
-      .content_texto {
-        padding: 14px 16px 14px;
-        white-space: nowrap;
-        position: relative;
-      }
-
-      .content_label {
-        position: absolute;
-        top: 14px;
-        right: 16px;
-        font-size: 15px;
-        color: #000;
-        font-family: "游ゴシック", sans-serif;
-        font-weight: 800;
-        padding: 6px 14px;
-        letter-spacing: -0.06em;
-      }
-      .content_texto h2 {
-        font-size: 110px;
-        font-family: "acumin-variable", sans-serif;
-        font-variation-settings:
-          "wght" 400,
-          "wdth" 100,
-          "slnt" 0;
-        font-style: normal;
-        align-items: center;
-        line-height: 1;
-        letter-spacing: -0.06em;
-      }
-
-      .slide-down-exit {
-        animation: slideDown 0.4s ease forwards;
-      }
-
-      @keyframes slideDown {
-        from {
-          transform: translateY(0);
-          opacity: 1;
+          to {
+            transform: translateY(100vh);
+            opacity: 0;
+          }
         }
-        to {
-          transform: translateY(100vh);
-          opacity: 0;
-        }
-      }
-    </style>
-  </body>
+      </style>
+    </body>
+  </Layout>
 </BaseLayout>
