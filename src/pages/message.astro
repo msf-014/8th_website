@@ -23,6 +23,7 @@ import Footer from "../components/footer.astro";
     <div class="bg_reveal" id="bg_reveal"></div>
     <div class="contents-list" transition:name="title--message">
       <div class="contents_texto">
+        <span class="content_label">メッセージ</span>
         <h2>MESSAGE</h2>
       </div>
     </div>
@@ -208,6 +209,19 @@ import Footer from "../components/footer.astro";
       .contents_texto {
         padding: 14px 16px 14px;
         white-space: nowrap;
+        position: relative;
+      }
+
+      .content_label {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        font-size: 15px;
+        color: #000;
+        font-family: "游ゴシック", sans-serif;
+        font-weight: 800;
+        padding: 6px 14px;
+        letter-spacing: -0.06em;
       }
 
       .contents_texto h2 {
@@ -220,6 +234,7 @@ import Footer from "../components/footer.astro";
         font-style: normal;
         align-items: center;
         line-height: 1;
+        letter-spacing: -0.06em;
       }
 
       .board-wrap {
