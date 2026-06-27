@@ -29,6 +29,8 @@ import Footer from "../components/footer.astro";
     </div>
     <div class="chronology">
       <div class="timeline-wrap">
+        <h4>矢車りね活動記録</h4>
+        <p>2018/09/28-2026/09/28</p>
         <div id="timeline" class="timeline"></div>
       </div>
     </div>
@@ -121,6 +123,28 @@ import Footer from "../components/footer.astro";
         letter-spacing: -0.06em;
       }
 
+      .timeline-wrap h4 {
+        display: block;
+        font-family: "游ゴシック", sans-serif;
+        font-weight: 500;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 30px;
+        margin: 0;
+      }
+
+      .timeline-wrap p {
+        display: flex;
+        font-family: "游ゴシック", sans-serif;
+        font-weight: 500;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 22px;
+        padding-bottom: 20px;
+      }
+
       .chronology {
         margin: 0 auto;
         padding-top: 24px;
@@ -137,7 +161,7 @@ import Footer from "../components/footer.astro";
         margin: 0 auto;
         padding: 64px 50px;
         opacity: 0;
-        background-color: rgba(238, 220, 253, 0.8);
+        background-color: #eedcfdcc;
         border: 1px solid #000;
         border-radius: 30px;
         animation: timelineFadeIn 0.5s ease forwards;
@@ -213,11 +237,11 @@ import Footer from "../components/footer.astro";
       }
 
       :global(.item-title) {
-        margin: 0 0 6px;
+        margin: 0 0 10px;
         font-size: 22px;
         font-weight: 700;
         padding-bottom: 10px;
-        border-bottom: 1px solid var(--timeline-line-color);
+        border-bottom: 2px solid var(--timeline-line-color);
       }
 
       :global(.item-desc) {
