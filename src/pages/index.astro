@@ -21,6 +21,13 @@ const contents = [
     url: "/chronology",
   },
   {
+    title: "WORDS",
+    label: "言葉",
+    bg: "#fff",
+    hoverBg: "rgb(181, 230, 198)",
+    url: "/words",
+  },
+  {
     title: "ILLUSTRATION",
     label: "記念イラスト",
     bg: "#fff",
@@ -57,6 +64,9 @@ const contents = [
     <Header />
     <!-- メインビジュアル -->
     <main class="main" id="main-home">
+      <div class="main_visual">
+        <img src="/src/assets/mainvisual_kari.png" alt="main_visual" />
+      </div>
       <div class="main_container">
         <div class="content_list">
           {
@@ -116,6 +126,10 @@ const contents = [
         padding: 0;
       }
 
+      html {
+        scrollbar-color: #a0b8f4 #fff;
+      }
+
       a,
       a:visited {
         color: #000; /*カラーコードは任意*/
@@ -153,8 +167,14 @@ const contents = [
         transition: background 0.3s transform 0.5s;
       }
 
+      .main_visual img {
+        margin: auto;
+        display: block;
+        width: 90%;
+      }
+
       .main_container {
-        padding-top: 1080px;
+        padding-top: 100px;
       }
 
       .content_texto {
