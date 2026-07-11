@@ -25,6 +25,9 @@ import Footer from "../components/footer.astro";
       <div class="contents_texto">
         <span class="content_label">記念メッセージ</span>
         <h2>MESSAGE</h2>
+        <a href="/" class="back_btn" aria-label="戻る">
+          <span class="back_arrow">←</span>
+        </a>
       </div>
     </div>
 
@@ -211,9 +214,15 @@ import Footer from "../components/footer.astro";
       }
 
       .contents_texto {
+        box-shadow:
+          0 -1px 0 0 #000,
+          0 1px 0 0 #000;
         padding: 14px 16px 14px;
         white-space: nowrap;
         position: relative;
+        display: flex; /* 追加 */
+        align-items: center; /* h2とボタンを縦中央揃え */
+        gap: 24px; /* h2とボタンの間隔 */
       }
 
       .content_label {
@@ -225,7 +234,6 @@ import Footer from "../components/footer.astro";
         font-family: "游ゴシック", sans-serif;
         font-weight: 800;
         padding: 6px 14px;
-        letter-spacing: -0.06em;
       }
 
       .contents_texto h2 {
@@ -239,6 +247,33 @@ import Footer from "../components/footer.astro";
         align-items: center;
         line-height: 1;
         letter-spacing: -0.06em;
+        position: relative;
+      }
+
+      .back_btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border: 2px solid #000;
+        border-radius: 50%;
+        text-decoration: none;
+        color: #000;
+        flex-shrink: 0; /* ボタンが縮まないようにする */
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      .back_btn:hover {
+        background: #000;
+        color: #fff;
+      }
+
+      .back_arrow {
+        font-size: 20px;
+        line-height: 1;
       }
 
       .board-wrap {
