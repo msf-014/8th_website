@@ -1,8 +1,6 @@
 ---
-import Layout from "../layouts/Layout.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
-import { url } from "astro:schema";
 import Footer from "../components/footer.astro";
 
 const contents = [
@@ -51,9 +49,11 @@ const contents = [
 ];
 ---
 
-<BaseLayout title="RineYaguruma 8th Anniv | 矢車りね 8周年記念サイト">
+<BaseLayout
+  title="RineYaguruma 8th Anniv | 矢車りね 8周年記念サイト"
+  headerOverlay={true}
+>
   <head>
-    <Layout />
     <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
     <link
       rel="stylesheet"
@@ -61,34 +61,35 @@ const contents = [
     />
   </head>
   <body>
-    <Header />
-    <!-- メインビジュアル -->
-    <main class="main" id="main-home">
-      <div class="main_visual">
-        <img src="mainvisual_kari.webp" alt="main_visual" />
-      </div>
-      <div class="main_container">
-        <div class="content_list">
-          {
-            contents.map((item) => (
-              <a
-                href={item.url}
-                class="contents"
-                style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
-                data-href={item.url}
-                transition:name={`title-${item.url.replace(/\//g, "-")}`}
-              >
-                <div class="content_texto">
-                  <span class="content_label">{item.label}</span>
-                  <h2>{item.title}</h2>
-                </div>
-              </a>
-            ))
-          }
+    <div class="main-wrapper">
+      <Header />
+      <!-- メインビジュアル -->
+      <main class="main" id="main-home">
+        <section class="main_visual">
+          <img src="mainvisual_kari.webp" alt="main_visual" />
+        </section>
+        <div class="main_container">
+          <div class="content_list">
+            {
+              contents.map((item) => (
+                <a
+                  href={item.url}
+                  class="contents"
+                  style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
+                  data-href={item.url}
+                  transition:name={`title-${item.url.replace(/\//g, "-")}`}
+                >
+                  <div class="content_texto">
+                    <span class="content_label">{item.label}</span>
+                    <h2>{item.title}</h2>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
         </div>
-      </div>
-    </main>
-
+      </main>
+    </div>
     <script>
       let clickedHref = null;
 
@@ -167,14 +168,15 @@ const contents = [
         transition: background 0.3s transform 0.5s;
       }
 
-      .main_visual img {
-        margin: auto;
-        display: block;
-        width: 90%;
+      .main-wrapper {
+        position: relative;
       }
 
-      .main_container {
-        padding-top: 100px;
+      .main_visual img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9; /* 好きな比率に変更 */
+        object-fit: cover;
       }
 
       .content_texto {

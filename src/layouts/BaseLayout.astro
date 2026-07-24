@@ -1,7 +1,18 @@
 ---
-// Baseayout.astro
-const { title, useTurnstile = false } = Astro.props;
+// BaseLayout.astro
 import { ClientRouter } from "astro:transitions";
+import Header from "../components/header.astro";
+
+interface Props {
+  title?: string;
+  useTurnstile?: boolean;
+  headerOverlay?: boolean;
+}
+const {
+  title = "Rinalia",
+  useTurnstile = false,
+  headerOverlay = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -11,11 +22,13 @@ import { ClientRouter } from "astro:transitions";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="https://use.typekit.net/xaq4odq.css" />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
     <title>{title}</title>
   </head>
   <body>
+    <Header overlay={headerOverlay} />
     <slot />
   </body>
 </html>
