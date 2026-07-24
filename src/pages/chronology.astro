@@ -50,6 +50,7 @@ import Footer from "../components/footer.astro";
 
         html {
           scrollbar-color: #ffffff #dcc8ff;
+          scroll-behavior: smooth;
         }
 
         body {
@@ -61,14 +62,16 @@ import Footer from "../components/footer.astro";
           --morph-duration: 0.6s;
           --bg-reveal-duration: 0.4s;
 
-          /* ここから年表用のトークン。配色などはあとで調整可 */
           --timeline-line-color: #2f3b52;
           --timeline-circle-bg: #fff;
           --timeline-circle-border: #2f3b52;
           --timeline-year-color: #2f3b52;
           --timeline-text-sub: #000;
           --timeline-text-comments: #9f83cf;
-          --timeline-max-width: 1240px;
+          --timeline-max-width: 1900px;
+
+          /* 左テキスト列の幅。残りが右メディア列になる */
+          --text-col-width: 38%;
         }
 
         ::view-transition-old(title--message),
@@ -83,7 +86,6 @@ import Footer from "../components/footer.astro";
           z-index: -1;
           transform: scaleY(0);
           animation: revealBg var(--bg-reveal-duration) ease forwards;
-          /* transform-origin はJSで動的に設定するため、ここでは指定しない */
         }
 
         @keyframes revealBg {
@@ -109,9 +111,9 @@ import Footer from "../components/footer.astro";
           padding: 14px 16px 14px;
           white-space: nowrap;
           position: relative;
-          display: flex; /* 追加 */
-          align-items: center; /* h2とボタンを縦中央揃え */
-          gap: 24px; /* h2とボタンの間隔 */
+          display: flex;
+          align-items: center;
+          gap: 24px;
         }
 
         .content_label {
@@ -149,42 +151,35 @@ import Footer from "../components/footer.astro";
           border-radius: 50%;
           text-decoration: none;
           color: #000;
-          flex-shrink: 0; /* ボタンが縮まないようにする */
+          flex-shrink: 0;
           transition:
             background 0.2s,
             color 0.2s;
         }
-
         .back_btn:hover {
           background: #000;
           color: #dcc8ff;
         }
-
         .back_arrow {
           font-size: 20px;
           line-height: 1;
         }
 
         .chronology_title {
-          position: center;
           width: 25%;
           margin: 60px auto;
           position: relative;
           padding: 0.5em 1.5em;
         }
-
         .chronology_title h4 {
           display: block;
           font-family: "殴り書きクレヨン", sans-serif;
           font-weight: 500;
-          align-items: center;
-          justify-content: center;
           text-align: center;
           font-size: 60px;
           margin: 0;
           padding: 45px 0 20px 0;
         }
-
         .chronology_title p {
           display: flex;
           font-family: "殴り書きクレヨン", sans-serif;
@@ -201,24 +196,17 @@ import Footer from "../components/footer.astro";
         }
 
         /* ===========================================================
-         年表セクション
-         この中の要素はJSで動的に生成するため、Astroのスコープ付きCSSが
-         効かない（data-astro-cid属性が付かない）。
-         そのため :global() で明示的にスコープ外にしている。
-         =========================================================== */
+           年表セクション（:global — JSで動的生成するため）
+           =========================================================== */
+
         :global(.timeline-wrap) {
           max-width: var(--timeline-max-width);
           margin: 0 auto;
           margin-bottom: 100px;
           padding: 64px 50px;
           opacity: 0;
-          background-color: #eedcfdcc;
-          border: 1px solid #000;
-          border-radius: 30px;
           animation: timelineFadeIn 0.5s ease forwards;
-          animation-delay: var(
-            --bg-reveal-duration
-          ); /* bg_revealの再生後に表示 */
+          animation-delay: var(--bg-reveal-duration);
         }
 
         @keyframes timelineFadeIn {
@@ -236,7 +224,7 @@ import Footer from "../components/footer.astro";
           position: relative;
         }
 
-        /* 最初の丸〜最後の丸を貫通する1本の縦線（top/heightはJSで設定） */
+        /* 縦の通し線 */
         :global(.timeline-line) {
           position: absolute;
           left: 10px;
@@ -246,98 +234,119 @@ import Footer from "../components/footer.astro";
           z-index: 0;
         }
 
+        /* 1項目のラッパー */
         :global(.timeline-item) {
           display: flex;
           align-items: flex-start;
-          padding-bottom: 48px;
+          padding-bottom: 56px;
           position: relative;
           z-index: 1;
+          /* スクロールフェードイン */
+          opacity: 0;
+          transform: translateY(16px);
+          transition:
+            opacity 0.5s ease,
+            transform 0.5s ease;
+        }
+        :global(.timeline-item.is-visible) {
+          opacity: 1;
+          transform: translateY(0);
         }
         :global(.timeline-item:last-child) {
           padding-bottom: 0;
         }
 
+        /* 丸マーカー列 */
         :global(.marker-col) {
           width: 20px;
           flex: 0 0 20px;
           display: flex;
           justify-content: center;
+          padding-top: 4px;
         }
-
         :global(.marker-circle) {
           width: 16px;
           height: 16px;
           border-radius: 50%;
           background: var(--timeline-circle-bg);
           border: 3px solid var(--timeline-circle-border);
-          margin-top: 2px;
         }
 
+        /* マーカーの右側 全体ラッパー → 2カラムに */
         :global(.content-col) {
           flex: 1 1 auto;
-          padding-left: 24px;
+          padding-left: 32px;
+          display: flex;
+          align-items: flex-start;
+          gap: 40px;
         }
 
+        /* 左：テキスト列 */
+        :global(.text-col) {
+          flex: 0 0 var(--text-col-width);
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        /* 右：メディア列（YouTube） */
+        :global(.media-col) {
+          flex: 1 1 auto;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        /* メディアがない項目はテキスト列を全幅に */
+        :global(.content-col.no-media .text-col) {
+          flex: 1 1 auto;
+        }
+
+        /* 年 */
         :global(.item-year) {
           display: inline-block;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 700;
           color: var(--timeline-year-color);
           letter-spacing: 0.05em;
-          margin-bottom: 6px;
         }
 
+        /* タイトル */
         :global(.item-title) {
-          margin: 0 0 10px;
-          font-size: 22px;
+          margin: 0;
+          font-size: 20px;
           font-weight: 700;
           padding-bottom: 10px;
           border-bottom: 2px solid var(--timeline-line-color);
         }
 
+        /* 概要 */
         :global(.item-desc) {
           margin: 0;
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 700;
           line-height: 2;
           color: var(--timeline-text-sub);
         }
 
-        /* YouTube埋め込み */
-        :global(.item-youtube) {
-          margin-top: 16px;
-          position: relative;
-          width: 100%;
-          aspect-ratio: 16 / 9;
-          border-radius: 8px;
-          overflow: hidden;
-          background: #000;
-        }
-        :global(.item-youtube iframe) {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          border: none;
-        }
-
         /* 一言コメント */
         :global(.item-comment) {
           position: relative;
-          margin-top: 14px;
           padding: 10px 14px;
           font-size: 13px;
           font-style: italic;
           color: var(--timeline-text-comments);
           background: #fbf9ff;
           border-radius: 999px;
+          align-self: flex-start;
         }
         :global(.item-comment)::before {
           content: "";
           position: absolute;
           left: 30px;
           top: -15px;
-          display: block;
           width: 0;
           height: 0;
           border-right: 15px solid transparent;
@@ -345,18 +354,18 @@ import Footer from "../components/footer.astro";
           border-left: 15px solid transparent;
         }
 
-        /* いいねボタン */
+        /* いいね */
         :global(.item-footer) {
           display: flex;
           align-items: center;
-          margin-top: 14px;
+          margin-top: 4px;
         }
         :global(.like-btn) {
           display: inline-flex;
           align-items: center;
           gap: 6px;
           padding: 6px 14px;
-          border: 1.5px solid #ffffff;
+          border: 1.5px solid #d9dce1;
           border-radius: 999px;
           background: transparent;
           font-size: 13px;
@@ -383,19 +392,79 @@ import Footer from "../components/footer.astro";
         :global(.like-btn.liked .like-icon) {
           transform: scale(1.25);
         }
+
+        /* YouTube */
+        :global(.item-youtube) {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          border-radius: 8px;
+          overflow: hidden;
+          background: #000;
+        }
+        :global(.item-youtube iframe) {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+
+        /* YouTubeサムネイルプレースホルダー */
+        :global(.yt-placeholder) {
+          position: absolute;
+          inset: 0;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        :global(.yt-placeholder img) {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        :global(.yt-play-btn) {
+          position: relative;
+          z-index: 1;
+          width: 64px;
+          height: 44px;
+          background: #ff0000;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0.92;
+          transition:
+            opacity 0.2s,
+            transform 0.2s;
+        }
+        :global(.yt-placeholder:hover .yt-play-btn) {
+          opacity: 1;
+          transform: scale(1.08);
+        }
+        :global(.yt-play-btn::after) {
+          content: "";
+          border-style: solid;
+          border-width: 9px 0 9px 18px;
+          border-color: transparent transparent transparent #fff;
+          margin-left: 4px;
+        }
+
+        /* レスポンシブ：幅が狭い場合は縦積みに戻す */
+        @media (max-width: 900px) {
+          :global(.content-col) {
+            flex-direction: column;
+          }
+          :global(.text-col) {
+            flex: 1 1 auto;
+          }
+        }
       </style>
 
       <script>
-        /* ===========================================================
-         表示する項目データ
-         各フィールドの説明:
-           year    : 年（数値）
-           title   : 見出し
-           desc    : 概要（本文）
-           comment : 一言コメント。省略するとコメント欄は表示されない
-           youtube : YouTube の動画ID（URLのv=以降の部分）。
-                     省略するとYouTubeエリアは表示されない
-         =========================================================== */
         const timelineData = [
           {
             year: "2018/09/28",
@@ -415,14 +484,14 @@ import Footer from "../components/footer.astro";
           {
             year: "2018/12/09",
             title: "【矢車りね】スマブラ78時間リレー生配信 その28【黒井しば】",
-            desc: "にじさんじ公式チャンネルへの初出演でありYouTube上での初めての配信、そして初コラボでもある初めて尽くしの配信。026年現在よりも尖っていた（本人談）時代の子供らしい発言や煽りが満載。しばちゃんとの仲の良い駆け引きも見どころ。",
+            desc: "にじさんじ公式チャンネルへの初出演でありYouTube上での初めての配信、そして初コラボでもある初めて尽くしの配信。2026年現在よりも尖っていた（本人談）時代の子供らしい発言や煽りが満載。しばちゃんとの仲の良い駆け引きも見どころ。",
             comment: "comments",
             youtube: "ksgP23ML9x0",
           },
           {
             year: "2018/12/23",
             title: "YouTubeにて初配信",
-            desc: "自身のYou Tubeチャンネルでの初めての配信。矢車の雑談配信史上公式の最古の記録。最近の出来事や人狼にハマっていることなどを語っている。",
+            desc: "自身のYouTubeチャンネルでの初めての配信。矢車の雑談配信史上公式の最古の記録。最近の出来事や人狼にハマっていることなどを語っている。",
             comment: "comments",
             youtube: "bd3eTSoKR6U",
           },
@@ -455,13 +524,6 @@ import Footer from "../components/footer.astro";
             youtube: "3OG0sutK_3U",
           },
           {
-            year: "2023/08/01",
-            title: "メンヘラトマト収穫ボイス単体販売",
-            desc: "メンヘラトマト収穫ボイスがにじさんじオフィシャルストアにて期間限定で単体販売された。メンヘラトマトの矢車とそれを収穫する農家という設定のボイスとなっている。そのタイトルの名に恥じぬ迫真の演技が聞ける素晴らしいボイスとなっている。",
-            comment: "現在は販売を終了しています。",
-            youtube: "",
-          },
-          {
             year: "2020/09/06",
             title: "新衣装お披露目",
             desc: "遠北千南卒業後の配信。あちきたの要素を取り入れた飴玉スキンの初お披露目。",
@@ -488,6 +550,13 @@ import Footer from "../components/footer.astro";
             desc: "2021年から正式名称が決まった元SEEDs2期生第3弾組【実は同期なんです。】の歌ってみた動画が投稿された。",
             comment: "迷ったときはオトノナルホウへ→",
             youtube: "LTfLs3YH8BY",
+          },
+          {
+            year: "2023/08/01",
+            title: "メンヘラトマト収穫ボイス単体販売",
+            desc: "メンヘラトマト収穫ボイスがにじさんじオフィシャルストアにて期間限定で単体販売された。メンヘラトマトの矢車とそれを収穫する農家という設定のボイスとなっている。そのタイトルの名に恥じぬ迫真の演技が聞ける素晴らしいボイスとなっている。",
+            comment: "現在は販売を終了しています。",
+            youtube: "",
           },
           {
             year: "2023/12/06",
@@ -518,25 +587,18 @@ import Footer from "../components/footer.astro";
             youtube: "8T0ckiYjBCs",
           },
           {
-            year: "2024/04/01",
-            title: "りねぱぺ、トラックに乗りヨーロッパを爆走",
-            desc: "エイプリルフールにりねぱぺがチャンネルを乗っ取り、「Euro Truck Simulator 2」の配信を行った。",
-            comment: "",
-            youtube: "11VM8CRzQ1Q",
-          },
-          {
-            year: "2024/06/20",
-            title: "にじGTAに参加、そして伝説へ",
-            desc: "にじGTAに参加。黒井しばと共に平和にお散歩を楽しんでいたはずが、衝動的に葛葉を銃撃。後に「矢車事変」「令和のサラエボ事件」と呼ばれるほど本企画のみならず矢車の今後の活動にも大きく影響を及ぼす出来事となった。",
-            comment: "",
-            youtube: "qYoTp91LxYw",
-          },
-          {
             year: "2024/03/10",
             title: "やぐるまちた 謝罪会見",
             desc: "「Untitled Goose Game 〜いたずらガチョウがやって来た!〜」を二人で配信の予定だったが、オンラインで二人プレイができないゲームだったため、やぐるまちたによる謝罪会見が開かれた。",
             comment: "謝罪会見という茶番で約45分間配信をやり切った二人に脱帽。",
             youtube: "mD8roGiO7I8",
+          },
+          {
+            year: "2024/04/01",
+            title: "りねぱぺ、トラックに乗りヨーロッパを爆走",
+            desc: "エイプリルフールにりねぱぺがチャンネルを乗っ取り、「Euro Truck Simulator 2」の配信を行った。",
+            comment: "",
+            youtube: "11VM8CRzQ1Q",
           },
           {
             year: "2024/05/10",
@@ -551,6 +613,13 @@ import Footer from "../components/footer.astro";
             desc: "「ダジャレしか言わないASMR 矢車りね」をにじさんじオフィシャルストアにて発売。リスナーに募集したダジャレを読み上げるという非常にニッチな内容となっている。",
             comment: "",
             youtube: "",
+          },
+          {
+            year: "2024/06/20",
+            title: "にじGTAに参加、そして伝説へ",
+            desc: "にじGTAに参加。黒井しばと共に平和にお散歩を楽しんでいたはずが、衝動的に葛葉を銃撃。後に「矢車事変」「令和のサラエボ事件」と呼ばれるほど本企画のみならず矢車の今後の活動にも大きく影響を及ぼす出来事となった。",
+            comment: "",
+            youtube: "qYoTp91LxYw",
           },
           {
             year: "2024/09/03",
@@ -581,7 +650,7 @@ import Footer from "../components/footer.astro";
             youtube: "XIVMojsEjiY",
           },
           {
-            year: "2025/2/22",
+            year: "2025/02/22",
             title: "にじフェス2025 参加",
             desc: "ついに、にじフェスに現地で参加。Day2ラジオブースにて「樋口楓と矢車りねのなかよしラジオ」を行い、涙の初出演となった。公式企画は約6年ぶりの参加となった。(5:49:50~)",
             comment: "良かったね",
@@ -597,7 +666,7 @@ import Footer from "../components/footer.astro";
           {
             year: "2025/06/05",
             title: "ファンタジーライフiを配信",
-            desc: "「ファンタジーライフi グルグルの竜と時をぬすむ少女」が発売された。兼ねてよりシリーズのファンだった矢車は6月5日から6月12日の間、毎日ファンタジーライフを配信するほどの作品愛を見せた。その際に投稿された配信スケジュールはもちろんファンタジーライフでびっしりだった。",
+            desc: "「ファンタジーライフi グルグルの竜と時をぬすむ少女」が発売された。兼ねてよりシリーズのファンだった矢車は6月5日から6月12日の間、毎日ファンタジーライフを配信するほどの作品愛を見せた。",
             comment:
               "バグった配信スケジュールに歓喜・戸惑い・恐怖など様々な感情が渦巻いていた",
             youtube: "2dR1fuUQ-qo",
@@ -605,14 +674,14 @@ import Footer from "../components/footer.astro";
           {
             year: "2025/08/08",
             title: "3Dお披露目配信",
-            desc: "3Dお披露目配信を行った。スマートフォン・にじGTA・メンヘラトマトなど、活動の中で起こった出来事を中心に構成されており、これまでの矢車りねの活動を総ざらいしたような内容となっている。その他には、やぐるまちた(矢車りね＆町田ちま)による「にんげんっていいな、カオスが極まる」、ぐるがみん(矢車りね＆石神のぞみ)による「Rising Hope」、矢車＆シスター・クレアによる「エビカニクス」、実は同期なんです。(矢車りね＆黒井しば＆夢追翔＆ベルモンド・バンデラス)による「虹」をそれぞれ披露、配信の最後には自身初となるオリジナル楽曲「地獄車」が発表・披露された。",
+            desc: "3Dお披露目配信を行った。スマートフォン・にじGTA・メンヘラトマトなど、活動の中で起こった出来事を中心に構成されており、これまでの矢車りねの活動を総ざらいしたような内容となっている。",
             comment: "",
             youtube: "7wJJFIFzvvM",
           },
           {
             year: "2025/08/08",
             title: "初のオリジナル楽曲「地獄車」 MV公開",
-            desc: "3Dお披露目配信後、「地獄車」のMVが公開された。全ての行いは巡り巡って自分に返ってくるという事を歌った楽曲となっている。楽曲提供はFAKE TYPE.。トップハムハット狂氏の持ち味でもある畳みかけるようなリリックを矢車の聞き取りやすい声としっかりとした発音で見事に歌いあげており、波乱万丈・突拍子もない事件を引き起こす撃鉄のような矢車の側面をコミカルなアニメーションで飾った映像にも注目。",
+            desc: "3Dお披露目配信後、「地獄車」のMVが公開された。全ての行いは巡り巡って自分に返ってくるという事を歌った楽曲となっている。楽曲提供はFAKE TYPE.。",
             comment: "",
             youtube: "9xbNg0-MBLY",
           },
@@ -626,7 +695,7 @@ import Footer from "../components/footer.astro";
           {
             year: "2025/09/28",
             title: "7周年、にじ3Dお披露目、逆凸配信",
-            desc: "7周年の記念日は、にじ3Dのお披露目と逆凸配信を行う。普段からお世話になってる先輩や裏でしか交流がなかった後輩との絡み、分厚い同期の絆など非常に見どころの多い内容となっている。配信の途中で歌ってみたの告知がフライングしてしまう珍事も発生し、色んな意味で視聴者を驚かせることになった。",
+            desc: "7周年の記念日は、にじ3Dのお披露目と逆凸配信を行う。普段からお世話になってる先輩や裏でしか交流がなかった後輩との絡み、分厚い同期の絆など非常に見どころの多い内容となっている。",
             comment: "",
             youtube: "_3ygpvBftJk",
           },
@@ -640,7 +709,7 @@ import Footer from "../components/footer.astro";
           {
             year: "2025/11/06",
             title: "初めてのストリートファイター6",
-            desc: "ストリートファイター6の配信を行う。コメントや友人、ライバーの助言と座学を経てコツコツと上達をするが、対空にことごとく苦しめられる。これ以降、矢車は「対空」というワードを引き金にし怒り、悲しみ、苦しむことが増えた。",
+            desc: "ストリートファイター6の配信を行う。コメントや友人、ライバーの助言と座学を経てコツコツと上達をするが、対空にことごとく苦しめられる。",
             comment: "comments",
             youtube: "RMc7sdZkGts",
           },
@@ -655,20 +724,20 @@ import Footer from "../components/footer.astro";
             year: "2025/12/14",
             title:
               "やぐるまちた「マル・マル・モリ・モリ！」歌って踊ってみた動画を投稿",
-            desc: "同日に行ったやぐるまちたオフコラボカラオケ配信直後に「マル・マル・モリ・モリ！」の歌って踊ってみた動画を公開。やぐるまちたのかわいい歌声と、それを見守るような形で合いの手を入れてくれる黒いしばのほっこりするような歌ってみた動画となっている。",
+            desc: "同日に行ったやぐるまちたオフコラボカラオケ配信直後に「マル・マル・モリ・モリ！」の歌って踊ってみた動画を公開。",
             comment: "歌が終わっても最後までみるべき。",
             youtube: "CnkYd2Phwbw",
           },
           {
             year: "2026/02/15",
             title: "ラップ曲いっぱい歌枠配信",
-            desc: "3Dお披露目以降、ラップに力を入れていた矢車の集大成のような歌枠。数日前にはメンバー限定で楽曲を覚えるまでひたすら練習をする配信を行うほどには気合が入った歌枠となっており、SOUL'd OUTやCreepy Nuts、Awitchなどを始め、後輩である3SKMの楽曲も披露するなど、自身の長所を存分に生かした選曲をしていた。配信の途中には「IRIS OUT」の歌ってみた動画投稿の告知も行い、最後の最後までリスナーを湧かせるエンターテイナー矢車りねの姿がそこにはあった。",
+            desc: "3Dお披露目以降、ラップに力を入れていた矢車の集大成のような歌枠。数日前にはメンバー限定で楽曲を覚えるまでひたすら練習をする配信を行うほどには気合が入った歌枠となっている。",
             comment: "comments",
             youtube: "IsazEcayExQ",
           },
           {
             year: "2026/02/15",
-            title: "「IRISOUT」歌ってみた動画を投稿",
+            title: "「IRIS OUT」歌ってみた動画を投稿",
             desc: "ラップ曲いっぱい歌枠配信直後に米津玄師「IRIS OUT」歌ってみた動画を公開。自身の長所であるラップ部分を存分に延ばし、生かしながらも、矢車の歌のポテンシャルがキラリと光る歌ってみた動画となっている。",
             comment: "この世で君だけ大正解。",
             youtube: "8Jz9CWNWTKA",
@@ -683,38 +752,71 @@ import Footer from "../components/footer.astro";
           {
             year: "2026/04/01",
             title: "りねぱぺ、泥棒の道へ",
-            desc: "2025年もエイプリルフールに体調が悪いという矢車の代わりにりねぱぺがチャンネルを乗っ取り、「Thief Simulator」の配信を行った。",
+            desc: "2026年もエイプリルフールに体調が悪いという矢車の代わりにりねぱぺがチャンネルを乗っ取り、「Thief Simulator」の配信を行った。",
             comment: "comments",
             youtube: "cb6BuYiKSt4",
           },
         ];
 
         /* --------------------------------------------------
-         いいね数の永続化（localStorage）
-         キー: "likes_<year>_<title のhash>"
-         -------------------------------------------------- */
-        function likeKey(item: { year: number; title: string }) {
+           いいね数の永続化（localStorage）
+           -------------------------------------------------- */
+        function likeKey(item: { year: string; title: string }) {
           return `likes_${item.year}_${item.title}`;
         }
-
-        function getLikes(item: { year: number; title: string }) {
+        function getLikes(item: { year: string; title: string }) {
           const raw = localStorage.getItem(likeKey(item));
           return raw ? JSON.parse(raw) : { count: 0, liked: false };
         }
-
         function saveLikes(
-          item: { year: number; title: string },
+          item: { year: string; title: string },
           data: { count: number; liked: boolean },
         ) {
           localStorage.setItem(likeKey(item), JSON.stringify(data));
         }
 
         /* --------------------------------------------------
-         描画
-         -------------------------------------------------- */
+           YouTubeサムネイルプレースホルダー
+           ビューポートに入るまでiframeを生成しない
+           -------------------------------------------------- */
+        function buildYoutubePlaceholder(videoId: string): HTMLElement {
+          const wrap = document.createElement("div");
+          wrap.className = "item-youtube";
+          wrap.dataset.ytId = videoId;
+
+          const placeholder = document.createElement("div");
+          placeholder.className = "yt-placeholder";
+          placeholder.innerHTML = `
+            <img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" alt="サムネイル" loading="lazy" />
+            <div class="yt-play-btn" aria-hidden="true"></div>
+          `;
+          placeholder.addEventListener("click", () =>
+            swapToIframe(wrap, videoId, true),
+          );
+          wrap.appendChild(placeholder);
+          return wrap;
+        }
+
+        function swapToIframe(
+          wrap: HTMLElement,
+          videoId: string,
+          autoplay = false,
+        ) {
+          const iframe = document.createElement("iframe");
+          iframe.src = `https://www.youtube.com/embed/${videoId}${autoplay ? "?autoplay=1" : ""}`;
+          iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          iframe.allowFullscreen = true;
+          wrap.innerHTML = "";
+          wrap.appendChild(iframe);
+        }
+
+        /* --------------------------------------------------
+           描画：案A（左テキスト・右メディアの2カラム）
+           -------------------------------------------------- */
         function renderTimeline(
           data: {
-            year: number;
+            year: string;
             title: string;
             desc: string;
             comment?: string;
@@ -732,58 +834,55 @@ import Footer from "../components/footer.astro";
 
           data.forEach((item) => {
             const likeData = getLikes(item);
-
-            // YouTube埋め込みHTML（youtubeフィールドがある場合のみ）
-            const youtubeHTML = item.youtube
-              ? `<div class="item-youtube">
-                <iframe
-                  src="https://www.youtube.com/embed/${item.youtube}"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                ></iframe>
-               </div>`
-              : "";
-
-            // 一言コメントHTML（commentフィールドがある場合のみ）
-            const commentHTML = item.comment
-              ? `<p class="item-comment">${item.comment}</p>`
-              : "";
+            const hasMedia = !!item.youtube;
 
             const itemEl = document.createElement("div");
             itemEl.className = "timeline-item";
-            itemEl.innerHTML = `
-            <div class="marker-col">
-              <div class="marker-circle"></div>
-            </div>
-            <div class="content-col">
+
+            /* 左テキスト列 */
+            const textCol = document.createElement("div");
+            textCol.className = "text-col";
+            textCol.innerHTML = `
               <span class="item-year">${item.year}</span>
               <h3 class="item-title">${item.title}</h3>
-              <p class="item-desc">${item.desc}</p>
-              ${commentHTML}
-              ${youtubeHTML}
+              ${item.desc ? `<p class="item-desc">${item.desc}</p>` : ""}
+              ${item.comment ? `<p class="item-comment">${item.comment}</p>` : ""}
               <div class="item-footer">
-                <button
-                  class="like-btn${likeData.liked ? " liked" : ""}"
-                  data-year="${item.year}"
-                  data-title="${item.title}"
-                  aria-label="いいね"
-                >
+                <button class="like-btn${likeData.liked ? " liked" : ""}" aria-label="いいね">
                   <span class="like-icon">${likeData.liked ? "♥" : "♡"}</span>
                   <span class="like-count">${likeData.count}</span>
                 </button>
               </div>
-            </div>
-          `;
+            `;
 
-            // いいねボタンのイベント
-            const btn = itemEl.querySelector(".like-btn") as HTMLButtonElement;
+            /* 右メディア列 */
+            const mediaCol = document.createElement("div");
+            mediaCol.className = "media-col";
+            if (item.youtube) {
+              mediaCol.appendChild(buildYoutubePlaceholder(item.youtube));
+            }
+
+            /* content-col に両方を入れる */
+            const contentCol = document.createElement("div");
+            contentCol.className = `content-col${hasMedia ? "" : " no-media"}`;
+            contentCol.appendChild(textCol);
+            if (hasMedia) contentCol.appendChild(mediaCol);
+
+            itemEl.innerHTML = `
+              <div class="marker-col">
+                <div class="marker-circle"></div>
+              </div>
+            `;
+            itemEl.appendChild(contentCol);
+
+            /* いいねボタンのイベント */
+            const btn = textCol.querySelector(".like-btn") as HTMLButtonElement;
             btn.addEventListener("click", () => {
               const current = getLikes(item);
               const next = current.liked
                 ? { count: current.count - 1, liked: false }
                 : { count: current.count + 1, liked: true };
               saveLikes(item, next);
-
               btn.classList.toggle("liked", next.liked);
               btn.querySelector(".like-icon")!.textContent = next.liked
                 ? "♥"
@@ -799,30 +898,74 @@ import Footer from "../components/footer.astro";
           updateTimelineLine();
         }
 
+        /* --------------------------------------------------
+           縦線の高さ計算
+           -------------------------------------------------- */
         function updateTimelineLine() {
           const container = document.getElementById("timeline");
           const line = document.getElementById("timelineLine");
           if (!container || !line) return;
-
           const circles = container.querySelectorAll(".marker-circle");
           if (circles.length === 0) return;
-
           const containerTop = container.getBoundingClientRect().top;
           const firstRect = circles[0].getBoundingClientRect();
           const lastRect = circles[circles.length - 1].getBoundingClientRect();
-
           const top = firstRect.top + firstRect.height / 2 - containerTop;
           const bottom = lastRect.top + lastRect.height / 2 - containerTop;
-
           (line as HTMLElement).style.top = `${top}px`;
           (line as HTMLElement).style.height = `${bottom - top}px`;
         }
 
+        /* --------------------------------------------------
+           IntersectionObserver
+           -------------------------------------------------- */
+        function observeItems() {
+          const itemObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  (entry.target as HTMLElement).classList.add("is-visible");
+                  itemObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.08 },
+          );
+
+          requestAnimationFrame(() => {
+            document.querySelectorAll(".timeline-item").forEach((el, i) => {
+              (el as HTMLElement).style.transitionDelay = `${i * 60}ms`;
+              itemObserver.observe(el);
+            });
+          });
+
+          const ytObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const img = (entry.target as HTMLElement).querySelector(
+                    "img",
+                  );
+                  if (img) img.loading = "eager";
+                  ytObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { rootMargin: "200px" },
+          );
+          document
+            .querySelectorAll(".item-youtube")
+            .forEach((el) => ytObserver.observe(el));
+        }
+
+        const BG_REVEAL_MS = 400;
         renderTimeline(timelineData);
         window.addEventListener("resize", updateTimelineLine);
+        setTimeout(observeItems, BG_REVEAL_MS);
 
         document.addEventListener("astro:page-load", () => {
           renderTimeline(timelineData);
+          setTimeout(observeItems, BG_REVEAL_MS);
         });
       </script>
     </div>
