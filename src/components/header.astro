@@ -17,6 +17,8 @@ const { overlay = false } = Astro.props;
     }
     .site-header:not(.overlay) {
       position: relative;
+      background: var(--header-back-color);
+      z-index: 0;
     }
     .site-header.overlay {
       position: absolute;
