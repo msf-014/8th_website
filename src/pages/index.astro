@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import Footer from "../components/footer.astro";
+import { navigate } from "astro:transitions/client";
 
 const contents = [
   {
@@ -47,6 +48,8 @@ const contents = [
     url: "/credit",
   },
 ];
+
+const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 ---
 
 <BaseLayout
@@ -105,11 +108,15 @@ const contents = [
         </div>
       </main>
     </div>
-    <script>
+    <script data-astro-rerun>
       let clickedHref = null;
+      let allowNavigate = false; // 引っ込めアニメーション後の「本当のクリック」を通すためのフラグ
 
       // スマホ判定(768px以下をスマホ扱い)
       const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
+      // 矢印を引っ込めるアニメーションの長さ(CSSのtransition時間と合わせる)
+      const ARROW_RETRACT_MS = 250;
 
       const contentsEls = document.querySelectorAll(".contents");
 
@@ -121,7 +128,7 @@ const contents = [
 
       contentsEls.forEach((link) => {
         link.addEventListener("click", (e) => {
-          if (isMobile()) {
+          if (isMobile() && !allowNavigate) {
             // まだ矢印が出ていない(1回目のタップ) → 遷移せず矢印を表示
             if (!link.classList.contains("is-armed")) {
               e.preventDefault();
@@ -129,8 +136,20 @@ const contents = [
               link.classList.add("is-armed");
               return;
             }
-            // 既に矢印が出ている(2回目のタップ) → 遷移させる
+
+            // 既に矢印が出ている(2回目のタップ)
+            // → 遷移アニメーションの前に、まず矢印を引っ込める
+            e.preventDefault();
+            link.classList.remove("is-armed");
+
+            setTimeout(() => {
+              allowNavigate = true;
+              link.click(); // ← 本当のクリックを再発火。今度はpreventDefaultしないので通常通り遷移する
+              allowNavigate = false;
+            }, ARROW_RETRACT_MS);
+            return;
           }
+
           clickedHref = link.getAttribute("data-href");
         });
       });
