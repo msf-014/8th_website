@@ -527,31 +527,31 @@ import Footer from "../components/footer.astro";
           }
 
           /* ---- ここから無限ループ・マーキー用のスタイル ---- */
-          .marquee-track {
-            display: inline-flex;
-            white-space: nowrap;
-          }
+:global(.marquee-track) {
+  display: inline-flex;
+  white-space: nowrap;
+}
 
-          .marquee-track.is-scrolling {
-            animation-name: marquee-loop;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-          }
+:global(.marquee-track.is-scrolling) {
+  animation-name: marquee-loop;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
 
-          @keyframes marquee-loop {
-            from {
-              transform: translateX(0);
-            }
-            to {
-              transform: translateX(var(--marquee-distance, 0px));
-            }
-          }
+@keyframes marquee-loop {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--marquee-distance, 0px));
+  }
+}
 
-          .marquee-item {
-            display: inline-block;
-            white-space: nowrap;
-          }
-          /* ---- ここまで ---- */
+:global(.marquee-item) {
+  display: inline-block;
+  white-space: nowrap;
+}
+/* ---- ここまで ---- */
 
           .back_btn {
             width: 40px;
@@ -1221,16 +1221,6 @@ import Footer from "../components/footer.astro";
 
         document.querySelectorAll('.contents_texto h2, .content_label').forEach(el => {
   console.log(el.className, 'scrollWidth:', el.scrollWidth, 'clientWidth:', el.clientWidth);
-});
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    const el = document.querySelector(".contents_texto h2");
-    if (el) {
-      alert(
-        `scrollWidth: ${el.scrollWidth}\nclientWidth: ${el.clientWidth}\nはみ出し量: ${el.scrollWidth - el.clientWidth}`,
-      );
-    }
-  }, 2000);
 });
       </script>
     </div>
