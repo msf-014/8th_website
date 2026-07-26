@@ -30,8 +30,9 @@ import Footer from "../components/footer.astro";
       </div>
       <div class="chronology">
         <div class="chronology_title">
-          <h4>矢車りね活動記録</h4>
-          <p>2018/09/28-2026/09/28</p>
+          <p class="chronology_subtitle">RINE YAGURUMA</p>
+          <h4>HISTORY</h4>
+          <p class="chronology_date">2018/09/28-2026/09/28</p>
         </div>
         <div class="timeline-wrap">
           <div id="timeline" class="timeline"></div>
@@ -184,24 +185,36 @@ import Footer from "../components/footer.astro";
           margin-right: -1px; /* .chronologyのborder-right分だけはみ出す */
           width: calc(100% + 2px); /* はみ出した分だけ横幅を広げる */
         }
+        .chronology_subtitle {
+          display: block;
+          font-family: "effra", sans-serif;
+          font-weight: 800;
+          text-align: center;
+          font-size: 50px;
+          line-height: 1;
+          padding: 1.3em 0 0 0;
+          letter-spacing: 0.02em;
+        }
         .chronology_title h4 {
           display: block;
-          font-family: "nagurigaki", sans-serif;
-          font-weight: 500;
+          font-family: "effra", sans-serif;
+          font-weight: 800;
           text-align: center;
-          font-size: 60px;
-          margin: 0;
-          padding: 45px 0 20px 0;
+          font-size: 100px;
+          line-height: 1;
+          margin: 0; /* padding: 4px 0 20px 0 → margin-bottom: 8px */
         }
-        .chronology_title p {
+        .chronology_date {
           display: flex;
-          font-family: "nagurigaki", sans-serif;
+          font-family: "effra", sans-serif;
           font-weight: 500;
           align-items: center;
           justify-content: center;
           text-align: center;
           font-size: 30px;
-          padding-bottom: 45px;
+          line-height: 1;
+          padding-bottom: 1.6em;
+          letter-spacing: 0.13em;
         }
 
         .chronology {
@@ -336,6 +349,8 @@ import Footer from "../components/footer.astro";
           font-weight: 700;
           color: var(--timeline-year-color);
           letter-spacing: 0.05em;
+          font-family: "effra", sans-serif;
+          line-height: 1;
         }
 
         /* タイトル */
@@ -345,6 +360,7 @@ import Footer from "../components/footer.astro";
           font-weight: 700;
           padding-bottom: 10px;
           border-bottom: 2px solid var(--timeline-line-color);
+          font-family: "Zen Kaku Gothic New", sans-serif;
         }
 
         /* 概要 */
@@ -354,6 +370,7 @@ import Footer from "../components/footer.astro";
           font-weight: 700;
           line-height: 2;
           color: var(--timeline-text-sub);
+          font-family: "Zen Kaku Gothic New", sans-serif;
         }
 
         /* 一言コメント */
@@ -366,6 +383,8 @@ import Footer from "../components/footer.astro";
           background: #fbf9ff;
           border-radius: 999px;
           align-self: flex-start;
+          font-family: "Zen Kaku Gothic New", sans-serif;
+          font-weight: 600;
         }
         :global(.item-comment)::before {
           content: "";
@@ -563,19 +582,18 @@ import Footer from "../components/footer.astro";
           }
 
           .chronology_title {
-            padding: 0.5em 1em;
+            padding: 16px 1em;
           }
-
+          .chronology_subtitle {
+            font-size: 20px;
+            letter-spacing: 0.2em;
+            margin: 0 0 2px 0;
+          }
           .chronology_title h4 {
-            font-size: 32px;
-            font-family: "nagurigaki", sans-serif;
-            padding: 28px 0 12px 0;
+            font-size: 13vw;
           }
-
-          .chronology_title p {
+          .chronology_date {
             font-size: 15px;
-            font-family: "nagurigaki", sans-serif;
-            padding-bottom: 28px;
           }
 
           :global(.timeline-wrap) {
