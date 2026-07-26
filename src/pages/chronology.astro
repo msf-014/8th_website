@@ -79,14 +79,6 @@ import Footer from "../components/footer.astro";
           animation-duration: var(--morph-duration);
         }
 
-        @font-face {
-          font-family: "nagurigaki";
-          src: url(public/fonts/crayon_1-1.woff2); format("woff2");
-          font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-        }
-
         .bg_reveal {
           position: fixed;
           inset: 0;
@@ -530,31 +522,31 @@ import Footer from "../components/footer.astro";
           }
 
           /* ---- ここから無限ループ・マーキー用のスタイル ---- */
-:global(.marquee-track) {
-  display: inline-flex;
-  white-space: nowrap;
-}
+          :global(.marquee-track) {
+            display: inline-flex;
+            white-space: nowrap;
+          }
 
-:global(.marquee-track.is-scrolling) {
-  animation-name: marquee-loop;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
+          :global(.marquee-track.is-scrolling) {
+            animation-name: marquee-loop;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+          }
 
-@keyframes marquee-loop {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(var(--marquee-distance, 0px));
-  }
-}
+          @keyframes marquee-loop {
+            from {
+              transform: translateX(0);
+            }
+            to {
+              transform: translateX(var(--marquee-distance, 0px));
+            }
+          }
 
-:global(.marquee-item) {
-  display: inline-block;
-  white-space: nowrap;
-}
-/* ---- ここまで ---- */
+          :global(.marquee-item) {
+            display: inline-block;
+            white-space: nowrap;
+          }
+          /* ---- ここまで ---- */
 
           .back_btn {
             width: 40px;
@@ -576,11 +568,13 @@ import Footer from "../components/footer.astro";
 
           .chronology_title h4 {
             font-size: 32px;
+            font-family: "nagurigaki", sans-serif;
             padding: 28px 0 12px 0;
           }
 
           .chronology_title p {
             font-size: 15px;
+            font-family: "nagurigaki", sans-serif;
             padding-bottom: 28px;
           }
 
@@ -1222,9 +1216,17 @@ import Footer from "../components/footer.astro";
         // 上記が使えない/間に合わない場合の保険として少し遅れて再チェック
         setTimeout(initAutoScrollTitles, 1500);
 
-        document.querySelectorAll('.contents_texto h2, .content_label').forEach(el => {
-  console.log(el.className, 'scrollWidth:', el.scrollWidth, 'clientWidth:', el.clientWidth);
-});
+        document
+          .querySelectorAll(".contents_texto h2, .content_label")
+          .forEach((el) => {
+            console.log(
+              el.className,
+              "scrollWidth:",
+              el.scrollWidth,
+              "clientWidth:",
+              el.clientWidth,
+            );
+          });
       </script>
     </div>
   </body>
