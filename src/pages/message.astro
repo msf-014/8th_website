@@ -156,6 +156,88 @@ import Footer from "../components/footer.astro";
 
       // DOMが確実に準備できてから実行
       document.addEventListener("astro:page-load", buildBoard);
+
+      /* --------------------------------------------------
+   タイトル・ラベルの無限ループ・マーキー表示
+   はみ出している要素だけ、テキストを複製して隙間なく
+   並べ、CSSアニメーションで左に流し続ける。
+   1周分スライドし終わったら（＝複製2つ目の先頭が
+   元の位置に来たら）継ぎ目なく最初から繰り返される。
+   -------------------------------------------------- */
+      const MARQUEE_SPEED = 60; // 数値を大きくするほど速く流れる（px/秒）
+      const MARQUEE_GAP = 48; // テキストの最後と、次の頭との間隔(px)
+      const MARQUEE_START_DELAY = 1000; // 表示されてから動き出すまでの待ち時間(ms)
+
+      function initAutoScrollTitles() {
+        const targets = document.querySelectorAll<HTMLElement>(
+          ".contents_texto h2, .content_label",
+        );
+
+        targets.forEach((el) => {
+          if (el.dataset.marqueeBound === "true") return;
+
+          const overflowAmount = el.scrollWidth - el.clientWidth;
+          if (overflowAmount <= 1) return; // はみ出していなければ何もしない
+
+          el.dataset.marqueeBound = "true";
+
+          const text = el.textContent ?? "";
+          el.textContent = "";
+
+          const track = document.createElement("span");
+          track.className = "marquee-track";
+
+          const item1 = document.createElement("span");
+          item1.className = "marquee-item";
+          item1.textContent = text;
+
+          const item2 = document.createElement("span");
+          item2.className = "marquee-item";
+          item2.textContent = text;
+          item2.setAttribute("aria-hidden", "true");
+          item2.style.paddingLeft = `${MARQUEE_GAP}px`;
+
+          track.appendChild(item1);
+          track.appendChild(item2);
+          el.appendChild(track);
+
+          setTimeout(() => {
+            // 実測した1コピー分の幅＋隙間 だけ流せば、複製2つ目が
+            // ちょうど元の位置に来て継ぎ目なくループする
+            const distance = item1.getBoundingClientRect().width + MARQUEE_GAP;
+            const duration = distance / MARQUEE_SPEED;
+            track.style.setProperty("--marquee-distance", `-${distance}px`);
+            track.style.animationDuration = `${duration}s`;
+            track.classList.add("is-scrolling");
+          }, MARQUEE_START_DELAY);
+        });
+      }
+
+      initAutoScrollTitles();
+      document.addEventListener("astro:page-load", initAutoScrollTitles);
+
+      /* Adobe Fonts等、フォントの非同期読み込みで文字幅が変わったあとに
+   もう一度オーバーフロー判定をやり直す(フォールバックフォント表示中に
+   「はみ出していない」と誤判定されるのを防ぐ) */
+      if (document.fonts && typeof document.fonts.ready?.then === "function") {
+        document.fonts.ready.then(() => {
+          requestAnimationFrame(initAutoScrollTitles);
+        });
+      }
+      // 上記が使えない/間に合わない場合の保険として少し遅れて再チェック
+      setTimeout(initAutoScrollTitles, 1500);
+
+      document
+        .querySelectorAll(".contents_texto h2, .content_label")
+        .forEach((el) => {
+          console.log(
+            el.className,
+            "scrollWidth:",
+            el.scrollWidth,
+            "clientWidth:",
+            el.clientWidth,
+          );
+        });
     </script>
 
     <Footer />
@@ -489,6 +571,153 @@ import Footer from "../components/footer.astro";
         color: #c42222;
         line-height: 1.3;
         font-family: "Noto Sans JP", sans-serif;
+      }
+
+      /* ==================== スマホ対応 ==================== */
+      @media (max-width: 768px) {
+        .contents_texto {
+          padding: 10px 12px;
+          gap: 12px;
+          white-space: normal;
+          overflow: hidden;
+        }
+
+        .contents_texto h2 {
+          flex: 1 1 0%;
+          min-width: 0;
+          font-size: 15vw;
+          overflow-x: hidden;
+          overflow-y: hidden;
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          font-size: 15vw;
+        }
+
+        .content_label {
+          top: 10px;
+          right: 66px;
+          max-width: 88px;
+          box-sizing: border-box;
+          overflow-x: hidden;
+          white-space: nowrap;
+          font-size: 11px;
+          padding: 4px 8px;
+        }
+
+        /* ---- ここから無限ループ・マーキー用のスタイル ---- */
+        :global(.marquee-track) {
+          display: inline-flex;
+          white-space: nowrap;
+        }
+
+        :global(.marquee-track.is-scrolling) {
+          animation-name: marquee-loop;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+
+        @keyframes marquee-loop {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(var(--marquee-distance, 0px));
+          }
+        }
+
+        :global(.marquee-item) {
+          display: inline-block;
+          white-space: nowrap;
+        }
+        /* ---- ここまで ---- */
+
+        .back_btn {
+          width: 40px;
+          height: 40px;
+        }
+
+        .back_arrow {
+          font-size: 16px;
+        }
+
+        .chronology {
+          max-width: 50vh;
+          margin: 0 10px;
+        }
+
+        .chronology_title {
+          padding: 16px 1em;
+        }
+        .chronology_subtitle {
+          font-size: 20px;
+          letter-spacing: 0.2em;
+          margin: 0 0 2px 0;
+        }
+        .chronology_title h4 {
+          font-size: 13vw;
+        }
+        .chronology_date {
+          font-size: 15px;
+        }
+
+        :global(.timeline-wrap) {
+          padding: 32px 16px;
+          margin-bottom: 60px;
+        }
+
+        :global(.timeline-line) {
+          left: 8px;
+        }
+
+        :global(.marker-col) {
+          width: 16px;
+          flex: 0 0 16px;
+        }
+
+        :global(.marker-circle) {
+          width: 14px;
+          height: 14px;
+          border-width: 2px;
+        }
+
+        :global(.content-col) {
+          padding-left: 16px;
+          gap: 20px;
+        }
+
+        :global(.item-year) {
+          font-size: 12px;
+        }
+
+        :global(.item-title) {
+          font-size: 17px;
+          padding-bottom: 8px;
+        }
+
+        :global(.item-desc) {
+          font-size: 13px;
+          line-height: 1.8;
+        }
+
+        :global(.item-comment) {
+          font-size: 12px;
+          padding: 8px 12px;
+        }
+
+        :global(.like-btn) {
+          font-size: 12px;
+          padding: 5px 12px;
+        }
+
+        :global(.item-youtube) {
+          border-radius: 6px;
+        }
+
+        :global(.yt-play-btn) {
+          width: 52px;
+          height: 36px;
+        }
       }
     </style>
   </body>
