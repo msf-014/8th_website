@@ -28,6 +28,7 @@ import Footer from "../components/footer.astro";
           <span class="back_arrow">←</span>
         </a>
       </div>
+      <div class="about"></div>
     </div>
 
     <style>
@@ -66,6 +67,18 @@ import Footer from "../components/footer.astro";
         transform: scaleY(0);
         animation: revealBg 0.4s ease forwards;
         /* transform-origin はJSで動的に設定するため、ここでは指定しない */
+      }
+
+      .about {
+        max-width: 1900px;
+        margin: 0 auto;
+        position: relative;
+        /* 左右にラインを引く */
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        /* contents_textoの下線（box-shadow 1px）と隙間なく接続 */
+        margin-top: -1px;
+        background: rgb(254, 236, 216);
       }
 
       @keyframes revealBg {
