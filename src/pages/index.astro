@@ -340,103 +340,89 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       }
     }
   </style>
-</BaseLayout>
+  <script data-astro-rerun is:inline>
+    (function () {
+      const MIN_DISPLAY_TIME = 2500;
+      const loader = document.getElementById("loading-screen");
 
-<script data-astro-rerun is:inline>
-  const MIN_DISPLAY_TIME = 2500;
-  const loader = document.getElementById("loading-screen");
-
-  if (sessionStorage.getItem("loaderShown")) {
-    // 2回目以降：即座に非表示
-    loader?.classList.add("hidden");
-  } else {
-    // 初回：最低表示時間を待ってからフェードアウト
-    const startTime = performance.now();
-
-    const finishLoading = () => {
-      const elapsed = performance.now() - startTime;
-      const remaining = Math.max(MIN_DISPLAY_TIME - elapsed, 0);
-      setTimeout(() => {
+      if (sessionStorage.getItem("loaderShown")) {
         loader?.classList.add("hidden");
-        sessionStorage.setItem("loaderShown", "true");
-      }, remaining);
-    };
+      } else {
+        const startTime = performance.now();
 
-    if (document.readyState === "complete") {
-      finishLoading();
-    } else {
-      window.addEventListener("load", finishLoading);
-    }
-  }
+        const finishLoading = () => {
+          const elapsed = performance.now() - startTime;
+          const remaining = Math.max(MIN_DISPLAY_TIME - elapsed, 0);
+          setTimeout(() => {
+            loader?.classList.add("hidden");
+            sessionStorage.setItem("loaderShown", "true");
+          }, remaining);
+        };
 
-  let clickedHref = null;
-  let allowNavigate = false; // 引っ込めアニメーション後の「本当のクリック」を通すためのフラグ
-
-  // スマホ判定(768px以下をスマホ扱い)
-  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
-
-  // 矢印を引っ込めるアニメーションの長さ(CSSのtransition時間と合わせる)
-  const ARROW_RETRACT_MS = 250;
-
-  const contentsEls = document.querySelectorAll(".contents");
-
-  const resetArmed = (except) => {
-    contentsEls.forEach((el) => {
-      if (el !== except) el.classList.remove("is-armed");
-    });
-  };
-
-  contentsEls.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      if (isMobile() && !allowNavigate) {
-        // まだ矢印が出ていない(1回目のタップ) → 遷移せず矢印を表示
-        if (!link.classList.contains("is-armed")) {
-          e.preventDefault();
-          resetArmed(link);
-          link.classList.add("is-armed");
-          return;
+        if (document.readyState === "complete") {
+          finishLoading();
+        } else {
+          window.addEventListener("load", finishLoading);
         }
-
-        // 既に矢印が出ている(2回目のタップ)
-        // → 遷移アニメーションの前に、まず矢印を引っ込める
-        e.preventDefault();
-        link.classList.remove("is-armed");
-
-        setTimeout(() => {
-          allowNavigate = true;
-          link.click(); // ← 本当のクリックを再発火。今度はpreventDefaultしないので通常通り遷移する
-          allowNavigate = false;
-        }, ARROW_RETRACT_MS);
-        return;
       }
 
-      clickedHref = link.getAttribute("data-href");
-    });
-  });
+      let clickedHref = null;
+      let allowNavigate = false;
 
-  // .contents 以外をタップしたら armed 状態をリセット
-  document.addEventListener("click", (e) => {
-    if (!(e.target instanceof Element) || !e.target.closest(".contents")) {
-      resetArmed(null);
-    }
-  });
+      const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+      const ARROW_RETRACT_MS = 250;
+      const contentsEls = document.querySelectorAll(".contents");
 
-  document.addEventListener("astro:before-preparation", (event) => {
-    const originalLoader = event.loader;
+      const resetArmed = (except) => {
+        contentsEls.forEach((el) => {
+          if (el !== except) el.classList.remove("is-armed");
+        });
+      };
 
-    event.loader = async function () {
-      // ここで少し待ってから実際の遷移処理(loader)を呼ぶ
-      await new Promise((resolve) => setTimeout(resolve, 300)); // 300ms の溜め
-      await originalLoader();
-    };
-  });
+      contentsEls.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          if (isMobile() && !allowNavigate) {
+            if (!link.classList.contains("is-armed")) {
+              e.preventDefault();
+              resetArmed(link);
+              link.classList.add("is-armed");
+              return;
+            }
+            e.preventDefault();
+            link.classList.remove("is-armed");
+            setTimeout(() => {
+              allowNavigate = true;
+              link.click();
+              allowNavigate = false;
+            }, ARROW_RETRACT_MS);
+            return;
+          }
+          clickedHref = link.getAttribute("data-href");
+        });
+      });
 
-  document.addEventListener("astro:before-swap", () => {
-    document.querySelectorAll(".contents").forEach((el) => {
-      const elHref = el.getAttribute("data-href");
-      if (elHref !== clickedHref) {
-        el.classList.add("slide-down-exit");
-      }
-    });
-  });
-</script>
+      document.addEventListener("click", (e) => {
+        if (!(e.target instanceof Element) || !e.target.closest(".contents")) {
+          resetArmed(null);
+        }
+      });
+
+      document.addEventListener("astro:before-preparation", (event) => {
+        const originalLoader = event.loader;
+        event.loader = async function () {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          await originalLoader();
+        };
+      });
+
+      document.addEventListener("astro:before-swap", () => {
+        document.querySelectorAll(".contents").forEach((el) => {
+          const elHref = el.getAttribute("data-href");
+          if (elHref !== clickedHref) {
+            el.classList.add("slide-down-exit");
+          }
+        });
+      });
+    })();
+  </script>
+</BaseLayout>
