@@ -347,21 +347,26 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
   const loader = document.getElementById("loading-screen");
 
   if (sessionStorage.getItem("loaderShown")) {
-    // 表示済み → アニメーションなしで即座に非表示
+    // 2回目以降：即座に非表示
     loader?.classList.add("hidden");
   } else {
-    // 初回のみ → 最低表示時間を待ってからフェードアウト
+    // 初回：最低表示時間を待ってからフェードアウト
     const startTime = performance.now();
 
-    window.addEventListener("load", () => {
+    const finishLoading = () => {
       const elapsed = performance.now() - startTime;
       const remaining = Math.max(MIN_DISPLAY_TIME - elapsed, 0);
-
       setTimeout(() => {
         loader?.classList.add("hidden");
         sessionStorage.setItem("loaderShown", "true");
       }, remaining);
-    });
+    };
+
+    if (document.readyState === "complete") {
+      finishLoading();
+    } else {
+      window.addEventListener("load", finishLoading);
+    }
   }
 
   let clickedHref = null;
