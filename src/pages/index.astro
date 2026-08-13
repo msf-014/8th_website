@@ -52,342 +52,386 @@ const contents = [
 const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 ---
 
+<script is:inline>
+  if (sessionStorage.getItem("loaderShown")) {
+    document.documentElement.classList.add("no-loader");
+  }
+</script>
+
 <BaseLayout
   title="RineYaguruma 8th Anniv | 矢車りね 8周年記念サイト"
   headerOverlay={true}
 >
-  <head>
-    <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
-    />
-  </head>
-  <body>
-    <div class="main-wrapper">
-      <!-- メインビジュアル -->
-      <main class="main" id="main-home">
-        <section class="main_visual">
-          <img src="mainvisual_kari_2.webp" alt="main_visual" />
-        </section>
-        <div class="main_container">
-          <div class="content_list">
-            {
-              contents.map((item) => (
-                <a
-                  href={item.url}
-                  class="contents"
-                  style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
-                  data-href={item.url}
-                  transition:name={`title-${item.url.replace(/\//g, "-")}`}
-                >
-                  <div class="content_texto">
-                    <span class="arrow-icon" aria-hidden="true">
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        fill="none"
-                      >
-                        <path
-                          d="M5 12h14M13 6l6 6-6 6"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </span>
-                    <span class="content_label">{item.label}</span>
-                    <h2>{item.title}</h2>
-                  </div>
-                </a>
-              ))
-            }
-          </div>
+  <div id="loading-screen">
+    <img src="public/loading.png" alt="Loading..." />
+  </div>
+  <div class="main-wrapper">
+    <!-- メインビジュアル -->
+    <main class="main" id="main-home">
+      <section class="main_visual">
+        <img src="mainvisual_kari_2.webp" alt="main_visual" />
+      </section>
+      <div class="main_container">
+        <div class="content_list">
+          {
+            contents.map((item) => (
+              <a
+                href={item.url}
+                class="contents"
+                style={`--bg: ${item.bg}; --hover-bg: ${item.hoverBg};`}
+                data-href={item.url}
+                transition:name={`title-${item.url.replace(/\//g, "-")}`}
+              >
+                <div class="content_texto">
+                  <span class="arrow-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span class="content_label">{item.label}</span>
+                  <h2>{item.title}</h2>
+                </div>
+              </a>
+            ))
+          }
         </div>
-      </main>
-    </div>
-    <script data-astro-rerun>
-      let clickedHref = null;
-      let allowNavigate = false; // 引っ込めアニメーション後の「本当のクリック」を通すためのフラグ
+      </div>
+    </main>
+  </div>
 
-      // スマホ判定(768px以下をスマホ扱い)
-      const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+  <Footer />
 
-      // 矢印を引っ込めるアニメーションの長さ(CSSのtransition時間と合わせる)
-      const ARROW_RETRACT_MS = 250;
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
 
-      const contentsEls = document.querySelectorAll(".contents");
+    html {
+      scrollbar-color: #a0b8f4 #fff;
+    }
 
-      const resetArmed = (except) => {
-        contentsEls.forEach((el) => {
-          if (el !== except) el.classList.remove("is-armed");
-        });
-      };
+    a,
+    a:visited {
+      color: #000; /*カラーコードは任意*/
+    }
 
-      contentsEls.forEach((link) => {
-        link.addEventListener("click", (e) => {
-          if (isMobile() && !allowNavigate) {
-            // まだ矢印が出ていない(1回目のタップ) → 遷移せず矢印を表示
-            if (!link.classList.contains("is-armed")) {
-              e.preventDefault();
-              resetArmed(link);
-              link.classList.add("is-armed");
-              return;
-            }
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition:
+        opacity 0.6s ease,
+        visibility 0.6s ease;
+    }
 
-            // 既に矢印が出ている(2回目のタップ)
-            // → 遷移アニメーションの前に、まず矢印を引っ込める
-            e.preventDefault();
-            link.classList.remove("is-armed");
+    #loading-screen img {
+      width: 150px;
+    }
 
-            setTimeout(() => {
-              allowNavigate = true;
-              link.click(); // ← 本当のクリックを再発火。今度はpreventDefaultしないので通常通り遷移する
-              allowNavigate = false;
-            }, ARROW_RETRACT_MS);
-            return;
-          }
+    #loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    /* 表示済みの場合は即座に非表示（アニメーションなし） */
+    .no-loader #loading-screen {
+      display: none !important;
+    }
 
-          clickedHref = link.getAttribute("data-href");
-        });
-      });
+    .content_list {
+      display: block;
+      box-shadow: 0 -1px 0 0 #000;
+    }
 
-      // .contents 以外をタップしたら armed 状態をリセット
-      document.addEventListener("click", (e) => {
-        if (!(e.target instanceof Element) || !e.target.closest(".contents")) {
-          resetArmed(null);
-        }
-      });
+    a .contents {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
 
-      document.addEventListener("astro:before-preparation", (event) => {
-        const originalLoader = event.loader;
+    .contents {
+      display: block;
+      text-decoration: none;
+      background: var(--bg);
+      box-shadow:
+        0 -1px 0 0 #000,
+        0 1px 0 0 #000;
+      margin-bottom: -39px;
+      position: relative;
+      z-index: 0;
+      transition:
+        background 0.1s,
+        transform 0.5s;
+    }
 
-        event.loader = async function () {
-          // ここで少し待ってから実際の遷移処理(loader)を呼ぶ
-          await new Promise((resolve) => setTimeout(resolve, 300)); // 300ms の溜め
-          await originalLoader();
-        };
-      });
+    .contents:hover {
+      transform: translateY(-39px);
+      background: var(--hover-bg);
+      transition: background 0.3s transform 0.5s;
+    }
 
-      document.addEventListener("astro:before-swap", () => {
-        document.querySelectorAll(".contents").forEach((el) => {
-          const elHref = el.getAttribute("data-href");
-          if (elHref !== clickedHref) {
-            el.classList.add("slide-down-exit");
-          }
-        });
-      });
-    </script>
+    .main-wrapper {
+      position: relative;
+    }
 
-    <Footer />
+    .main_visual img {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+    }
 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
+    .content_texto {
+      padding: 14px 16px 14px;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    /* 矢印アイコン(丸で囲まれた矢印) PCでは非表示 */
+    .arrow-icon {
+      display: none;
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(-50%) scale(0.5);
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+      pointer-events: none;
+    }
+
+    .content_label {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 15px;
+      color: #000;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 800;
+      padding: 6px 14px;
+      letter-spacing: -0.06em;
+    }
+    .content_texto h2 {
+      font-size: 110px;
+      font-family: "acumin-variable", sans-serif;
+      font-variation-settings:
+        "wght" 400,
+        "wdth" 100,
+        "slnt" 0;
+      font-style: normal;
+      align-items: center;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      transition:
+        transform 0.25s ease,
+        padding-left 0.25s ease;
+    }
+
+    .slide-down-exit {
+      animation: slideDown 0.4s ease forwards;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(0);
+        opacity: 1;
       }
-
-      html {
-        scrollbar-color: #a0b8f4 #fff;
-      }
-
-      a,
-      a:visited {
-        color: #000; /*カラーコードは任意*/
-      }
-
-      .content_list {
-        display: block;
-        box-shadow: 0 -1px 0 0 #000;
-      }
-
-      a .contents {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-      }
-
-      .contents {
-        display: block;
-        text-decoration: none;
-        background: var(--bg);
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-        margin-bottom: -39px;
-        position: relative;
-        z-index: 0;
-        transition:
-          background 0.1s,
-          transform 0.5s;
-      }
-
-      .contents:hover {
-        transform: translateY(-39px);
-        background: var(--hover-bg);
-        transition: background 0.3s transform 0.5s;
-      }
-
-      .main-wrapper {
-        position: relative;
-      }
-
-      .main_visual img {
-        display: block;
-        width: 100%;
-        object-fit: cover;
-      }
-
-      .content_texto {
-        padding: 14px 16px 14px;
-        white-space: nowrap;
-        position: relative;
-      }
-
-      /* 矢印アイコン(丸で囲まれた矢印) PCでは非表示 */
-      .arrow-icon {
-        display: none;
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        border: 1px solid #000;
-        align-items: center;
-        justify-content: center;
+      to {
+        transform: translateY(100vh);
         opacity: 0;
-        transform: translateY(-50%) scale(0.5);
-        transition:
-          opacity 0.25s ease,
-          transform 0.25s ease;
-        pointer-events: none;
+      }
+    }
+
+    /* ==================== スマホ対応 ==================== */
+    @media (max-width: 768px) {
+      .content_texto {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        white-space: normal;
+        overflow: hidden;
       }
 
-      .content_label {
-        position: absolute;
-        top: 14px;
-        right: 16px;
-        font-size: 15px;
-        color: #000;
-        font-family: "Zen Kaku Gothic New", sans-serif;
-        font-weight: 800;
-        padding: 6px 14px;
-        letter-spacing: -0.06em;
-      }
       .content_texto h2 {
-        font-size: 110px;
-        font-family: "acumin-variable", sans-serif;
-        font-variation-settings:
-          "wght" 400,
-          "wdth" 100,
-          "slnt" 0;
-        font-style: normal;
-        align-items: center;
-        line-height: 1;
-        letter-spacing: -0.06em;
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 15vw;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        transform: none;
+        border-left: 1px solid transparent; /* 普段は透明の線 */
+        padding-left: 0;
+        box-sizing: border-box;
         transition:
-          transform 0.25s ease,
+          border-color 0.25s ease,
           padding-left 0.25s ease;
       }
 
-      .slide-down-exit {
-        animation: slideDown 0.4s ease forwards;
+      /* 矢印が出た(is-armed)ときに区切り線も一緒に表示 */
+      .contents.is-armed .content_texto h2 {
+        border-left-color: #000;
+        padding-left: 12px;
       }
 
-      @keyframes slideDown {
-        from {
-          transform: translateY(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateY(100vh);
-          opacity: 0;
-        }
+      .content_texto h2::-webkit-scrollbar {
+        display: none;
       }
 
-      /* ==================== スマホ対応 ==================== */
-      @media (max-width: 768px) {
-        .content_texto {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 12px;
-          white-space: normal;
-          overflow: hidden;
-        }
-
-        .content_texto h2 {
-          flex: 1 1 auto;
-          min-width: 0;
-          font-size: 15vw;
-          overflow-x: auto;
-          overflow-y: hidden;
-          white-space: nowrap;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          transform: none;
-          border-left: 1px solid transparent; /* 普段は透明の線 */
-          padding-left: 0;
-          box-sizing: border-box;
-          transition:
-            border-color 0.25s ease,
-            padding-left 0.25s ease;
-        }
-
-        /* 矢印が出た(is-armed)ときに区切り線も一緒に表示 */
-        .contents.is-armed .content_texto h2 {
-          border-left-color: #000;
-          padding-left: 12px;
-        }
-
-        .content_texto h2::-webkit-scrollbar {
-          display: none;
-        }
-
-        .content_label {
-          top: 10px;
-          right: 12px;
-          font-size: 11px;
-          padding: 4px 8px;
-        }
-
-        /* 矢印:普段は幅0で場所を取らず、is-armedで幅が広がってスペースを作る */
-        .arrow-icon {
-          display: flex;
-          position: static;
-          flex: 0 0 auto;
-          width: 0;
-          height: 36px;
-          padding: 0;
-          border-color: transparent;
-          opacity: 0;
-          overflow: hidden;
-          transform: none;
-          transition:
-            width 0.25s ease,
-            padding 0.25s ease,
-            opacity 0.25s ease,
-            border-color 0.25s ease;
-        }
-
-        /* 1回目タップ後(is-armed)で矢印を表示し、タイトルを少し右にずらす */
-        .contents.is-armed .arrow-icon {
-          top: 50%;
-          width: 36px;
-          height: 36px;
-          padding: 8px;
-          opacity: 1;
-          box-sizing: border-box;
-          border-color: #000;
-        }
-
-        .contents.is-armed {
-          background: var(--hover-bg);
-        }
+      .content_label {
+        top: 10px;
+        right: 12px;
+        font-size: 11px;
+        padding: 4px 8px;
       }
-    </style>
-  </body>
+
+      /* 矢印:普段は幅0で場所を取らず、is-armedで幅が広がってスペースを作る */
+      .arrow-icon {
+        display: flex;
+        position: static;
+        flex: 0 0 auto;
+        width: 0;
+        height: 36px;
+        padding: 0;
+        border-color: transparent;
+        opacity: 0;
+        overflow: hidden;
+        transform: none;
+        transition:
+          width 0.25s ease,
+          padding 0.25s ease,
+          opacity 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      /* 1回目タップ後(is-armed)で矢印を表示し、タイトルを少し右にずらす */
+      .contents.is-armed .arrow-icon {
+        top: 50%;
+        width: 36px;
+        height: 36px;
+        padding: 8px;
+        opacity: 1;
+        box-sizing: border-box;
+        border-color: #000;
+      }
+
+      .contents.is-armed {
+        background: var(--hover-bg);
+      }
+    }
+  </style>
 </BaseLayout>
+
+<script data-astro-rerun is:inline>
+  const MIN_DISPLAY_TIME = 2500;
+  const loader = document.getElementById("loading-screen");
+
+  if (sessionStorage.getItem("loaderShown")) {
+    // 表示済み → アニメーションなしで即座に非表示
+    loader?.classList.add("hidden");
+  } else {
+    // 初回のみ → 最低表示時間を待ってからフェードアウト
+    const startTime = performance.now();
+
+    window.addEventListener("load", () => {
+      const elapsed = performance.now() - startTime;
+      const remaining = Math.max(MIN_DISPLAY_TIME - elapsed, 0);
+
+      setTimeout(() => {
+        loader?.classList.add("hidden");
+        sessionStorage.setItem("loaderShown", "true");
+      }, remaining);
+    });
+  }
+
+  let clickedHref = null;
+  let allowNavigate = false; // 引っ込めアニメーション後の「本当のクリック」を通すためのフラグ
+
+  // スマホ判定(768px以下をスマホ扱い)
+  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
+  // 矢印を引っ込めるアニメーションの長さ(CSSのtransition時間と合わせる)
+  const ARROW_RETRACT_MS = 250;
+
+  const contentsEls = document.querySelectorAll(".contents");
+
+  const resetArmed = (except) => {
+    contentsEls.forEach((el) => {
+      if (el !== except) el.classList.remove("is-armed");
+    });
+  };
+
+  contentsEls.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      if (isMobile() && !allowNavigate) {
+        // まだ矢印が出ていない(1回目のタップ) → 遷移せず矢印を表示
+        if (!link.classList.contains("is-armed")) {
+          e.preventDefault();
+          resetArmed(link);
+          link.classList.add("is-armed");
+          return;
+        }
+
+        // 既に矢印が出ている(2回目のタップ)
+        // → 遷移アニメーションの前に、まず矢印を引っ込める
+        e.preventDefault();
+        link.classList.remove("is-armed");
+
+        setTimeout(() => {
+          allowNavigate = true;
+          link.click(); // ← 本当のクリックを再発火。今度はpreventDefaultしないので通常通り遷移する
+          allowNavigate = false;
+        }, ARROW_RETRACT_MS);
+        return;
+      }
+
+      clickedHref = link.getAttribute("data-href");
+    });
+  });
+
+  // .contents 以外をタップしたら armed 状態をリセット
+  document.addEventListener("click", (e) => {
+    if (!(e.target instanceof Element) || !e.target.closest(".contents")) {
+      resetArmed(null);
+    }
+  });
+
+  document.addEventListener("astro:before-preparation", (event) => {
+    const originalLoader = event.loader;
+
+    event.loader = async function () {
+      // ここで少し待ってから実際の遷移処理(loader)を呼ぶ
+      await new Promise((resolve) => setTimeout(resolve, 300)); // 300ms の溜め
+      await originalLoader();
+    };
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    document.querySelectorAll(".contents").forEach((el) => {
+      const elHref = el.getAttribute("data-href");
+      if (elHref !== clickedHref) {
+        el.classList.add("slide-down-exit");
+      }
+    });
+  });
+</script>
