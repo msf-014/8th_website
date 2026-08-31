@@ -1,0 +1,299 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/header.astro";
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/footer.astro";
+---
+
+<BaseLayout>
+  <head>
+    <link rel="stylesheet" href="https://use.typekit.net/bwo1tdd.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.adobe.com/fonts/acumin-variable?vf-instance=Semibold&vf-font-size=100&vf-font=AcuminVF"
+    />
+  </head>
+  <body>
+    <div class="bg_reveal" id="bg_reveal"></div>
+    <div class="contents-list" transition:name="title--credit">
+      <div class="contents_texto">
+        <span class="content_label">サムネイル</span>
+        <h2>THUMBNAIL</h2>
+        <a href="/" class="back_btn" aria-label="戻る">
+          <span class="back_arrow">←</span>
+        </a>
+      </div>
+    </div>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #fff;
+        position: relative;
+      }
+
+      :root {
+        --morph-duration: 0.6s;
+
+        --header-back-color: rgb(255, 249, 158);
+      }
+
+      ::view-transition-old(title--message),
+      ::view-transition-new(title--message) {
+        animation-duration: var(--morph-duration);
+      }
+
+      .bg_reveal {
+        position: fixed;
+        inset: 0;
+        background: rgb(255, 249, 158);
+        background-image: radial-gradient(
+          circle,
+          rgba(120, 80, 200, 0.35) 1px,
+          transparent 1px
+        );
+        background-size: 5px 5px;
+        z-index: -1;
+        transform: scaleY(0);
+        animation: revealBg 0.4s ease forwards;
+        /* transform-origin はJSで動的に設定するため、ここでは指定しない */
+      }
+
+      @keyframes revealBg {
+        from {
+          transform: scaleY(0);
+        }
+        to {
+          transform: scaleY(1);
+        }
+      }
+
+      .contents-list {
+        display: block;
+        box-shadow:
+          0 -1px 0 0 #000,
+          0 1px 0 0 #000;
+      }
+
+      .contents_texto {
+        box-shadow:
+          0 -1px 0 0 #000,
+          0 1px 0 0 #000;
+        padding: 14px 16px 14px;
+        white-space: nowrap;
+        position: relative;
+        display: flex; /* 追加 */
+        align-items: center; /* h2とボタンを縦中央揃え */
+        gap: 24px; /* h2とボタンの間隔 */
+        background: rgb(255, 249, 158);
+      }
+
+      .content_label {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        font-size: 15px;
+        color: #000;
+        font-family: "Zen Kaku Gothic New", sans-serif;
+        font-weight: 800;
+        padding: 6px 14px;
+      }
+
+      .contents_texto h2 {
+        font-size: 110px;
+        font-family: "acumin-variable", sans-serif;
+        font-variation-settings:
+          "wght" 400,
+          "wdth" 100,
+          "slnt" 0;
+        font-style: normal;
+        align-items: center;
+        line-height: 1;
+        letter-spacing: -0.06em;
+        position: relative;
+      }
+
+      .back_btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border: 2px solid #000;
+        border-radius: 50%;
+        text-decoration: none;
+        color: #000;
+        flex-shrink: 0; /* ボタンが縮まないようにする */
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      .back_btn:hover {
+        background: #000;
+        color: #e6e6e6;
+      }
+
+      .back_arrow {
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      /* ==================== スマホ対応 ==================== */
+      @media (max-width: 768px) {
+        .contents_texto {
+          padding: 10px 12px;
+          gap: 12px;
+          white-space: normal;
+          overflow: hidden;
+        }
+
+        .contents_texto h2 {
+          flex: 1 1 0%;
+          min-width: 0;
+          font-size: 15vw;
+          overflow-x: hidden;
+          overflow-y: hidden;
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          font-size: 15vw;
+        }
+
+        .content_label {
+          top: 10px;
+          right: 66px;
+          max-width: 88px;
+          box-sizing: border-box;
+          overflow-x: hidden;
+          white-space: nowrap;
+          font-size: 11px;
+          padding: 4px 8px;
+        }
+
+        /* ---- ここから無限ループ・マーキー用のスタイル ---- */
+        :global(.marquee-track) {
+          display: inline-flex;
+          white-space: nowrap;
+        }
+
+        :global(.marquee-track.is-scrolling) {
+          animation-name: marquee-loop;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+
+        @keyframes marquee-loop {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(var(--marquee-distance, 0px));
+          }
+        }
+
+        :global(.marquee-item) {
+          display: inline-block;
+          white-space: nowrap;
+        }
+        /* ---- ここまで ---- */
+
+        .back_btn {
+          width: 40px;
+          height: 40px;
+        }
+
+        .back_arrow {
+          font-size: 16px;
+        }
+
+        .chronology {
+          max-width: 50vh;
+          margin: 0 10px;
+        }
+
+        .chronology_title {
+          padding: 16px 1em;
+        }
+        .chronology_subtitle {
+          font-size: 20px;
+          letter-spacing: 0.2em;
+          margin: 0 0 2px 0;
+        }
+        .chronology_title h4 {
+          font-size: 13vw;
+        }
+        .chronology_date {
+          font-size: 15px;
+        }
+
+        :global(.timeline-wrap) {
+          padding: 32px 16px;
+          margin-bottom: 60px;
+        }
+
+        :global(.timeline-line) {
+          left: 8px;
+        }
+
+        :global(.marker-col) {
+          width: 16px;
+          flex: 0 0 16px;
+        }
+
+        :global(.marker-circle) {
+          width: 14px;
+          height: 14px;
+          border-width: 2px;
+        }
+
+        :global(.content-col) {
+          padding-left: 16px;
+          gap: 20px;
+        }
+
+        :global(.item-year) {
+          font-size: 12px;
+        }
+
+        :global(.item-title) {
+          font-size: 17px;
+          padding-bottom: 8px;
+        }
+
+        :global(.item-desc) {
+          font-size: 13px;
+          line-height: 1.8;
+        }
+
+        :global(.item-comment) {
+          font-size: 12px;
+          padding: 8px 12px;
+        }
+
+        :global(.like-btn) {
+          font-size: 12px;
+          padding: 5px 12px;
+        }
+
+        :global(.item-youtube) {
+          border-radius: 6px;
+        }
+
+        :global(.yt-play-btn) {
+          width: 52px;
+          height: 36px;
+        }
+      }
+    </style>
+  </body>
+</BaseLayout>
