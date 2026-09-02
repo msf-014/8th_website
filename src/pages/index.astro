@@ -252,7 +252,27 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     }
 
     .slide-down-exit {
-      animation: slideDown 0.4s ease forwards;
+      animation: slideDown 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+      pointer-events: none;
+    }
+
+    /* クリックされた項目: 浮いた位置と背景色を保ったまま次ページのタイトルへモーフする */
+    .contents.is-leaving-target {
+      transform: translateY(-39px);
+      background: var(--hover-bg);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* メインビジュアルは退場中にゆっくり沈めて、視線をタイトルへ寄せる */
+    .main_visual {
+      transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    }
+    .main-wrapper.is-leaving .main_visual {
+      opacity: 0;
+      transform: translateY(24px);
     }
 
     @keyframes slideDown {
@@ -378,6 +398,7 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
       const ARROW_RETRACT_MS = 250;
+      const EXIT_MS = 400; // CSS の slideDown と合わせる
       const contentsEls = document.querySelectorAll(".contents");
 
       const resetArmed = (except) => {
@@ -405,8 +426,22 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
             return;
           }
           clickedHref = link.getAttribute("data-href");
+          // 遷移「前」に退場アニメーションを開始する。
+          // 以降の fetch / 待ち時間はこの動きの裏で進む
+          startExit(clickedHref);
         });
       });
+
+      const startExit = (href) => {
+        document.querySelector(".main-wrapper")?.classList.add("is-leaving");
+        contentsEls.forEach((el) => {
+          if (el.getAttribute("data-href") === href) {
+            el.classList.add("is-leaving-target");
+          } else {
+            el.classList.add("slide-down-exit");
+          }
+        });
+      };
 
       document.addEventListener("click", (e) => {
         if (!(e.target instanceof Element) || !e.target.closest(".contents")) {
@@ -416,22 +451,19 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       document.addEventListener("astro:before-preparation", (event) => {
         const originalLoader = event.loader;
-        // 矢印アニメーション用の 300ms 待ちと次ページの fetch を並行させる
+        // 退場アニメーション(0.4s)の完了と次ページの fetch を並行させる
         event.loader = async function () {
           await Promise.all([
-            new Promise((resolve) => setTimeout(resolve, 300)),
+            new Promise((resolve) => setTimeout(resolve, EXIT_MS)),
             originalLoader(),
           ]);
         };
       });
 
+      // クリック以外の経路（戻る/進む等）で遷移した場合のフォールバック
       document.addEventListener("astro:before-swap", () => {
-        document.querySelectorAll(".contents").forEach((el) => {
-          const elHref = el.getAttribute("data-href");
-          if (elHref !== clickedHref) {
-            el.classList.add("slide-down-exit");
-          }
-        });
+        if (document.querySelector(".main-wrapper.is-leaving")) return;
+        startExit(clickedHref);
       });
     })();
   </script>
