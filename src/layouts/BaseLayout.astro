@@ -22,14 +22,19 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="https://use.typekit.net/xaq4odq.css" />
+    <!--
+      フォントはサイト全体でここ 1 か所だけ読み込む。
+      ページ側で個別に <link> を足すと ClientRouter が遷移ごとに
+      その CSS の読み込み完了を待つため、遷移が遅くなる。
+    -->
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://use.typekit.net/xaq4odq.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Zen+Kaku+Gothic+New&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://use.typekit.net/xaq4odq.css" />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
     <title>{title}</title>

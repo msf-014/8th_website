@@ -416,9 +416,12 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       document.addEventListener("astro:before-preparation", (event) => {
         const originalLoader = event.loader;
+        // 矢印アニメーション用の 300ms 待ちと次ページの fetch を並行させる
         event.loader = async function () {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          await originalLoader();
+          await Promise.all([
+            new Promise((resolve) => setTimeout(resolve, 300)),
+            originalLoader(),
+          ]);
         };
       });
 
