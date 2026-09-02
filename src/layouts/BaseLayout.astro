@@ -35,6 +35,12 @@ const {
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Zen+Kaku+Gothic+New&display=swap"
+      rel="stylesheet"
+    />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
     <title>{title}</title>
@@ -54,9 +60,7 @@ const {
   html.is-leaving-back .contents-list > :not(.contents_texto),
   html.is-leaving-back
     body
-    > :not(header):not(.contents-list):not(.bg_reveal):not(script):not(
-      style
-    ) {
+    > :not(header):not(.contents-list):not(.bg_reveal):not(script):not(style) {
     /* transition ではなく from を明示した animation にする:
        ページ側の keyframe(例: message の fadeInContent)が opacity を握っていても
        確実に 1 → 0 へフェードさせるため */
