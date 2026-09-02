@@ -44,25 +44,57 @@ import Footer from "../components/footer.astro";
       const messages = [
         {
           from: "かぶと",
-          msg: "矢車へ。8周年おめでとう！いつも配信でたくさん元気もらってます！矢車に出会えて本当に幸せです！これからも矢車のこと応援させてね！大大大大大好きです〜！！！！",
+          msg: [
+            "矢車へ。",
+            "8周年おめでとう！",
+            "いつも配信でたくさん元気もらってます！矢車に出会えて本当に幸せです！",
+            "これからも矢車のこと応援させてね！大大大大大好きです〜！！！！",
+          ],
         },
         {
           from: "ゆかん。",
-          msg: "りねちゃん、8周年おめでとうございます🎉 いつもたくさんの元気をもらっています！あなたの笑顔が大好き！ お顔もお歌も最強の11歳🔥 これからも応援しています♡",
+          msg: [
+            "りねちゃん、8周年おめでとうございます🎉",
+            "いつもたくさんの元気をもらっています！あなたの笑顔が大好き！",
+            "お顔もお歌も最強の11歳🔥",
+            "これからも応援しています♡",
+          ],
         },
         {
           from: "早川",
-          msg: "8周年おめでとうございます🎉いつも元気をありがとう！！大好きだ〜〜〜〜！！！",
+          msg: [
+            "8周年おめでとうございます🎉",
+            "いつも元気をありがとう！！",
+            "大好きだ〜〜〜〜！！！",
+          ],
         },
         {
           from: "らぴ♡",
-          msg: "8周年おめでとうございます！矢車さんがオーストラリアに住んでたことが発覚したりラップが上手だったり3Dお披露目も見れたりと色んな活躍が見れて本当に楽しかったです！矢車さんが色んなお話してたりゲームに挑戦する度に矢車さんのこと好きだなぁって日に日に好き度が増していきますദ്ദി˶ｰ̀֊ｰ́ )8周年も矢車さんのペースで活動をしていってほしいし矢車さんがやりたいことをたくさんできたら嬉しいなと思っています。これからも矢車さん大好き！！",
+          msg: [
+            "8周年おめでとうございます！",
+            "矢車さんがオーストラリアに住んでたことが発覚したりラップが上手だったり3Dお披露目も見れたりと色んな活躍が見れて本当に楽しかったです！",
+            "矢車さんが色んなお話してたりゲームに挑戦する度に矢車さんのこと好きだなぁって日に日に好き度が増していきますദ്ദി˶ｰ̀֊ｰ́ )",
+            "8周年も矢車さんのペースで活動をしていってほしいし矢車さんがやりたいことをたくさんできたら嬉しいなと思っています。",
+            "これからも矢車さん大好き！！",
+          ],
         },
         {
           from: "オールドキング",
-          msg: "8周年本当におめでとうございます！デビュー当初見た目で気になって見始めてから喋りに引き込まれて英語やラップの上手さでさらに引き込まれて気づけばずっと見続けていました。矢車さんのことが好きな人が最近どんどん増えているのを見ると本当に嬉しく思います。本当にいつもたくさん楽しませてくれてありがとう！これからも応援し続けます！",
+          msg: [
+            "8周年本当におめでとうございます！",
+            "デビュー当初見た目で気になって見始めてから喋りに引き込まれて英語やラップの上手さでさらに引き込まれて気づけばずっと見続けていました。",
+            "矢車さんのことが好きな人が最近どんどん増えているのを見ると本当に嬉しく思います。",
+            "本当にいつもたくさん楽しませてくれてありがとう！これからも応援し続けます！",
+          ],
         },
-        { from: "名前", msg: "これはテストメッセージです！" },
+        {
+          from: "nu",
+          msg: [
+            "8周年おめでとう🎉",
+            "出会えて良かった！矢車に元気を沢山もらって、笑顔になれる日が増えたよ◎本当にいつもありがとう！！",
+            "矢車りね最高だ〜〜💐",
+          ],
+        },
         { from: "名前", msg: "これはテストメッセージです。" },
         { from: "名前", msg: "これはテストメッセージです。" },
         { from: "名前", msg: "これはテストメッセージです。" },
@@ -114,14 +146,32 @@ import Footer from "../components/footer.astro";
         const W = board.offsetWidth,
           H = board.offsetHeight;
         const placed = autoPlace(messages, W, H);
+
         placed.forEach((m, i) => {
           const el = document.createElement("div");
           el.className = "sticky";
           el.style.cssText = `left:${m.x}px;top:${m.y}px;z-index:${m.z};opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;`;
-          el.innerHTML = `
-      <span class="s-from">${m.from}</span>
-      <span class="s-msg">${m.msg}</span>
-      <span class="s-num">REMINDER ——— ${String(i + 1).padStart(4, "0")}</span>`;
+
+          const fromEl = document.createElement("span");
+          fromEl.className = "s-from";
+          fromEl.textContent = m.from;
+
+          const msgEl = document.createElement("div");
+          msgEl.className = "s-msg";
+          m.msg.forEach((text) => {
+            const p = document.createElement("p");
+            p.textContent = text;
+            msgEl.appendChild(p);
+          });
+
+          const numEl = document.createElement("span");
+          numEl.className = "s-num";
+          numEl.textContent = "REMINDER ——— " + String(i + 1).padStart(4, "0");
+
+          el.appendChild(fromEl);
+          el.appendChild(msgEl);
+          el.appendChild(numEl);
+
           el.addEventListener("click", () => openModal(m));
           board.appendChild(el);
           setTimeout(() => {
@@ -132,7 +182,15 @@ import Footer from "../components/footer.astro";
 
       function openModal(m) {
         document.getElementById("m-from").textContent = m.from;
-        document.getElementById("m-msg").textContent = m.msg;
+
+        const msgEl = document.getElementById("m-msg");
+        msgEl.innerHTML = "";
+        m.msg.forEach((text) => {
+          const p = document.createElement("p");
+          p.textContent = text;
+          msgEl.appendChild(p);
+        });
+
         document.getElementById("modal-backdrop").classList.add("open");
       }
 
@@ -313,7 +371,7 @@ import Footer from "../components/footer.astro";
 
       :global(.sticky) {
         position: absolute; /* ← これが効かないと一覧になる */
-        width: 156px;
+        width: 250px;
         min-height: 120px;
         background: #fff;
         border: 2px solid #c42222;
@@ -379,6 +437,9 @@ import Footer from "../components/footer.astro";
         flex: 1;
         font-family: "Noto Sans JP", sans-serif;
       }
+      :global(.sticky .s-msg p + p) {
+        margin-top: 0.4em;
+      }
       :global(.sticky .s-num) {
         font-family: "Bebas Neue", monospace;
         font-size: 9px;
@@ -406,7 +467,7 @@ import Footer from "../components/footer.astro";
         border: 3px solid #c42222;
         box-shadow: 7px 7px 0 #c42222;
         padding: 36px 32px 28px;
-        max-width: 360px;
+        max-width: 600px;
         width: 90%;
         position: relative;
         clip-path: polygon(
@@ -481,6 +542,9 @@ import Footer from "../components/footer.astro";
         color: #c42222;
         line-height: 1.3;
         font-family: "Noto Sans JP", sans-serif;
+      }
+      .modal .m-msg p + p {
+        margin-top: 0.6em;
       }
 
       /* ==================== スマホ対応 ==================== */
