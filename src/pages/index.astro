@@ -252,7 +252,59 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     }
 
     .slide-down-exit {
-      animation: slideDown 0.4s ease forwards;
+      animation: slideDown 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+      pointer-events: none;
+    }
+
+    /* クリックされた項目: 浮いた位置と背景色を保ったまま次ページのタイトルへモーフする */
+    .contents.is-leaving-target {
+      transform: translateY(-39px);
+      background: var(--hover-bg);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* サブページから戻ってきたとき: リストが下から戻り、メインビジュアルが浮かび上がる */
+    .slide-up-enter {
+      animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+      animation-delay: calc(var(--enter-i, 0) * 45ms);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(60vh);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .main-wrapper.is-entering .main_visual {
+      animation: visualIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+
+    @keyframes visualIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* メインビジュアルは退場中にゆっくり沈めて、視線をタイトルへ寄せる */
+    .main_visual {
+      transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    }
+    .main-wrapper.is-leaving .main_visual {
+      opacity: 0;
+      transform: translateY(24px);
     }
 
     @keyframes slideDown {
@@ -376,8 +428,28 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       let clickedHref = null;
       let allowNavigate = false;
 
+      // ===== サブページの「戻る」から来た場合の入場アニメーション =====
+      const backFrom = sessionStorage.getItem("backFrom");
+      if (backFrom) {
+        sessionStorage.removeItem("backFrom");
+        document.querySelector(".main-wrapper")?.classList.add("is-entering");
+        let i = 0;
+        document.querySelectorAll(".contents").forEach((el) => {
+          // 戻り元の項目はタイトルのモーフに任せるので動かさない
+          if (el.getAttribute("data-href") === backFrom) return;
+          el.style.setProperty("--enter-i", String(i++));
+          el.classList.add("slide-up-enter");
+          el.addEventListener(
+            "animationend",
+            () => el.classList.remove("slide-up-enter"),
+            { once: true },
+          );
+        });
+      }
+
       const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
       const ARROW_RETRACT_MS = 250;
+      const EXIT_MS = 400; // CSS の slideDown と合わせる
       const contentsEls = document.querySelectorAll(".contents");
 
       const resetArmed = (except) => {
@@ -405,8 +477,22 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
             return;
           }
           clickedHref = link.getAttribute("data-href");
+          // 遷移「前」に退場アニメーションを開始する。
+          // 以降の fetch / 待ち時間はこの動きの裏で進む
+          startExit(clickedHref);
         });
       });
+
+      const startExit = (href) => {
+        document.querySelector(".main-wrapper")?.classList.add("is-leaving");
+        contentsEls.forEach((el) => {
+          if (el.getAttribute("data-href") === href) {
+            el.classList.add("is-leaving-target");
+          } else {
+            el.classList.add("slide-down-exit");
+          }
+        });
+      };
 
       document.addEventListener("click", (e) => {
         if (!(e.target instanceof Element) || !e.target.closest(".contents")) {
@@ -416,19 +502,19 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       document.addEventListener("astro:before-preparation", (event) => {
         const originalLoader = event.loader;
+        // 退場アニメーション(0.4s)の完了と次ページの fetch を並行させる
         event.loader = async function () {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          await originalLoader();
+          await Promise.all([
+            new Promise((resolve) => setTimeout(resolve, EXIT_MS)),
+            originalLoader(),
+          ]);
         };
       });
 
+      // クリック以外の経路（戻る/進む等）で遷移した場合のフォールバック
       document.addEventListener("astro:before-swap", () => {
-        document.querySelectorAll(".contents").forEach((el) => {
-          const elHref = el.getAttribute("data-href");
-          if (elHref !== clickedHref) {
-            el.classList.add("slide-down-exit");
-          }
-        });
+        if (document.querySelector(".main-wrapper.is-leaving")) return;
+        startExit(clickedHref);
       });
     })();
   </script>
