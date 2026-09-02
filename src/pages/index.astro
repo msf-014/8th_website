@@ -264,6 +264,38 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       pointer-events: none;
     }
 
+    /* サブページから戻ってきたとき: リストが下から戻り、メインビジュアルが浮かび上がる */
+    .slide-up-enter {
+      animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+      animation-delay: calc(var(--enter-i, 0) * 45ms);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(60vh);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .main-wrapper.is-entering .main_visual {
+      animation: visualIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+
+    @keyframes visualIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     /* メインビジュアルは退場中にゆっくり沈めて、視線をタイトルへ寄せる */
     .main_visual {
       transition:
@@ -395,6 +427,25 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       let clickedHref = null;
       let allowNavigate = false;
+
+      // ===== サブページの「戻る」から来た場合の入場アニメーション =====
+      const backFrom = sessionStorage.getItem("backFrom");
+      if (backFrom) {
+        sessionStorage.removeItem("backFrom");
+        document.querySelector(".main-wrapper")?.classList.add("is-entering");
+        let i = 0;
+        document.querySelectorAll(".contents").forEach((el) => {
+          // 戻り元の項目はタイトルのモーフに任せるので動かさない
+          if (el.getAttribute("data-href") === backFrom) return;
+          el.style.setProperty("--enter-i", String(i++));
+          el.classList.add("slide-up-enter");
+          el.addEventListener(
+            "animationend",
+            () => el.classList.remove("slide-up-enter"),
+            { once: true },
+          );
+        });
+      }
 
       const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
       const ARROW_RETRACT_MS = 250;
