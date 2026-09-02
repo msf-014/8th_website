@@ -163,9 +163,37 @@ const nameChars = ["矢", "車", "り", "ね"];
 
     <Footer />
 
-    <script is:inline>
+    <script>
+      import Lenis from "lenis";
+
       (() => {
         const MQ_MOBILE = "(max-width: 768px)";
+        let panelLenis: Lenis | null = null;
+
+        // 右カラム専用のスムーススクロール（デスクトップのみ）
+        function createPanelLenis(detail: HTMLElement) {
+          if (panelLenis) return panelLenis;
+          const content = detail.querySelector<HTMLElement>(
+            ".about_detail_inner",
+          );
+          if (!content) return null;
+          panelLenis = new Lenis({
+            wrapper: detail,
+            content,
+            duration: 1.4,
+            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            wheelMultiplier: 1,
+            touchMultiplier: 1.5,
+            autoRaf: true,
+          });
+          return panelLenis;
+        }
+
+        function destroyPanelLenis() {
+          if (!panelLenis) return;
+          panelLenis.destroy();
+          panelLenis = null;
+        }
 
         function setupAbout() {
           const about = document.getElementById("about");
@@ -202,10 +230,21 @@ const nameChars = ["矢", "車", "り", "ね"];
           }
 
           // 左のイラスト上でホイールしても右側が動くようにする
-          function forwardWheel(e) {
+          function forwardWheel(e: WheelEvent) {
             if (window.matchMedia(MQ_MOBILE).matches) return;
-            detail.scrollTop += e.deltaY;
             e.preventDefault();
+            if (panelLenis) {
+              // 慣性を保ったまま右カラムへ流す
+              panelLenis.scrollTo(panelLenis.targetScroll + e.deltaY);
+            } else {
+              detail.scrollTop += e.deltaY;
+            }
+          }
+
+          // ブレークポイントをまたいだら Lenis を付け外し
+          function syncPanelLenis() {
+            if (window.matchMedia(MQ_MOBILE).matches) destroyPanelLenis();
+            else createPanelLenis(detail);
           }
 
           // ---- プロフィール行の出現アニメーション ----
@@ -230,10 +269,12 @@ const nameChars = ["矢", "車", "り", "ね"];
           visual.addEventListener("wheel", forwardWheel, { passive: false });
           window.addEventListener("resize", () => {
             fitHeight();
+            syncPanelLenis();
             updateBar();
           });
 
           fitHeight();
+          syncPanelLenis();
           updateBar();
           // Web フォント読込後に高さが変わるので再計測
           if (document.fonts && document.fonts.ready) {
@@ -252,8 +293,8 @@ const nameChars = ["矢", "車", "り", "ね"];
         }
 
         document.addEventListener("astro:page-load", setupAbout);
-        if (document.readyState !== "loading") setupAbout();
-        else document.addEventListener("DOMContentLoaded", setupAbout);
+        // ページ遷移で DOM が入れ替わる前にインスタンスを破棄
+        document.addEventListener("astro:before-swap", destroyPanelLenis);
       })();
     </script>
 
