@@ -30,43 +30,40 @@ import Footer from "../components/footer.astro";
       </div>
     </div>
 
-    <!-- ============ ここから追加：吹き出しセクション ============ -->
     <div class="words-canvas">
       <div class="stage" id="stage">
-
         <div class="intro">
           <span class="eyebrow">SPEECH BUBBLES</span>
-          <p>まわりの吹き出しをクリックすると、寄せられた言葉をひとつずつ読むことができます。</p>
+          <p>
+            まわりの吹き出しをクリックすると、寄せられた言葉をひとつずつ読むことができます。
+          </p>
         </div>
 
-        <div class="character" aria-hidden="true">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="100" cy="188" rx="60" ry="7" fill="#000" opacity="0.12"/>
-            <circle cx="100" cy="105" r="78" fill="#fff" stroke="#000" stroke-width="4"/>
-            <path d="M40 95 A60 60 0 0 1 160 95" fill="#B5E6C6" stroke="#000" stroke-width="4"/>
-            <circle cx="76" cy="108" r="7" fill="#000"/>
-            <circle cx="124" cy="108" r="7" fill="#000"/>
-            <circle cx="60" cy="128" r="10" fill="#B5E6C6" opacity="0.7"/>
-            <circle cx="140" cy="128" r="10" fill="#B5E6C6" opacity="0.7"/>
-            <path d="M84 132 Q100 143 116 132" stroke="#000" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <div class="character" aria-hidden="true"></div>
 
         <!-- 吹き出し：data-modal は下の wordsData のキーと対応させてください -->
         <div class="bubble-wrap" style="--angle: -140deg; --delay: 0s;">
-          <button class="bubble" data-modal="w1">いつも元気を<br>もらってます</button>
+          <button class="bubble" data-modal="w1"
+            >いつも元気を<br />もらってます</button
+          >
           <div class="tail"></div>
         </div>
         <div class="bubble-wrap" style="--angle: -95deg; --delay: .08s;">
-          <button class="bubble" data-modal="w2">8周年、<br>おめでとう！</button>
+          <button class="bubble" data-modal="w2"
+            >8周年、<br />おめでとう！</button
+          >
           <div class="tail"></div>
         </div>
         <div class="bubble-wrap" style="--angle: -40deg; --delay: .16s;">
-          <button class="bubble" data-modal="w3">これからも<br>応援してます</button>
+          <button class="bubble" data-modal="w3"
+            >これからも<br />応援してます</button
+          >
           <div class="tail"></div>
         </div>
         <div class="bubble-wrap" style="--angle: 40deg; --delay: .24s;">
-          <button class="bubble" data-modal="w4">出会えて<br>よかったです</button>
+          <button class="bubble" data-modal="w4"
+            >出会えて<br />よかったです</button
+          >
           <div class="tail"></div>
         </div>
         <div class="bubble-wrap" style="--angle: 95deg; --delay: .32s;">
@@ -74,22 +71,29 @@ import Footer from "../components/footer.astro";
           <div class="tail"></div>
         </div>
         <div class="bubble-wrap" style="--angle: 140deg; --delay: .4s;">
-          <button class="bubble" data-modal="w6">これからも<br>ずっと一緒に</button>
+          <button class="bubble" data-modal="w6"
+            >これからも<br />ずっと一緒に</button
+          >
           <div class="tail"></div>
         </div>
-
       </div>
     </div>
 
     <div class="overlay" id="overlay">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         <button class="close" id="closeBtn" aria-label="閉じる">✕</button>
         <span class="tag" id="modal-tag">MESSAGE</span>
         <h2 id="modal-title">TITLE</h2>
         <p id="modal-body">本文</p>
       </div>
     </div>
-    <!-- ============ 追加ここまで ============ -->
+
+    <Footer />
 
     <style>
       * {
@@ -328,10 +332,7 @@ import Footer from "../components/footer.astro";
           height: 36px;
         }
       }
-    </style>
 
-    <!-- ============ 追加：吹き出しセクション専用スタイル ============ -->
-    <style>
       .words-canvas {
         width: 1900px;
         margin: 0 auto;
@@ -343,10 +344,15 @@ import Footer from "../components/footer.astro";
         position: relative;
         width: 100%;
         height: 900px;
-        background-image: radial-gradient(rgba(120, 80, 200, 0.35) 1px, transparent 1px);
+        background-image: radial-gradient(
+          rgba(120, 80, 200, 0.35) 1px,
+          transparent 1px
+        );
         background-size: 26px 26px;
         background-position: center;
         overflow: hidden;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
       }
 
       .intro {
@@ -359,7 +365,7 @@ import Footer from "../components/footer.astro";
         font-family: "Zen Kaku Gothic New", sans-serif;
         font-weight: 800;
         font-size: 13px;
-        letter-spacing: .06em;
+        letter-spacing: 0.06em;
         display: inline-block;
         background: #b5e6c6;
         border: 2px solid #000;
@@ -384,8 +390,13 @@ import Footer from "../components/footer.astro";
         transform-origin: center;
       }
       @keyframes breathe {
-        0%, 100% { transform: translate(-50%, -50%) scale(1); }
-        50%      { transform: translate(-50%, -50%) scale(1.02); }
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.02);
+        }
       }
 
       .bubble-wrap {
@@ -396,13 +407,19 @@ import Footer from "../components/footer.astro";
         left: calc(50% + var(--radius-x) * cos(var(--angle)));
         transform: translate(-50%, -50%);
         opacity: 0;
-        animation: fadeIn .5s ease forwards;
+        animation: fadeIn 0.5s ease forwards;
         animation-delay: var(--delay);
         z-index: 2;
       }
       @keyframes fadeIn {
-        from { opacity: 0; transform: translate(-50%, -50%) scale(.9); }
-        to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
       }
 
       .bubble {
@@ -420,9 +437,13 @@ import Footer from "../components/footer.astro";
         border-radius: 18px;
         cursor: pointer;
         text-align: left;
-        transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
       }
-      .bubble:hover, .bubble:focus-visible {
+      .bubble:hover,
+      .bubble:focus-visible {
         transform: translateY(-4px);
         box-shadow: 4px 6px 0 0 #000;
         background: #b5e6c6;
@@ -459,22 +480,27 @@ import Footer from "../components/footer.astro";
         border-bottom: 9px solid transparent;
         border-left: 13px solid #fff;
       }
-      .bubble-wrap:hover .tail::after { border-left-color: #b5e6c6; }
+      .bubble-wrap:hover .tail::after {
+        border-left-color: #b5e6c6;
+      }
 
       .overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, .45);
+        background: rgba(0, 0, 0, 0.45);
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 24px;
         opacity: 0;
         pointer-events: none;
-        transition: opacity .2s ease;
+        transition: opacity 0.2s ease;
         z-index: 10;
       }
-      .overlay.open { opacity: 1; pointer-events: auto; }
+      .overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
 
       .modal {
         background: #fff;
@@ -485,9 +511,14 @@ import Footer from "../components/footer.astro";
         position: relative;
         transform: translateY(10px);
         opacity: 0;
-        transition: transform .25s ease, opacity .25s ease;
+        transition:
+          transform 0.25s ease,
+          opacity 0.25s ease;
       }
-      .overlay.open .modal { transform: translateY(0); opacity: 1; }
+      .overlay.open .modal {
+        transform: translateY(0);
+        opacity: 1;
+      }
 
       .modal .tag {
         display: inline-block;
@@ -502,7 +533,7 @@ import Footer from "../components/footer.astro";
       .modal h2 {
         font-family: "Bebas Neue", sans-serif;
         font-size: 42px;
-        letter-spacing: .01em;
+        letter-spacing: 0.01em;
         margin: 0 0 16px;
         line-height: 1;
       }
@@ -527,24 +558,61 @@ import Footer from "../components/footer.astro";
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background .2s, color .2s;
+        transition:
+          background 0.2s,
+          color 0.2s;
       }
-      .modal .close:hover { background: #000; color: #b5e6c6; }
+      .modal .close:hover {
+        background: #000;
+        color: #b5e6c6;
+      }
 
       @media (prefers-reduced-motion: reduce) {
-        .character, .bubble-wrap { animation: none !important; opacity: 1 !important; }
+        .character,
+        .bubble-wrap {
+          animation: none !important;
+          opacity: 1 !important;
+        }
       }
     </style>
 
     <script>
       // 吹き出しごとの中身：実際の言葉に差し替えてください
-      const wordsData: Record<string, { tag: string; title: string; body: string }> = {
-        w1: { tag: "MESSAGE 01", title: "いつも元気をもらってます", body: "ここに実際に寄せられた言葉本文を入れます。長さは自由に調整できます。" },
-        w2: { tag: "MESSAGE 02", title: "8周年、おめでとう！", body: "ここに実際に寄せられた言葉本文を入れます。" },
-        w3: { tag: "MESSAGE 03", title: "これからも応援してます", body: "ここに実際に寄せられた言葉本文を入れます。" },
-        w4: { tag: "MESSAGE 04", title: "出会えてよかったです", body: "ここに実際に寄せられた言葉本文を入れます。" },
-        w5: { tag: "MESSAGE 05", title: "笑顔をありがとう", body: "ここに実際に寄せられた言葉本文を入れます。" },
-        w6: { tag: "MESSAGE 06", title: "これからもずっと一緒に", body: "ここに実際に寄せられた言葉本文を入れます。" },
+      const wordsData: Record<
+        string,
+        { tag: string; title: string; body: string }
+      > = {
+        w1: {
+          tag: "MESSAGE 01",
+          title:
+            "スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか",
+          body: "ここに実際に寄せられた言葉本文を入れます。長さは自由に調整できます。",
+        },
+        w2: {
+          tag: "MESSAGE 02",
+          title: "24時間回ってる扇風機、24時ファン",
+          body: "ここに実際に寄せられた言葉本文を入れます。",
+        },
+        w3: {
+          tag: "MESSAGE 03",
+          title: "疲れた町田ちま、たちまち寝落ちする",
+          body: "ここに実際に寄せられた言葉本文を入れます。",
+        },
+        w4: {
+          tag: "MESSAGE 04",
+          title: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
+          body: "ここに実際に寄せられた言葉本文を入れます。",
+        },
+        w5: {
+          tag: "MESSAGE 05",
+          title: "わりと暇な悪魔「いつデーモンいけます」",
+          body: "ここに実際に寄せられた言葉本文を入れます。",
+        },
+        w6: {
+          tag: "MESSAGE 06",
+          title: "あんまり納得できてない大富豪、イロン・マスク",
+          body: "ここに実際に寄せられた言葉本文を入れます。",
+        },
       };
 
       const overlay = document.getElementById("overlay")!;
@@ -569,8 +637,12 @@ import Footer from "../components/footer.astro";
         lastFocused?.focus();
       }
       closeBtn.addEventListener("click", closeModal);
-      overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
     </script>
   </body>
 </BaseLayout>
