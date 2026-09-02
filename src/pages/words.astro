@@ -26,41 +26,7 @@ import Footer from "../components/footer.astro";
             </p>
           </div>
 
-          <div class="character" aria-hidden="true">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <ellipse
-                cx="100"
-                cy="188"
-                rx="60"
-                ry="7"
-                fill="#000"
-                opacity="0.12"></ellipse>
-              <circle
-                cx="100"
-                cy="105"
-                r="78"
-                fill="#fff"
-                stroke="#000"
-                stroke-width="4"></circle>
-              <path
-                d="M40 95 A60 60 0 0 1 160 95"
-                fill="#B5E6C6"
-                stroke="#000"
-                stroke-width="4"></path>
-              <circle cx="76" cy="108" r="7" fill="#000"></circle>
-              <circle cx="124" cy="108" r="7" fill="#000"></circle>
-              <circle cx="60" cy="128" r="10" fill="#B5E6C6" opacity="0.7"
-              ></circle>
-              <circle cx="140" cy="128" r="10" fill="#B5E6C6" opacity="0.7"
-              ></circle>
-              <path
-                d="M84 132 Q100 143 116 132"
-                stroke="#000"
-                stroke-width="3.5"
-                fill="none"
-                stroke-linecap="round"></path>
-            </svg>
-          </div>
+          <div class="character" aria-hidden="true"></div>
 
           <!-- 吹き出し：data-modal は下の wordsData のキーと対応させてください -->
           <div class="bubble-wrap" style="--angle: -140deg; --delay: 0s;">
@@ -71,29 +37,31 @@ import Footer from "../components/footer.astro";
           </div>
           <div class="bubble-wrap" style="--angle: -95deg; --delay: .08s;">
             <button class="bubble" data-modal="w2"
-              >8周年、<br />おめでとう！</button
+              >24時間回ってる扇風機、24時ファン</button
             >
             <div class="tail"></div>
           </div>
           <div class="bubble-wrap" style="--angle: -40deg; --delay: .16s;">
             <button class="bubble" data-modal="w3"
-              >これからも<br />応援してます</button
+              >疲れた町田ちま、たちまち寝落ちする</button
             >
             <div class="tail"></div>
           </div>
           <div class="bubble-wrap" style="--angle: 40deg; --delay: .24s;">
             <button class="bubble" data-modal="w4"
-              >出会えて<br />よかったです</button
+              >ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」</button
             >
             <div class="tail"></div>
           </div>
           <div class="bubble-wrap" style="--angle: 95deg; --delay: .32s;">
-            <button class="bubble" data-modal="w5">笑顔をありがとう</button>
+            <button class="bubble" data-modal="w5"
+              >わりと暇な悪魔「いつデーモンいけます」</button
+            >
             <div class="tail"></div>
           </div>
           <div class="bubble-wrap" style="--angle: 140deg; --delay: .4s;">
             <button class="bubble" data-modal="w6"
-              >これからも<br />ずっと一緒に</button
+              >あんまり納得できてない大富豪、イロン・マスク</button
             >
             <div class="tail"></div>
           </div>
@@ -115,6 +83,8 @@ import Footer from "../components/footer.astro";
       </div>
       <!-- ============ 追加ここまで ============ -->
     </div>
+
+    <Footer />
 
     <style>
       * {
@@ -198,6 +168,8 @@ import Footer from "../components/footer.astro";
         background-size: 26px 26px;
         background-position: center;
         overflow: hidden;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
       }
 
       .intro {
