@@ -29,41 +29,41 @@ import Footer from "../components/footer.astro";
           <div class="character" aria-hidden="true"></div>
 
           <!-- 吹き出し：data-modal は下の wordsData のキーと対応させてください -->
-          <div class="bubble-wrap" style="--angle: -140deg; --delay: 0s;">
+          <div class="bubble-wrap dir-b" style="--angle: -140deg; --delay: 0s;">
             <button class="bubble" data-modal="w1"
               >スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか</button
             >
-            <div class="tail"></div>
           </div>
-          <div class="bubble-wrap" style="--angle: -95deg; --delay: .08s;">
+          <div
+            class="bubble-wrap dir-b"
+            style="--angle: -95deg; --delay: .08s;"
+          >
             <button class="bubble" data-modal="w2"
               >24時間回ってる扇風機、24時ファン</button
             >
-            <div class="tail"></div>
           </div>
-          <div class="bubble-wrap" style="--angle: -40deg; --delay: .16s;">
+          <div
+            class="bubble-wrap dir-b"
+            style="--angle: -40deg; --delay: .16s;"
+          >
             <button class="bubble" data-modal="w3"
               >疲れた町田ちま、たちまち寝落ちする</button
             >
-            <div class="tail"></div>
           </div>
-          <div class="bubble-wrap" style="--angle: 40deg; --delay: .24s;">
+          <div class="bubble-wrap dir-t" style="--angle: 40deg; --delay: .24s;">
             <button class="bubble" data-modal="w4"
               >ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」</button
             >
-            <div class="tail"></div>
           </div>
-          <div class="bubble-wrap" style="--angle: 95deg; --delay: .32s;">
+          <div class="bubble-wrap dir-t" style="--angle: 95deg; --delay: .32s;">
             <button class="bubble" data-modal="w5"
               >わりと暇な悪魔「いつデーモンいけます」</button
             >
-            <div class="tail"></div>
           </div>
-          <div class="bubble-wrap" style="--angle: 140deg; --delay: .4s;">
+          <div class="bubble-wrap dir-t" style="--angle: 140deg; --delay: .4s;">
             <button class="bubble" data-modal="w6"
               >あんまり納得できてない大富豪、イロン・マスク</button
             >
-            <div class="tail"></div>
           </div>
         </div>
       </div>
@@ -267,38 +267,56 @@ import Footer from "../components/footer.astro";
         outline: none;
       }
 
-      .tail {
+      .bubble::before,
+      .bubble::after {
+        content: "";
         position: absolute;
-        top: 50%;
+        width: 0;
+        height: 0;
+      }
+      .bubble::before {
+        border-style: solid;
+      }
+      .bubble::after {
+        border-style: solid;
+      }
+
+      /* 吹き出しが上にある → キャラは下 → しっぽは下向き */
+      .dir-b .bubble::before {
+        bottom: -14px;
         left: 50%;
-        width: 0;
-        height: 0;
-        transform: rotate(calc(var(--angle) + 180deg)) translateX(78px);
+        margin-left: -13px;
+        border-width: 14px 13px 0 13px;
+        border-color: #000 transparent transparent transparent;
       }
-      .tail::before {
-        content: "";
-        position: absolute;
-        top: -11px;
-        left: 0;
-        width: 0;
-        height: 0;
-        border-top: 11px solid transparent;
-        border-bottom: 11px solid transparent;
-        border-left: 16px solid #000;
+      .dir-b .bubble::after {
+        bottom: -10.5px;
+        left: 50%;
+        margin-left: -10px;
+        border-width: 11px 10px 0 10px;
+        border-color: var(--paper) transparent transparent transparent;
       }
-      .tail::after {
-        content: "";
-        position: absolute;
-        top: -9px;
-        left: 0;
-        width: 0;
-        height: 0;
-        border-top: 9px solid transparent;
-        border-bottom: 9px solid transparent;
-        border-left: 13px solid #fff;
+      .dir-b .bubble:hover::after {
+        border-top-color: var(--mint);
       }
-      .bubble-wrap:hover .tail::after {
-        border-left-color: #b5e6c6;
+
+      /* 吹き出しが下にある → キャラは上 → しっぽは上向き */
+      .dir-t .bubble::before {
+        top: -14px;
+        left: 50%;
+        margin-left: -13px;
+        border-width: 0 13px 14px 13px;
+        border-color: transparent transparent #000 transparent;
+      }
+      .dir-t .bubble::after {
+        top: -10.5px;
+        left: 50%;
+        margin-left: -10px;
+        border-width: 0 10px 11px 10px;
+        border-color: transparent transparent var(--paper) transparent;
+      }
+      .dir-t .bubble:hover::after {
+        border-bottom-color: var(--mint);
       }
 
       .overlay {
