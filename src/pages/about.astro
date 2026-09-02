@@ -627,14 +627,16 @@ const nameChars = ["矢", "車", "り", "ね"];
       /* 各種リンク */
       .about_links {
         list-style: none;
-        display: flex;
-        justify-content: space-around;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 24px;
         margin: clamp(40px, 6vh, 64px) 0;
         padding: 0 16px;
       }
 
       .about_links li {
+        display: flex;
+        justify-content: center;
         opacity: 0;
         transform: translateY(16px);
         transition:
