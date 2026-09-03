@@ -180,7 +180,6 @@ import Footer from "../components/footer.astro";
         margin: 0 auto;
         position: relative;
         background: #b5e6c6;
-        z-index: -1;
       }
 
       .stage {
@@ -238,7 +237,9 @@ import Footer from "../components/footer.astro";
         }
       }
 
-      /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) ===== */
+      /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) =====
+         JSで document.createElement する要素は Astro のスコープ属性が
+         付かないため、対応するCSSは :global() でスコープ対象外にする */
       :global(.bubble-wrap) {
         position: absolute;
         z-index: 2;
@@ -248,18 +249,15 @@ import Footer from "../components/footer.astro";
       }
       @keyframes popOut {
         0% {
-          transform: translate(-50%, -50%) scale(0.2)
-            rotate(var(--start-rot, -12deg));
+          transform: translate(-50%, -50%) scale(0.2);
           opacity: 0;
         }
         60% {
-          transform: translate(-50%, -50%) scale(1.08)
-            rotate(var(--final-rot, 0deg));
+          transform: translate(-50%, -50%) scale(1.08);
           opacity: 1;
         }
         100% {
-          transform: translate(-50%, -50%) scale(1)
-            rotate(var(--final-rot, 0deg));
+          transform: translate(-50%, -50%) scale(1);
           opacity: 1;
         }
       }
@@ -420,8 +418,10 @@ import Footer from "../components/footer.astro";
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .character,
-        .bubble-wrap {
+        .character {
+          animation: none !important;
+        }
+        :global(.bubble-wrap) {
           animation: none !important;
           opacity: 1 !important;
         }
@@ -688,24 +688,32 @@ import Footer from "../components/footer.astro";
 
             const dir = y < centerY ? "dir-b" : "dir-t";
 
+            // 吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りにする
             const norm = Math.max(
               -1,
               Math.min(1, (centerX - x) / (stageRect.w / 2)),
             );
-            const tailX = 50 - norm * 30;
+            const tailX = 50 + norm * 30;
             const clampedTailX = Math.min(80, Math.max(20, tailX));
-
-            const startRot = (Math.random() * 30 - 15).toFixed(1) + "deg";
-            const finalRot = (Math.random() * 4 - 2).toFixed(1) + "deg";
 
             wrap.classList.add(dir);
             wrap.style.left = x + "px";
             wrap.style.top = y + "px";
             wrap.style.visibility = "visible";
             wrap.style.setProperty("--tail-x", clampedTailX + "%");
-            wrap.style.setProperty("--start-rot", startRot);
-            wrap.style.setProperty("--final-rot", finalRot);
             wrap.style.setProperty("--delay", i * 0.07 + "s");
+
+            // アニメーション終了後は animation 指定自体を解除しておく
+            // (forwards のまま残すとブラウザによって hover 等の
+            //  通常のスタイル反映が鈍くなることがあるための保険)
+            wrap.addEventListener(
+              "animationend",
+              () => {
+                wrap.style.animation = "none";
+                wrap.style.opacity = "1";
+              },
+              { once: true },
+            );
           });
         }
 
