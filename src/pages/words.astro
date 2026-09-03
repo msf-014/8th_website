@@ -268,7 +268,7 @@ import Footer from "../components/footer.astro";
         width: 200px;
         background: var(--paper);
         color: var(--ink);
-        font-family: "Zen Kaku Gothic New", sans-serif;
+        font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
         font-weight: 700;
         font-size: 14px;
         line-height: 1.6;
@@ -372,7 +372,7 @@ import Footer from "../components/footer.astro";
       }
       .modal .tag {
         display: inline-block;
-        font-family: "Zen Kaku Gothic New", sans-serif;
+        font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
         font-weight: 800;
         font-size: 12px;
         background: var(--mint);
@@ -381,7 +381,7 @@ import Footer from "../components/footer.astro";
         margin-bottom: 16px;
       }
       .modal h2 {
-        font-family: "Bebas Neue", sans-serif;
+        font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
         font-size: 42px;
         letter-spacing: 0.01em;
         margin: 0 0 16px;
@@ -684,8 +684,6 @@ import Footer from "../components/footer.astro";
               );
             }
 
-            placed.push({ x, y, w, h });
-
             const dir = y < centerY ? "dir-b" : "dir-t";
 
             // 吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りにする
@@ -702,22 +700,21 @@ import Footer from "../components/footer.astro";
             wrap.style.visibility = "visible";
             wrap.style.setProperty("--tail-x", clampedTailX + "%");
             wrap.style.setProperty("--delay", i * 0.07 + "s");
-
-            // アニメーション終了後は animation 指定自体を解除しておく
-            // (forwards のまま残すとブラウザによって hover 等の
-            //  通常のスタイル反映が鈍くなることがあるための保険)
-            wrap.addEventListener(
-              "animationend",
-              () => {
-                wrap.style.animation = "none";
-                wrap.style.opacity = "1";
-              },
-              { once: true },
-            );
           });
         }
 
-        layoutBubbles();
+        // 「window の load を待つ」と、プレビュー環境によっては
+        // スクリプト実行時点で load が既に発火済みで呼ばれないことがあるため、
+        // ここで直接実行する(このスクリプトは body の末尾にあるのでDOMは準備済み)
+        //
+        // また、Webフォントの読み込みが終わってから測って配置しないと、
+        // 後からフォントが差し替わった時に箱のサイズが変わり位置がズレるため、
+        // フォント読み込み完了を待つ
+        if (document.fonts && document.fonts.status !== "loaded") {
+          document.fonts.ready.then(layoutBubbles);
+        } else {
+          layoutBubbles();
+        }
 
         // ===== モーダル =====
         const content = Object.fromEntries(messages.map((m) => [m.id, m]));
