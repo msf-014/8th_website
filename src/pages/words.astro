@@ -45,656 +45,774 @@ import Footer from "../components/footer.astro";
         <span class="tag" id="modal-tag">MESSAGE</span>
         <h2 id="modal-title">TITLE</h2>
         <p id="modal-body">本文</p>
+        <div class="modal-actions">
+          <a
+            id="modal-source"
+            class="modal-btn"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            引用元を見る ↗
+          </a>
+          <button
+            id="modal-share"
+            class="modal-btn modal-btn--share"
+            type="button"
+          >
+            Xでシェア
+          </button>
+        </div>
       </div>
     </div>
+  </body>
 
-    <Footer />
+  <Footer />
 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
 
-      body {
-        background-color: #fff;
-        position: relative;
-      }
+    body {
+      background-color: #fff;
+      position: relative;
+    }
 
-      :root {
-        --morph-duration: 0.6s;
+    :root {
+      --morph-duration: 0.6s;
 
-        --header-back-color: rgb(181, 230, 198);
+      --header-back-color: rgb(181, 230, 198);
 
-        --mint: #b5e6c6;
-        --ink: #000000;
-        --paper: #ffffff;
-        --dot: rgba(120, 80, 200, 0.35);
-        --canvas-w: 1900px;
-      }
+      --mint: #b5e6c6;
+      --ink: #000000;
+      --paper: #ffffff;
+      --dot: rgba(120, 80, 200, 0.35);
+      --canvas-w: 1900px;
+    }
 
-      ::view-transition-old(title--message),
-      ::view-transition-new(title--message) {
-        animation-duration: var(--morph-duration);
-      }
+    ::view-transition-old(title--message),
+    ::view-transition-new(title--message) {
+      animation-duration: var(--morph-duration);
+    }
 
-      .bg_reveal {
-        position: fixed;
-        inset: 0;
-        background: rgb(181, 230, 198);
-        background-image: radial-gradient(
-          circle,
-          rgba(120, 80, 200, 0.35) 1px,
-          transparent 1px
-        );
-        background-size: 5px 5px;
-        z-index: -2;
+    .bg_reveal {
+      position: fixed;
+      inset: 0;
+      background: rgb(181, 230, 198);
+      background-image: radial-gradient(
+        circle,
+        rgba(120, 80, 200, 0.35) 1px,
+        transparent 1px
+      );
+      background-size: 5px 5px;
+      z-index: -2;
+      transform: scaleY(0);
+      animation: revealBg 0.4s ease forwards;
+      /* transform-origin はJSで動的に設定するため、ここでは指定しない */
+    }
+
+    @keyframes revealBg {
+      from {
         transform: scaleY(0);
-        animation: revealBg 0.4s ease forwards;
-        /* transform-origin はJSで動的に設定するため、ここでは指定しない */
       }
-
-      @keyframes revealBg {
-        from {
-          transform: scaleY(0);
-        }
-        to {
-          transform: scaleY(1);
-        }
+      to {
+        transform: scaleY(1);
       }
+    }
 
-      .contents-list {
-        display: block;
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
+    .contents-list {
+      display: block;
+      box-shadow:
+        0 -1px 0 0 #000,
+        0 1px 0 0 #000;
+    }
+
+    .contents_texto {
+      box-shadow:
+        0 -1px 0 0 #000,
+        0 1px 0 0 #000;
+      padding: 14px 16px 14px;
+      white-space: nowrap;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      background: #b5e6c6;
+      z-index: 1;
+    }
+
+    .content_label {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 15px;
+      color: #000;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 800;
+      padding: 6px 14px;
+    }
+
+    .contents_texto h2 {
+      font-size: 110px;
+      font-family: "acumin-variable", sans-serif;
+      font-variation-settings:
+        "wght" 400,
+        "wdth" 100,
+        "slnt" 0;
+      font-style: normal;
+      align-items: center;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      position: relative;
+    }
+
+    .back_btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #000;
+      flex-shrink: 0;
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+
+    .back_btn:hover {
+      background: #000;
+      color: #b5e6c6;
+    }
+
+    .back_arrow {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .words-canvas {
+      width: 1900px;
+      margin: 0 auto;
+      position: relative;
+      background: #b5e6c6;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 1200px;
+      background-size: 26px 26px;
+      background-position: center;
+      overflow: hidden;
+      border-left: 1px solid #000;
+      border-right: 1px solid #000;
+    }
+
+    .intro {
+      position: absolute;
+      top: 56px;
+      left: 64px;
+      max-width: 380px;
+    }
+    .intro .eyebrow {
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      display: inline-block;
+      background: #b5e6c6;
+      border: 2px solid #000;
+      padding: 4px 12px;
+      margin-bottom: 14px;
+    }
+    .intro p {
+      font-family: "Noto Sans JP", sans-serif;
+      font-size: 14px;
+      line-height: 2;
+      color: #333;
+    }
+
+    .character {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px;
+      z-index: 3;
+      animation: breathe 6s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    .character img {
+      width: 80%;
+      border: 2px solid #000;
+      border-radius: 100%;
+    }
+
+    @keyframes breathe {
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
       }
+      50% {
+        transform: translate(-50%, -50%) scale(1.02);
+      }
+    }
 
+    /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) =====
+         JSで document.createElement する要素は Astro のスコープ属性が
+         付かないため、対応するCSSは :global() でスコープ対象外にする */
+    :global(.bubble-wrap) {
+      position: absolute;
+      z-index: 2;
+      opacity: 0;
+      animation: popOut 0.55s cubic-bezier(0.25, 0.9, 0.35, 1.15) forwards;
+      animation-delay: var(--delay, 0s);
+    }
+    @keyframes popOut {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 0;
+      }
+      60% {
+        transform: translate(-50%, -50%) scale(1.08);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    :global(.bubble) {
+      position: relative;
+      display: block;
+      width: 200px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 16px 18px;
+      border: 2px solid #000;
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+    :global(.bubble:hover),
+    :global(.bubble:focus-visible) {
+      transform: translateY(-3px);
+      box-shadow: 4px 5px 0 0 #000;
+      background: var(--mint);
+      outline: none;
+    }
+
+    /* しっぽ:上下のみ判定、辺の中の位置は --tail-x で調整 */
+    :global(.bubble::before),
+    :global(.bubble::after) {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+
+    :global(.dir-b .bubble::before) {
+      bottom: -14px;
+      left: var(--tail-x, 50%);
+      margin-left: -13px;
+      border-width: 14px 13px 0 13px;
+      border-color: #000 transparent transparent transparent;
+    }
+    :global(.dir-b .bubble::after) {
+      bottom: -10.5px;
+      left: var(--tail-x, 50%);
+      margin-left: -10px;
+      border-width: 11px 10px 0 10px;
+      border-color: var(--paper) transparent transparent transparent;
+    }
+    :global(.dir-b .bubble:hover::after) {
+      border-top-color: var(--mint);
+    }
+
+    :global(.dir-t .bubble::before) {
+      top: -14px;
+      left: var(--tail-x, 50%);
+      margin-left: -13px;
+      border-width: 0 13px 14px 13px;
+      border-color: transparent transparent #000 transparent;
+    }
+    :global(.dir-t .bubble::after) {
+      top: -10.5px;
+      left: var(--tail-x, 50%);
+      margin-left: -10px;
+      border-width: 0 10px 11px 10px;
+      border-color: transparent transparent var(--paper) transparent;
+    }
+    :global(.dir-t .bubble:hover::after) {
+      border-bottom-color: var(--mint);
+    }
+
+    /* ===== モーダル ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 10;
+    }
+    .overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--paper);
+      color: var(--ink);
+      width: min(480px, 100%);
+      border: 3px solid #000;
+      padding: 36px 32px 32px;
+      position: relative;
+      transform: translateY(10px);
+      opacity: 0;
+      transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+    }
+    .overlay.open .modal {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .modal .tag {
+      display: inline-block;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      background: var(--mint);
+      border: 2px solid #000;
+      padding: 4px 12px;
+      margin-bottom: 16px;
+    }
+    .modal h2 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 42px;
+      letter-spacing: 0.01em;
+      margin: 0 0 16px;
+      line-height: 1;
+    }
+    .modal p {
+      font-family: "Noto Sans JP", sans-serif;
+      font-size: 14.5px;
+      line-height: 2;
+      color: #222;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .modal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      color: #000;
+      background: var(--paper);
+      border: 2px solid #000;
+      border-radius: 100px;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+    .modal-btn:hover {
+      background: var(--mint);
+      transform: translateY(-2px);
+    }
+    .modal-btn--share {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+    .modal-btn--share:hover {
+      background: var(--mint);
+      color: #000;
+    }
+    /* sourceUrl が無いメッセージでは引用元リンクを非表示にする */
+    .modal-btn[data-empty="true"] {
+      display: none;
+    }
+
+    .modal .close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #000;
+      background: var(--paper);
+      color: #000;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+    .modal .close:hover {
+      background: #000;
+      color: var(--mint);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .character {
+        animation: none !important;
+      }
+      :global(.bubble-wrap) {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+    }
+
+    /* ==================== スマホ対応 ==================== */
+    @media (max-width: 768px) {
       .contents_texto {
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-        padding: 14px 16px 14px;
-        white-space: nowrap;
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        background: #b5e6c6;
-        z-index: 1;
-      }
-
-      .content_label {
-        position: absolute;
-        top: 14px;
-        right: 16px;
-        font-size: 15px;
-        color: #000;
-        font-family: "Zen Kaku Gothic New", sans-serif;
-        font-weight: 800;
-        padding: 6px 14px;
+        padding: 10px 12px;
+        gap: 12px;
+        white-space: normal;
+        overflow: hidden;
       }
 
       .contents_texto h2 {
-        font-size: 110px;
-        font-family: "acumin-variable", sans-serif;
-        font-variation-settings:
-          "wght" 400,
-          "wdth" 100,
-          "slnt" 0;
-        font-style: normal;
-        align-items: center;
-        line-height: 1;
-        letter-spacing: -0.06em;
-        position: relative;
+        flex: 1 1 0%;
+        min-width: 0;
+        font-size: 15vw;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        font-size: 15vw;
+      }
+
+      .content_label {
+        top: 10px;
+        right: 66px;
+        max-width: 100px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        white-space: nowrap;
+        font-size: 11px;
+        padding: 4px 8px;
       }
 
       .back_btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        border: 2px solid #000;
-        border-radius: 50%;
-        text-decoration: none;
-        color: #000;
-        flex-shrink: 0;
-        transition:
-          background 0.2s,
-          color 0.2s;
-      }
-
-      .back_btn:hover {
-        background: #000;
-        color: #b5e6c6;
+        width: 40px;
+        height: 40px;
       }
 
       .back_arrow {
-        font-size: 20px;
-        line-height: 1;
+        font-size: 16px;
       }
 
+      .chronology {
+        max-width: 50vh;
+        margin: 0 10px;
+      }
+
+      .chronology_title {
+        padding: 16px 1em;
+      }
+      .chronology_subtitle {
+        font-size: 20px;
+        letter-spacing: 0.2em;
+        margin: 0 0 2px 0;
+      }
+      .chronology_title h4 {
+        font-size: 13vw;
+      }
+      .chronology_date {
+        font-size: 15px;
+      }
+
+      :global(.timeline-wrap) {
+        padding: 32px 16px;
+        margin-bottom: 60px;
+      }
+
+      :global(.timeline-line) {
+        left: 8px;
+      }
+
+      :global(.marker-col) {
+        width: 16px;
+        flex: 0 0 16px;
+      }
+
+      :global(.marker-circle) {
+        width: 14px;
+        height: 14px;
+        border-width: 2px;
+      }
+
+      :global(.content-col) {
+        padding-left: 16px;
+        gap: 20px;
+      }
+
+      :global(.item-year) {
+        font-size: 12px;
+      }
+
+      :global(.item-title) {
+        font-size: 17px;
+        padding-bottom: 8px;
+      }
+
+      :global(.item-desc) {
+        font-size: 13px;
+        line-height: 1.8;
+      }
+
+      :global(.item-comment) {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      :global(.like-btn) {
+        font-size: 12px;
+        padding: 5px 12px;
+      }
+
+      :global(.item-youtube) {
+        border-radius: 6px;
+      }
+
+      :global(.yt-play-btn) {
+        width: 52px;
+        height: 36px;
+      }
+
+      /* ===== ここから WORDS ボード(キャラ+吹き出し)のスマホ調整 ===== */
       .words-canvas {
-        width: 1900px;
-        margin: 0 auto;
-        position: relative;
-        background: #b5e6c6;
+        width: 100%;
       }
 
       .stage {
-        position: relative;
-        width: 100%;
-        height: 1200px;
-        background-size: 26px 26px;
-        background-position: center;
-        overflow: hidden;
-        border-left: 1px solid #000;
-        border-right: 1px solid #000;
+        height: 82vh;
       }
 
       .intro {
-        position: absolute;
-        top: 56px;
-        left: 64px;
-        max-width: 380px;
+        top: 20px;
+        left: 16px;
+        max-width: calc(100% - 32px);
       }
       .intro .eyebrow {
-        font-family: "Zen Kaku Gothic New", sans-serif;
-        font-weight: 800;
-        font-size: 13px;
-        letter-spacing: 0.06em;
-        display: inline-block;
-        background: #b5e6c6;
-        border: 2px solid #000;
-        padding: 4px 12px;
-        margin-bottom: 14px;
+        font-size: 11px;
+        padding: 3px 10px;
+        margin-bottom: 8px;
       }
       .intro p {
-        font-family: "Noto Sans JP", sans-serif;
-        font-size: 14px;
-        line-height: 2;
-        color: #333;
+        font-size: 12px;
+        line-height: 1.7;
       }
 
       .character {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 220px;
-        z-index: 3;
-        animation: breathe 6s ease-in-out infinite;
-        transform-origin: center;
-      }
-
-      .character img {
-        width: 80%;
-        border: 2px solid #000;
-        border-radius: 100%;
-      }
-
-      @keyframes breathe {
-        0%,
-        100% {
-          transform: translate(-50%, -50%) scale(1);
-        }
-        50% {
-          transform: translate(-50%, -50%) scale(1.02);
-        }
-      }
-
-      /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) =====
-         JSで document.createElement する要素は Astro のスコープ属性が
-         付かないため、対応するCSSは :global() でスコープ対象外にする */
-      :global(.bubble-wrap) {
-        position: absolute;
-        z-index: 2;
-        opacity: 0;
-        animation: popOut 0.55s cubic-bezier(0.25, 0.9, 0.35, 1.15) forwards;
-        animation-delay: var(--delay, 0s);
-      }
-      @keyframes popOut {
-        0% {
-          transform: translate(-50%, -50%) scale(0.2);
-          opacity: 0;
-        }
-        60% {
-          transform: translate(-50%, -50%) scale(1.08);
-          opacity: 1;
-        }
-        100% {
-          transform: translate(-50%, -50%) scale(1);
-          opacity: 1;
-        }
+        width: 140px;
       }
 
       :global(.bubble) {
-        position: relative;
-        display: block;
-        width: 200px;
-        background: var(--paper);
-        color: var(--ink);
-        font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 1.6;
-        padding: 16px 18px;
-        border: 2px solid #000;
-        border-radius: 14px;
-        cursor: pointer;
-        text-align: left;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease,
-          background 0.2s ease;
-      }
-      :global(.bubble:hover),
-      :global(.bubble:focus-visible) {
-        transform: translateY(-3px);
-        box-shadow: 4px 5px 0 0 #000;
-        background: var(--mint);
-        outline: none;
-      }
-
-      /* しっぽ:上下のみ判定、辺の中の位置は --tail-x で調整 */
-      :global(.bubble::before),
-      :global(.bubble::after) {
-        content: "";
-        position: absolute;
-        width: 0;
-        height: 0;
-        border-style: solid;
+        width: 132px;
+        font-size: 12px;
+        line-height: 1.5;
+        padding: 12px 14px;
+        border-radius: 12px;
       }
 
       :global(.dir-b .bubble::before) {
-        bottom: -14px;
-        left: var(--tail-x, 50%);
-        margin-left: -13px;
-        border-width: 14px 13px 0 13px;
-        border-color: #000 transparent transparent transparent;
+        border-width: 11px 10px 0 10px;
+        margin-left: -10px;
+        bottom: -11px;
       }
       :global(.dir-b .bubble::after) {
-        bottom: -10.5px;
-        left: var(--tail-x, 50%);
-        margin-left: -10px;
-        border-width: 11px 10px 0 10px;
-        border-color: var(--paper) transparent transparent transparent;
+        border-width: 9px 8px 0 8px;
+        margin-left: -8px;
+        bottom: -8.5px;
       }
-      :global(.dir-b .bubble:hover::after) {
-        border-top-color: var(--mint);
-      }
-
       :global(.dir-t .bubble::before) {
-        top: -14px;
-        left: var(--tail-x, 50%);
-        margin-left: -13px;
-        border-width: 0 13px 14px 13px;
-        border-color: transparent transparent #000 transparent;
+        border-width: 0 10px 11px 10px;
+        margin-left: -10px;
+        top: -11px;
       }
       :global(.dir-t .bubble::after) {
-        top: -10.5px;
-        left: var(--tail-x, 50%);
-        margin-left: -10px;
-        border-width: 0 10px 11px 10px;
-        border-color: transparent transparent var(--paper) transparent;
-      }
-      :global(.dir-t .bubble:hover::after) {
-        border-bottom-color: var(--mint);
+        border-width: 0 8px 9px 8px;
+        margin-left: -8px;
+        top: -8.5px;
       }
 
-      /* ===== モーダル ===== */
-      .overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-        z-index: 10;
-      }
-      .overlay.open {
-        opacity: 1;
-        pointer-events: auto;
-      }
       .modal {
-        background: var(--paper);
-        color: var(--ink);
-        width: min(480px, 100%);
-        border: 3px solid #000;
-        padding: 36px 32px 32px;
-        position: relative;
-        transform: translateY(10px);
-        opacity: 0;
-        transition:
-          transform 0.25s ease,
-          opacity 0.25s ease;
-      }
-      .overlay.open .modal {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      .modal .tag {
-        display: inline-block;
-        font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
-        font-weight: 800;
-        font-size: 12px;
-        background: var(--mint);
-        border: 2px solid #000;
-        padding: 4px 12px;
-        margin-bottom: 16px;
+        padding: 28px 22px 22px;
       }
       .modal h2 {
-        font-family: "Montserrat", "Zen Kaku Gothic New", sans-serif;
-        font-size: 42px;
-        letter-spacing: 0.01em;
-        margin: 0 0 16px;
-        line-height: 1;
+        font-size: 30px;
       }
       .modal p {
-        font-family: "Noto Sans JP", sans-serif;
-        font-size: 14.5px;
-        line-height: 2;
-        color: #222;
+        font-size: 13.5px;
       }
-      .modal .close {
-        position: absolute;
-        top: 18px;
-        right: 18px;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 2px solid #000;
-        background: var(--paper);
-        color: #000;
-        font-size: 15px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition:
-          background 0.2s,
-          color 0.2s;
-      }
-      .modal .close:hover {
-        background: #000;
-        color: var(--mint);
-      }
+      /* ===== WORDS ボードのスマホ調整ここまで ===== */
+    }
+  </style>
 
-      @media (prefers-reduced-motion: reduce) {
-        .character {
-          animation: none !important;
-        }
-        :global(.bubble-wrap) {
-          animation: none !important;
-          opacity: 1 !important;
-        }
-      }
+  <script>
+    // 吹き出しごとの中身：実際の言葉に差し替えてください
 
-      /* ==================== スマホ対応 ==================== */
-      @media (max-width: 768px) {
-        .contents_texto {
-          padding: 10px 12px;
-          gap: 12px;
-          white-space: normal;
-          overflow: hidden;
-        }
+    import { title } from "process";
 
-        .contents_texto h2 {
-          flex: 1 1 0%;
-          min-width: 0;
-          font-size: 15vw;
-          overflow-x: hidden;
-          overflow-y: hidden;
-          white-space: nowrap;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          font-size: 15vw;
-        }
+    // ここに項目を追加していけば、吹き出しの数はいくつでも増やせます
+    const messages = [
+      {
+        id: "w1",
+        bubble:
+          "スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか",
+        tag: "DAJARE",
+        title:
+          "スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか",
+        body: "",
+        sourceUrl: "https://x.com/i/status/1967896983102018040",
+      },
+      {
+        id: "w2",
+        bubble: "24時間回ってる扇風機、24時ファン",
+        tag: "DAJARE",
+        title: "24時間回ってる扇風機、24時ファン",
+        body: "",
+        sourceUrl: "https://x.com/i/status/1854727402947260600",
+      },
+      {
+        id: "w3",
+        bubble: "疲れた町田ちま、たちまち寝落ちする",
+        tag: "DAJARE",
+        title: "疲れた町田ちま、たちまち寝落ちする",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w4",
+        bubble: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
+        tag: "DAJARE",
+        title: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w5",
+        bubble: "わりと暇な悪魔「いつデーモンいけます」",
+        tag: "DAJARE",
+        title: "わりと暇な悪魔「いつデーモンいけます」",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w6",
+        bubble: "あんまり納得できてない大富豪、イロン・マスク",
+        tag: "DAJARE",
+        title: "あんまり納得できてない大富豪、イロン・マスク",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w7",
+        bubble: "徒歩移動で、トホホ〜😅",
+        tag: "DAJARE",
+        title: "徒歩移動で、トホホ〜😅",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w8",
+        bubble: "カレーが、辛(かれ)ェ〜笑",
+        tag: "DAJARE",
+        title: "カレーが、辛(かれ)ェ〜笑",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w9",
+        bubble: "花粉にギャフン",
+        tag: "DAJARE",
+        title: "花粉にギャフン",
+        body: "",
+        sourceUrl: "",
+      },
+      {
+        id: "w10",
+        bubble: "IKEAに、行けや。",
+        tag: "DAJARE",
+        title: "IKEAに、行けや。",
+        body: "",
+        sourceUrl: "",
+      },
+    ];
 
-        .content_label {
-          top: 10px;
-          right: 66px;
-          max-width: 100px;
-          box-sizing: border-box;
-          overflow-x: hidden;
-          white-space: nowrap;
-          font-size: 11px;
-          padding: 4px 8px;
-        }
+    const stage = document.getElementById("stage");
+    const character = document.getElementById("character");
 
-        .back_btn {
-          width: 40px;
-          height: 40px;
-        }
+    const BUBBLE_W = 200; // .bubble の固定幅と合わせる
+    const MIN_GAP = 22; // 吹き出し同士の最低間隔
+    const EDGE_MARGIN = 40; // ボード端からの最低距離(しっぽ・影のはみ出し分含む)
+    const MAX_ATTEMPTS = 400;
 
-        .back_arrow {
-          font-size: 16px;
-        }
-
-        .chronology {
-          max-width: 50vh;
-          margin: 0 10px;
-        }
-
-        .chronology_title {
-          padding: 16px 1em;
-        }
-        .chronology_subtitle {
-          font-size: 20px;
-          letter-spacing: 0.2em;
-          margin: 0 0 2px 0;
-        }
-        .chronology_title h4 {
-          font-size: 13vw;
-        }
-        .chronology_date {
-          font-size: 15px;
-        }
-
-        :global(.timeline-wrap) {
-          padding: 32px 16px;
-          margin-bottom: 60px;
-        }
-
-        :global(.timeline-line) {
-          left: 8px;
-        }
-
-        :global(.marker-col) {
-          width: 16px;
-          flex: 0 0 16px;
-        }
-
-        :global(.marker-circle) {
-          width: 14px;
-          height: 14px;
-          border-width: 2px;
-        }
-
-        :global(.content-col) {
-          padding-left: 16px;
-          gap: 20px;
-        }
-
-        :global(.item-year) {
-          font-size: 12px;
-        }
-
-        :global(.item-title) {
-          font-size: 17px;
-          padding-bottom: 8px;
-        }
-
-        :global(.item-desc) {
-          font-size: 13px;
-          line-height: 1.8;
-        }
-
-        :global(.item-comment) {
-          font-size: 12px;
-          padding: 8px 12px;
-        }
-
-        :global(.like-btn) {
-          font-size: 12px;
-          padding: 5px 12px;
-        }
-
-        :global(.item-youtube) {
-          border-radius: 6px;
-        }
-
-        :global(.yt-play-btn) {
-          width: 52px;
-          height: 36px;
-        }
-
-        /* ===== ここから WORDS ボード(キャラ+吹き出し)のスマホ調整 ===== */
-        .words-canvas {
-          width: 100%;
-        }
-
-        .stage {
-          height: 82vh;
-        }
-
-        .intro {
-          top: 20px;
-          left: 16px;
-          max-width: calc(100% - 32px);
-        }
-        .intro .eyebrow {
-          font-size: 11px;
-          padding: 3px 10px;
-          margin-bottom: 8px;
-        }
-        .intro p {
-          font-size: 12px;
-          line-height: 1.7;
-        }
-
-        .character {
-          width: 140px;
-        }
-
-        :global(.bubble) {
-          width: 132px;
-          font-size: 12px;
-          line-height: 1.5;
-          padding: 12px 14px;
-          border-radius: 12px;
-        }
-
-        :global(.dir-b .bubble::before) {
-          border-width: 11px 10px 0 10px;
-          margin-left: -10px;
-          bottom: -11px;
-        }
-        :global(.dir-b .bubble::after) {
-          border-width: 9px 8px 0 8px;
-          margin-left: -8px;
-          bottom: -8.5px;
-        }
-        :global(.dir-t .bubble::before) {
-          border-width: 0 10px 11px 10px;
-          margin-left: -10px;
-          top: -11px;
-        }
-        :global(.dir-t .bubble::after) {
-          border-width: 0 8px 9px 8px;
-          margin-left: -8px;
-          top: -8.5px;
-        }
-
-        .modal {
-          padding: 28px 22px 22px;
-        }
-        .modal h2 {
-          font-size: 30px;
-        }
-        .modal p {
-          font-size: 13.5px;
-        }
-        /* ===== WORDS ボードのスマホ調整ここまで ===== */
-      }
-    </style>
-
-    <script>
-      // 吹き出しごとの中身：実際の言葉に差し替えてください
-      // ここに項目を追加していけば、吹き出しの数はいくつでも増やせます
-      const messages = [
-        {
-          id: "w1",
-          bubble:
-            "スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか",
-          tag: "DAJARE",
-          title:
-            "スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか",
-          body: "ここに実際に寄せられた言葉本文を入れます。長さは自由に調整できます。",
-        },
-        {
-          id: "w2",
-          bubble: "24時間回ってる扇風機、24時ファン",
-          tag: "DAJARE",
-          title: "24時間回ってる扇風機、24時ファン",
-          body: "ここに実際に寄せられた言葉本文を入れます。",
-        },
-        {
-          id: "w3",
-          bubble: "疲れた町田ちま、たちまち寝落ちする",
-          tag: "DAJARE",
-          title: "疲れた町田ちま、たちまち寝落ちする",
-          body: "ここに実際に寄せられた言葉本文を入れます。",
-        },
-        {
-          id: "w4",
-          bubble: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
-          tag: "DAJARE",
-          title: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
-          body: "ここに実際に寄せられた言葉本文を入れます。",
-        },
-        {
-          id: "w5",
-          bubble: "わりと暇な悪魔「いつデーモンいけます」",
-          tag: "DAJARE",
-          title: "わりと暇な悪魔「いつデーモンいけます」",
-          body: "ここに実際に寄せられた言葉本文を入れます。",
-        },
-        {
-          id: "w6",
-          bubble: "あんまり納得できてない大富豪、イロン・マスク",
-          tag: "DAJARE",
-          title: "あんまり納得できてない大富豪、イロン・マスク",
-          body: "ここに実際に寄せられた言葉本文を入れます。",
-        },
-      ];
-
+    // このページに来たとき(初回表示・View Transitionsでの遷移の両方)に実行する
+    function initWordsPage() {
       const stage = document.getElementById("stage");
+      if (!stage) return; // words ページ以外では何もしない
       const character = document.getElementById("character");
+      if (!character) return;
 
-      const BUBBLE_W = 200; // .bubble の固定幅と合わせる
-      const MIN_GAP = 22; // 吹き出し同士の最低間隔
-      const EDGE_MARGIN = 24; // ボード端からの最低距離(しっぽ・影のはみ出し分含む)
-      const MAX_ATTEMPTS = 400;
+      // 何回呼ばれても実際の配置処理は1回だけにするガード
+      // (直接呼び出し・astro:page-load・その他の再実行経路が
+      //  重なっても、これで確実に1回だけになる)
+      if (stage.dataset.wordsInit === "true") return;
+      stage.dataset.wordsInit = "true";
 
       function layoutBubbles() {
         const stageRect = { w: stage.clientWidth, h: stage.clientHeight };
         const centerX = stageRect.w / 2;
         const centerY = stageRect.h / 2;
 
-        // キャラクターの除外半径(実サイズ+余白)
         const charEl = character.getBoundingClientRect();
+        // 除外円の半径:キャラクターの実サイズを基準にする
+        // (固定値だとキャラが小さいスマホ表示で除外エリアが相対的に
+        //  広くなりすぎ、吹き出しの置き場所が窮屈になるため)
         const exclusionRadius = Math.max(charEl.width, charEl.height) / 2 + 70;
 
-        const placed = []; // { x, y, w, h } 中心座標とサイズ
+        const placed: { x: number; y: number; w: number; h: number }[] = [];
 
         messages.forEach((msg, i) => {
-          // 一時的に挿入してサイズ(高さ)を計測する
           const wrap = document.createElement("div");
           wrap.className = "bubble-wrap";
           wrap.style.visibility = "hidden";
@@ -710,12 +828,12 @@ import Footer from "../components/footer.astro";
           stage.appendChild(wrap);
 
           const rect = btn.getBoundingClientRect();
-          const w = rect.width + 32; // しっぽ・影の余裕を含める
+          // しっぽ(14px)・影・ホバー時の浮き上がり(3px)分の余裕を持たせる
+          const w = rect.width + 32;
           const h = rect.height + 32;
 
-          // ランダム配置(中心を避け、既存の吹き出しとも重ならないように)
-          let x,
-            y,
+          let x = 0,
+            y = 0,
             ok = false;
           for (let a = 0; a < MAX_ATTEMPTS; a++) {
             x =
@@ -741,7 +859,6 @@ import Footer from "../components/footer.astro";
             ok = true;
             break;
           }
-          // 見つからなければ、除外円のすぐ外側に機械的に配置(保険)
           if (!ok) {
             // 通常の試行で見つからなかった場合、除外円の外側を
             // 少しずつ広げながら、他の吹き出しと重ならない場所を探す
@@ -777,6 +894,7 @@ import Footer from "../components/footer.astro";
               }
             }
             // それでも見つからない場合のみ、重なりを許容して機械的に配置する
+            // (ここまで来るのは極端に吹き出しが多い/ボードが狭い場合の保険)
             if (!foundFallback) {
               const angle = Math.random() * Math.PI * 2;
               x = centerX + Math.cos(angle) * (exclusionRadius + w / 2 + 20);
@@ -794,15 +912,14 @@ import Footer from "../components/footer.astro";
 
           placed.push({ x, y, w, h });
 
-          // 上下のみでしっぽの向きを判定
           const dir = y < centerY ? "dir-b" : "dir-t";
 
-          // 辺の中の左右位置(吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りに)
+          // 吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りにする
           const norm = Math.max(
             -1,
             Math.min(1, (centerX - x) / (stageRect.w / 2)),
-          ); // -1..1
-          const tailX = 50 + norm * 30; // 20%〜80%程度に収める
+          );
+          const tailX = 50 + norm * 30;
           const clampedTailX = Math.min(80, Math.max(20, tailX));
 
           wrap.classList.add(dir);
@@ -814,13 +931,9 @@ import Footer from "../components/footer.astro";
         });
       }
 
-      // 「window の load を待つ」と、プレビュー環境によっては
-      // スクリプト実行時点で load が既に発火済みで呼ばれないことがあるため、
-      // ここで直接実行する(このスクリプトは body の末尾にあるのでDOMは準備済み)
-      //
-      // また、Webフォントの読み込みが終わってから測って配置しないと、
-      // 後からフォントが差し替わった時に箱のサイズが変わり位置がズレるため、
-      // フォント読み込み完了を待つ
+      // Webフォントの読み込みが完了してからサイズを測って配置する
+      // (先に測ってしまうと、後からフォントが差し替わった時に
+      //  箱のサイズが変わり、位置がズレて見える)
       if (document.fonts && document.fonts.status !== "loaded") {
         document.fonts.ready.then(layoutBubbles);
       } else {
@@ -831,31 +944,70 @@ import Footer from "../components/footer.astro";
       const content = Object.fromEntries(messages.map((m) => [m.id, m]));
       const overlay = document.getElementById("overlay");
       const closeBtn = document.getElementById("closeBtn");
-      let lastFocused = null;
+      const sourceLink = document.getElementById(
+        "modal-source",
+      ) as HTMLAnchorElement | null;
+      const shareBtn = document.getElementById("modal-share");
+      let lastFocused: HTMLElement | null = null;
+      let currentMessage: (typeof messages)[number] | null = null;
 
       stage.addEventListener("click", (e) => {
-        const btn = e.target.closest(".bubble");
+        const btn = (e.target as HTMLElement).closest(
+          ".bubble",
+        ) as HTMLButtonElement | null;
         if (!btn) return;
-        const d = content[btn.dataset.modal];
-        document.getElementById("modal-tag").textContent = d.tag;
-        document.getElementById("modal-title").textContent = d.title;
-        document.getElementById("modal-body").textContent = d.body;
-        lastFocused = document.activeElement;
-        overlay.classList.add("open");
-        closeBtn.focus();
+        const d = content[btn.dataset.modal!];
+        currentMessage = d;
+        document.getElementById("modal-tag")!.textContent = d.tag;
+        document.getElementById("modal-title")!.textContent = d.title;
+        document.getElementById("modal-body")!.textContent = d.body;
+
+        // 引用元リンク:sourceUrl が無ければボタンごと隠す
+        if (sourceLink) {
+          if (d.sourceUrl) {
+            sourceLink.href = d.sourceUrl;
+            sourceLink.dataset.empty = "false";
+          } else {
+            sourceLink.removeAttribute("href");
+            sourceLink.dataset.empty = "true";
+          }
+        }
+
+        lastFocused = document.activeElement as HTMLElement;
+        overlay!.classList.add("open");
+        closeBtn!.focus();
+      });
+
+      // Xでシェア:本文の言葉+このページのURLを添えて投稿画面を開く
+      shareBtn?.addEventListener("click", () => {
+        if (!currentMessage) return;
+        const text = currentMessage.title;
+        const shareUrl = new URL(location.href);
+        const intentUrl =
+          "https://twitter.com/intent/tweet?text=" +
+          encodeURIComponent(text) +
+          "&url=" +
+          encodeURIComponent(shareUrl.toString());
+        window.open(intentUrl, "_blank", "noopener,noreferrer");
       });
 
       function closeModal() {
-        overlay.classList.remove("open");
-        if (lastFocused) lastFocused.focus();
+        overlay!.classList.remove("open");
+        lastFocused?.focus();
       }
-      closeBtn.addEventListener("click", closeModal);
-      overlay.addEventListener("click", (e) => {
+      closeBtn!.addEventListener("click", closeModal);
+      overlay!.addEventListener("click", (e) => {
         if (e.target === overlay) closeModal();
       });
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeModal();
       });
-    </script>
-  </body>
+    }
+
+    // 通常の読み込みに対応
+    initWordsPage();
+    // View Transitionsでの遷移(このサイトで実際に発火するかは環境依存)にも対応。
+    // 上のガードにより、両方発火しても実行は1回だけになる
+    document.addEventListener("astro:page-load", initWordsPage);
+  </script>
 </BaseLayout>
