@@ -5,7 +5,7 @@ import Footer from "../components/footer.astro";
 // ====== 編集ポイント ======
 // イラスト: public/ 配下に置いたパスを指定（空文字ならプレースホルダー表示）
 const illustSrc = "";
-const illustrator = ""; // "illustration by ___" の名前
+const illustrator = "奏音"; // "illustration by ___" の名前
 
 // 各種リンク（プロフィールの上に並ぶ 3 つ）
 const links = [
@@ -16,13 +16,13 @@ const links = [
 
 // 『誕生日』以下のプロフィール。値は仮なので差し替えてください
 const profile = [
-  { label: "誕生日", value: "—" },
+  { label: "誕生日", value: "1993.8.2" },
   { label: "年齢", value: "11歳" },
-  { label: "身長", value: "—" },
+  { label: "身長", value: "141cm" },
   { label: "好きなもの", value: "矢車菊の花" },
-  { label: "苦手なもの", value: "—" },
+  { label: "苦手なもの", value: "トマト、ネギ" },
   { label: "趣味", value: "—" },
-  { label: "ファンネーム", value: "—" },
+  { label: "ファンネーム", value: "矢字馬" },
   { label: "ハッシュタグ", value: "—" },
   { label: "ママ（イラスト）", value: "—" },
   { label: "デビュー", value: "2018.09.28" },
@@ -424,7 +424,7 @@ const nameChars = ["矢", "車", "り", "ね"];
         border-left: 1px solid var(--about-ink);
         border-right: 1px solid var(--about-ink);
         background: var(--about-bg);
-        font-family: "Noto Sans JP", "Zen Kaku Gothic New", sans-serif;
+        font-family: "Zen Kaku Gothic New", sans-serif;
         color: var(--about-ink);
         overflow: hidden;
       }
@@ -504,9 +504,9 @@ const nameChars = ["矢", "車", "り", "ね"];
       }
 
       .about_visual_credit {
+        font-family: "Zen Kaku Gothic New", sans-serif;
         display: inline-block;
         min-width: 10em;
-        border-bottom: 1px solid var(--about-ink);
         line-height: 1;
         padding-bottom: 2px;
       }
@@ -731,6 +731,7 @@ const nameChars = ["矢", "車", "り", "ね"];
       /* プロフィール（誕生日以下） */
       .about_profile {
         border-top: 1px solid var(--about-ink);
+        font-family: "Zen Kaku Gothic New", "acumin-variable", sans-serif;s
       }
 
       .about_profile_row {
