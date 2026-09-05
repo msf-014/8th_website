@@ -344,7 +344,7 @@ import Footer from "../components/footer.astro";
       border-color: #000 transparent transparent transparent;
     }
     :global(.dir-b .bubble::after) {
-      bottom: -10.5px;
+      bottom: -10px;
       left: var(--tail-x, 50%);
       margin-left: -10px;
       border-width: 11px 10px 0 10px;
@@ -362,7 +362,7 @@ import Footer from "../components/footer.astro";
       border-color: transparent transparent #000 transparent;
     }
     :global(.dir-t .bubble::after) {
-      top: -10.5px;
+      top: -10px;
       left: var(--tail-x, 50%);
       margin-left: -10px;
       border-width: 0 10px 11px 10px;
@@ -776,7 +776,7 @@ import Footer from "../components/footer.astro";
  
         :global(.bubble) {
           width: 132px;
-          font-size: 12px;
+          font-size: 9px;
           line-height: 1.5;
           padding: 12px 14px;
           border-radius: 12px;
@@ -785,22 +785,22 @@ import Footer from "../components/footer.astro";
         :global(.dir-b .bubble::before) {
           border-width: 11px 10px 0 10px;
           margin-left: -10px;
-          bottom: -9px;
+          bottom: -11px;
         }
         :global(.dir-b .bubble::after) {
           border-width: 9px 8px 0 8px;
           margin-left: -8px;
-          bottom: -6.5px;
+          bottom: -7.5px;
         }
         :global(.dir-t .bubble::before) {
           border-width: 0 10px 11px 10px;
           margin-left: -10px;
-          top: -9px;
+          top: -11px;
         }
         :global(.dir-t .bubble::after) {
           border-width: 0 8px 9px 8px;
           margin-left: -8px;
-          top: -6.5px;
+          top: -7.5px;
         }
  
         .modal {
