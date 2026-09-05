@@ -627,74 +627,193 @@ import Footer from "../components/footer.astro";
         height: 36px;
       }
 
-      /* ===== ここから WORDS ボード(キャラ+吹き出し)のスマホ調整 ===== */
-      .words-canvas {
-        width: 100%;
+       /* ==================== スマホ対応 ==================== */
+      @media (max-width: 768px) {
+        .contents_texto {
+          padding: 10px 12px;
+          gap: 12px;
+          white-space: normal;
+          overflow: hidden;
+        }
+ 
+        .contents_texto h2 {
+          flex: 1 1 0%;
+          min-width: 0;
+          font-size: 15vw;
+          overflow-x: hidden;
+          overflow-y: hidden;
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          font-size: 15vw;
+        }
+ 
+        .content_label {
+          top: 10px;
+          right: 66px;
+          max-width: 100px;
+          box-sizing: border-box;
+          overflow-x: hidden;
+          white-space: nowrap;
+          font-size: 11px;
+          padding: 4px 8px;
+        }
+ 
+        .back_btn {
+          width: 40px;
+          height: 40px;
+        }
+ 
+        .back_arrow {
+          font-size: 16px;
+        }
+ 
+        .chronology {
+          max-width: 50vh;
+          margin: 0 10px;
+        }
+ 
+        .chronology_title {
+          padding: 16px 1em;
+        }
+        .chronology_subtitle {
+          font-size: 20px;
+          letter-spacing: 0.2em;
+          margin: 0 0 2px 0;
+        }
+        .chronology_title h4 {
+          font-size: 13vw;
+        }
+        .chronology_date {
+          font-size: 15px;
+        }
+ 
+        :global(.timeline-wrap) {
+          padding: 32px 16px;
+          margin-bottom: 60px;
+        }
+ 
+        :global(.timeline-line) {
+          left: 8px;
+        }
+ 
+        :global(.marker-col) {
+          width: 16px;
+          flex: 0 0 16px;
+        }
+ 
+        :global(.marker-circle) {
+          width: 14px;
+          height: 14px;
+          border-width: 2px;
+        }
+ 
+        :global(.content-col) {
+          padding-left: 16px;
+          gap: 20px;
+        }
+ 
+        :global(.item-year) {
+          font-size: 12px;
+        }
+ 
+        :global(.item-title) {
+          font-size: 17px;
+          padding-bottom: 8px;
+        }
+ 
+        :global(.item-desc) {
+          font-size: 13px;
+          line-height: 1.8;
+        }
+ 
+        :global(.item-comment) {
+          font-size: 12px;
+          padding: 8px 12px;
+        }
+ 
+        :global(.like-btn) {
+          font-size: 12px;
+          padding: 5px 12px;
+        }
+ 
+        :global(.item-youtube) {
+          border-radius: 6px;
+        }
+ 
+        :global(.yt-play-btn) {
+          width: 52px;
+          height: 36px;
+        }
+ 
+        /* ===== ここから WORDS ボード(キャラ+吹き出し)のスマホ調整 ===== */
+        .words-canvas {
+          width: 100%;
+        }
+ 
+        .stage {
+          height: 640px;
+        }
+ 
+        .intro {
+          top: 20px;
+          left: 16px;
+          max-width: calc(100% - 32px);
+        }
+        .intro .eyebrow {
+          font-size: 11px;
+          padding: 3px 10px;
+          margin-bottom: 8px;
+        }
+        .intro p {
+          font-size: 12px;
+          line-height: 1.7;
+        }
+ 
+        .character {
+          width: 140px;
+        }
+ 
+        :global(.bubble) {
+          width: 132px;
+          font-size: 12px;
+          line-height: 1.5;
+          padding: 12px 14px;
+          border-radius: 12px;
+        }
+ 
+        :global(.dir-b .bubble::before) {
+          border-width: 11px 10px 0 10px;
+          margin-left: -10px;
+          bottom: -9px;
+        }
+        :global(.dir-b .bubble::after) {
+          border-width: 9px 8px 0 8px;
+          margin-left: -8px;
+          bottom: -6.5px;
+        }
+        :global(.dir-t .bubble::before) {
+          border-width: 0 10px 11px 10px;
+          margin-left: -10px;
+          top: -9px;
+        }
+        :global(.dir-t .bubble::after) {
+          border-width: 0 8px 9px 8px;
+          margin-left: -8px;
+          top: -6.5px;
+        }
+ 
+        .modal {
+          padding: 28px 22px 22px;
+        }
+        .modal h2 {
+          font-size: 30px;
+        }
+        .modal p {
+          font-size: 13.5px;
+        }
+        /* ===== WORDS ボードのスマホ調整ここまで ===== */
       }
-
-      .stage {
-        height: 82vh;
-      }
-
-      .intro {
-        top: 20px;
-        left: 16px;
-        max-width: calc(100% - 32px);
-      }
-      .intro .eyebrow {
-        font-size: 11px;
-        padding: 3px 10px;
-        margin-bottom: 8px;
-      }
-      .intro p {
-        font-size: 12px;
-        line-height: 1.7;
-      }
-
-      .character {
-        width: 140px;
-      }
-
-      :global(.bubble) {
-        width: 132px;
-        font-size: 12px;
-        line-height: 1.5;
-        padding: 12px 14px;
-        border-radius: 12px;
-      }
-
-      :global(.dir-b .bubble::before) {
-        border-width: 11px 10px 0 10px;
-        margin-left: -10px;
-        bottom: -11px;
-      }
-      :global(.dir-b .bubble::after) {
-        border-width: 9px 8px 0 8px;
-        margin-left: -8px;
-        bottom: -8.5px;
-      }
-      :global(.dir-t .bubble::before) {
-        border-width: 0 10px 11px 10px;
-        margin-left: -10px;
-        top: -11px;
-      }
-      :global(.dir-t .bubble::after) {
-        border-width: 0 8px 9px 8px;
-        margin-left: -8px;
-        top: -8.5px;
-      }
-
-      .modal {
-        padding: 28px 22px 22px;
-      }
-      .modal h2 {
-        font-size: 30px;
-      }
-      .modal p {
-        font-size: 13.5px;
-      }
-      /* ===== WORDS ボードのスマホ調整ここまで ===== */
-    }
   </style>
 
   <script>
