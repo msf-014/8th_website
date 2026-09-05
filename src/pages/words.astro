@@ -24,12 +24,16 @@ import Footer from "../components/footer.astro";
       <div class="stage" id="stage">
         <div class="intro">
           <span class="eyebrow">YAGURUMA WORDS</span>
-          <p>吹き出しをクリックすると、詳細を読むことが出来ます。</p>
+          <p>
+            大矢車様のありがたいお言葉を集めました。<br
+            />吹き出しをクリックすると、詳細を読むことが出来ます。
+          </p>
         </div>
 
         <!-- 実際のキャラクター画像/イラストをここに入れてください(現状は空です) -->
         <div class="character" id="character" aria-hidden="true">
           <img class="character_img" src="/icon_1.png" />
+          <p>大矢車様</p>
         </div>
       </div>
     </div>
@@ -245,6 +249,12 @@ import Footer from "../components/footer.astro";
       z-index: 3;
       animation: breathe 6s ease-in-out infinite;
       transform-origin: center;
+      margin: auto;
+    }
+
+    .character p {
+      display: flex;
+      justify-content: center;
     }
 
     .character img {
@@ -718,7 +728,7 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "疲れた町田ちま、たちまち寝落ちする",
         body: "",
-        sourceUrl: "",
+        sourceUrl: "https://x.com/i/status/1855464762915864845",
       },
       {
         id: "w4",
@@ -726,7 +736,7 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
         body: "",
-        sourceUrl: "",
+        sourceUrl: "https://x.com/i/status/1856213372162756691",
       },
       {
         id: "w5",
@@ -734,7 +744,7 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "わりと暇な悪魔「いつデーモンいけます」",
         body: "",
-        sourceUrl: "",
+        sourceUrl: "https://x.com/i/status/1855132655941304833",
       },
       {
         id: "w6",
@@ -742,7 +752,7 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "あんまり納得できてない大富豪、イロン・マスク",
         body: "",
-        sourceUrl: "",
+        sourceUrl: "https://x.com/i/status/1942805149988114825",
       },
       {
         id: "w7",
@@ -750,7 +760,8 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "徒歩移動で、トホホ〜😅",
         body: "",
-        sourceUrl: "",
+        sourceUrl:
+          "https://x.com/Rine_Yaguruma/status/1859021640702849380?s=20",
       },
       {
         id: "w8",
@@ -758,7 +769,8 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "カレーが、辛(かれ)ェ〜笑",
         body: "",
-        sourceUrl: "",
+        sourceUrl:
+          "https://x.com/Rine_Yaguruma/status/1938430093124374571?s=20",
       },
       {
         id: "w9",
@@ -766,15 +778,26 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title: "花粉にギャフン",
         body: "",
-        sourceUrl: "",
+        sourceUrl:
+          "https://x.com/Rine_Yaguruma/status/1883877445021135179?s=20",
       },
       {
-        id: "w10",
+        id: "w9",
+        bubble: "抹消しまっしょう",
+        tag: "DAJARE",
+        title: "抹消しまっしょう",
+        body: "",
+        sourceUrl:
+          "https://x.com/Rine_Yaguruma/status/2042213422134378979?s=20",
+      },
+      {
+        id: "w11",
         bubble: "IKEAに、行けや。",
         tag: "DAJARE",
         title: "IKEAに、行けや。",
         body: "",
-        sourceUrl: "",
+        sourceUrl:
+          "https://x.com/Rine_Yaguruma/status/1774393131615826133?s=20",
       },
     ];
 
