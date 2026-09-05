@@ -552,6 +552,74 @@ import Footer from "../components/footer.astro";
           width: 52px;
           height: 36px;
         }
+
+        /* ===== ここから WORDS ボード(キャラ+吹き出し)のスマホ調整 ===== */
+        .words-canvas {
+          width: 100%;
+        }
+
+        .stage {
+          height: 82vh;
+        }
+
+        .intro {
+          top: 20px;
+          left: 16px;
+          max-width: calc(100% - 32px);
+        }
+        .intro .eyebrow {
+          font-size: 11px;
+          padding: 3px 10px;
+          margin-bottom: 8px;
+        }
+        .intro p {
+          font-size: 12px;
+          line-height: 1.7;
+        }
+
+        .character {
+          width: 140px;
+        }
+
+        :global(.bubble) {
+          width: 132px;
+          font-size: 12px;
+          line-height: 1.5;
+          padding: 12px 14px;
+          border-radius: 12px;
+        }
+
+        :global(.dir-b .bubble::before) {
+          border-width: 11px 10px 0 10px;
+          margin-left: -10px;
+          bottom: -11px;
+        }
+        :global(.dir-b .bubble::after) {
+          border-width: 9px 8px 0 8px;
+          margin-left: -8px;
+          bottom: -8.5px;
+        }
+        :global(.dir-t .bubble::before) {
+          border-width: 0 10px 11px 10px;
+          margin-left: -10px;
+          top: -11px;
+        }
+        :global(.dir-t .bubble::after) {
+          border-width: 0 8px 9px 8px;
+          margin-left: -8px;
+          top: -8.5px;
+        }
+
+        .modal {
+          padding: 28px 22px 22px;
+        }
+        .modal h2 {
+          font-size: 30px;
+        }
+        .modal p {
+          font-size: 13.5px;
+        }
+        /* ===== WORDS ボードのスマホ調整ここまで ===== */
       }
     </style>
 
