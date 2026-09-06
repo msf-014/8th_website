@@ -68,6 +68,7 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 <BaseLayout
   title="RineYaguruma 8th Anniv | 矢車りね 8周年記念サイト"
   headerOverlay={true}
+  headerColor="#000"
 >
   <div id="loading-screen">
     <img src="/loading.gif" alt="Loading..." />
@@ -76,7 +77,11 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     <!-- メインビジュアル -->
     <main class="main" id="main-home">
       <section class="main_visual">
-        <img src="mainvisual_kari_2.webp" alt="main_visual" />
+        <div class="main_visual_left"></div>
+        <div class="main_visual_center">
+          <img src="8th_2026_main_rough.webp" alt="main_visual" />
+        </div>
+        <div class="main_visual_right"></div>
       </section>
       <div class="main_container">
         <div class="content_list">
@@ -127,6 +132,10 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     a,
     a:visited {
       color: #000; /*カラーコードは任意*/
+    }
+
+    :root {
+      --footer-height: 48px;
     }
 
     #loading-screen {
@@ -190,12 +199,6 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
     .main-wrapper {
       position: relative;
-    }
-
-    .main_visual img {
-      display: block;
-      width: 100%;
-      object-fit: cover;
     }
 
     .content_texto {
@@ -298,9 +301,32 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
     /* メインビジュアルは退場中にゆっくり沈めて、視線をタイトルへ寄せる */
     .main_visual {
-      transition:
-        opacity 0.4s ease,
-        transform 0.4s ease;
+      display: grid;
+      grid-template-columns: 1fr 33.333% 1fr; /* 左・中央1/3・右 */
+      width: 100%;
+      max-height: calc(100vh - var(--footer-height));
+      overflow: ciu;
+    }
+
+    .main_visual_left {
+      background: #a0b8f4; /* とりあえず空白 */
+    }
+
+    .main_visual_center {
+      /* スマホ幅のフレームっぽく見せる */
+    }
+
+    .main_visual_center img {
+      display: block;
+      width: 100%;
+      max-height: calc(100vh - var(--footer-height));
+      object-fit: contain;
+      object-position: center top; /* 上部を基準にトリミング */
+      background: #a0b8f4;
+    }
+
+    .main_visual_right {
+      background: #a0b8f4; /* とりあえず空白 */
     }
     .main-wrapper.is-leaving .main_visual {
       opacity: 0;
@@ -362,6 +388,20 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         right: 12px;
         font-size: 11px;
         padding: 4px 8px;
+      }
+
+      .main_visual {
+        grid-template-columns: 1fr; /* 1カラムに */
+        max-height: calc(100vh - 45px); /* スマホのフッター高さに合わせて調整 */
+      }
+
+      .main_visual_left,
+      .main_visual_right {
+        display: none; /* 左右カラムを非表示 */
+      }
+
+      .main_visual_center img {
+        max-height: calc(100vh - 45px);
       }
 
       /* 矢印:普段は幅0で場所を取らず、is-armedで幅が広がってスペースを作る */

@@ -2,10 +2,13 @@
 interface Props {
   overlay?: boolean;
 }
-const { overlay = false } = Astro.props;
+const { overlay = false, headerColor = "#fff" } = Astro.props;
 ---
 
-<header class:list={["site-header", { overlay }]}>
+<header
+  class:list={["site-header", { overlay }]}
+  style={`--header-text-color: ${headerColor}`}
+>
   <div class="header">
     <h2><a href="/">Rinalia</a></h2>
   </div>
@@ -50,7 +53,7 @@ const { overlay = false } = Astro.props;
 
     /* overlay時は白文字などに調整(画像に合わせて色は変更してください) */
     .site-header.overlay .header h2 {
-      color: #fff;
+      color: var(--header-text-color, #fff);
     }
 
     /* ==================== スマホ対応 ==================== */
