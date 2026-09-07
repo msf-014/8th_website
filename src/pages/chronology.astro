@@ -355,7 +355,7 @@ import Footer from "../components/footer.astro";
         :global(.item-desc) {
           margin: 0;
           font-size: 14px;
-          font-weight: 700;
+          font-weight: 500;
           line-height: 2;
           color: var(--timeline-text-sub);
           font-family: "Zen Kaku Gothic New", sans-serif;
@@ -373,7 +373,7 @@ import Footer from "../components/footer.astro";
           border-radius: 999px;
           align-self: flex-start;
           font-family: "Zen Kaku Gothic New", sans-serif;
-          font-weight: 600;
+          font-weight: 500;
         }
         :global(.item-comment)::before {
           content: "";
@@ -441,6 +441,18 @@ import Footer from "../components/footer.astro";
           width: 100%;
           height: 100%;
           border: none;
+        }
+
+        :global(.item-image) {
+          width: 100%;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        :global(.item-image img) {
+          width: 100%;
+          height: auto;
+          display: block;
+          object-fit: cover;
         }
 
         /* YouTubeサムネイルプレースホルダー */
@@ -653,6 +665,7 @@ import Footer from "../components/footer.astro";
             desc: "Mirrativにて初配信を行う。",
             comment: "",
             youtube: "",
+            image: "mainvisual_kari.png",
           },
           {
             year: "2018/09/28",
@@ -661,6 +674,7 @@ import Footer from "../components/footer.astro";
             comment:
               "詳細はメン限のため差し控えるが可愛い矢車を確認することができる。",
             youtube: "",
+            image: "mainvisual_kari.png",
           },
           {
             year: "2018/12/09",
@@ -668,6 +682,7 @@ import Footer from "../components/footer.astro";
             desc: "にじさんじ公式チャンネルへの初出演でありYouTube上での初めての配信、そして初コラボでもある初めて尽くしの配信。\n2026年現在よりも尖っていた（本人談）時代の子供らしい発言や煽りが満載。\nしばちゃんとの仲の良い駆け引きも見どころ。",
             comment: "comments",
             youtube: "ksgP23ML9x0",
+            image: "mainvisual_kari.png",
           },
           {
             year: "2018/12/23",
@@ -675,6 +690,7 @@ import Footer from "../components/footer.astro";
             desc: "自身のYouTubeチャンネルでの初めての配信。矢車の雑談配信史上公式の最古の記録。\n最近の出来事や人狼にハマっていることなどを語っている。",
             comment: "comments",
             youtube: "bd3eTSoKR6U",
+            image: "mainvisual_kari.png",
           },
           {
             year: "2019/06/01",
@@ -682,6 +698,7 @@ import Footer from "../components/footer.astro";
             desc: "先着100名でボイス内容をリクエストすることができた。\nこの時リクエストを出さなかったユーザーにメンヘラトマト収穫ボイスを送付した。",
             comment: "comments",
             youtube: "",
+            image: "mainvisual_kari.png",
           },
           {
             year: "2019/06/20",
@@ -689,6 +706,7 @@ import Footer from "../components/footer.astro";
             desc: "ライバー用スマホを失くした雑談配信を行う。「Liver Yo Smartphone」はこの時に生まれた。",
             comment: "comments",
             youtube: "B9SL-dlO9Zo",
+            image: "mainvisual_kari.png",
           },
           {
             year: "2020/03/31",
@@ -1114,6 +1132,11 @@ import Footer from "../components/footer.astro";
             mediaCol.className = "media-col";
             if (item.youtube) {
               mediaCol.appendChild(buildYoutubePlaceholder(item.youtube));
+            } else if (item.image) {
+              const imgWrap = document.createElement("div");
+              imgWrap.className = "item-image";
+              imgWrap.innerHTML = `<img src="${item.image}" alt="${item.title}" loading="lazy">`;
+              mediaCol.appendChild(imgWrap);
             }
 
             /* content-col に両方を入れる */
