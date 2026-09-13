@@ -335,21 +335,21 @@ import Footer from "../components/footer.astro";
       width: 0;
       height: 0;
       border-style: solid;
+      transition: background-color 0.2s ease;
     }
 
     :global(.dir-b .bubble::before) {
-      bottom: -12px;
-      left: var(--tail-x, 50%);
-      margin-left: -13px;
-      border-width: 14px 13px 0 13px;
-      border-color: #000 transparent transparent transparent;
-      z-index: -1;
-    }
-    :global(.dir-b .bubble::after) {
-      bottom: -10px;
+      bottom: -13px;
       left: var(--tail-x, 50%);
       margin-left: -10px;
-      border-width: 11px 10px 0 10px;
+      border-width: 13px 10px 0;
+      border-color: #000 transparent transparent transparent;
+    }
+    :global(.dir-b .bubble::after) {
+      bottom: -11px;
+      left: var(--tail-x, 50%);
+      margin-left: -12px;
+      border-width: 17px 12px 0;
       border-color: var(--paper) transparent transparent transparent;
     }
     :global(.dir-b .bubble:hover::after) {
@@ -357,18 +357,17 @@ import Footer from "../components/footer.astro";
     }
 
     :global(.dir-t .bubble::before) {
-      top: -12px;
-      left: var(--tail-x, 50%);
-      margin-left: -13px;
-      border-width: 0 13px 14px 13px;
-      border-color: transparent transparent #000 transparent;
-      z-index: -1;
-    }
-    :global(.dir-t .bubble::after) {
-      top: -10px;
+      top: -13px;
       left: var(--tail-x, 50%);
       margin-left: -10px;
-      border-width: 0 10px 11px 10px;
+      border-width: 0 10px 13px;
+      border-color: transparent transparent #000 transparent;
+    }
+    :global(.dir-t .bubble::after) {
+      top: -11px;
+      left: var(--tail-x, 50%);
+      margin-left: -12px;
+      border-width: 0 12px 17px;
       border-color: transparent transparent var(--paper) transparent;
     }
     :global(.dir-t .bubble:hover::after) {
@@ -638,7 +637,7 @@ import Footer from "../components/footer.astro";
         tag: "DAJARE",
         title:
           "スイミングしながら睡眠している時、それはまだスイミングなんじゃないだろうか",
-        body: "",
+        body: "Xより",
         sourceUrl: "https://x.com/i/status/1967896983102018040",
       },
       {
@@ -646,7 +645,7 @@ import Footer from "../components/footer.astro";
         bubble: "24時間回ってる扇風機、24時ファン",
         tag: "DAJARE",
         title: "24時間回ってる扇風機、24時ファン",
-        body: "",
+        body: "Xより",
         sourceUrl: "https://x.com/i/status/1854727402947260600",
       },
       {
@@ -654,7 +653,7 @@ import Footer from "../components/footer.astro";
         bubble: "疲れた町田ちま、たちまち寝落ちする",
         tag: "DAJARE",
         title: "疲れた町田ちま、たちまち寝落ちする",
-        body: "",
+        body: "Xより",
         sourceUrl: "https://x.com/i/status/1855464762915864845",
       },
       {
@@ -662,7 +661,7 @@ import Footer from "../components/footer.astro";
         bubble: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
         tag: "DAJARE",
         title: "ダルめの騎士「今夜は貴方様をお守りしナイト…っとｗ」",
-        body: "",
+        body: "Xより",
         sourceUrl: "https://x.com/i/status/1856213372162756691",
       },
       {
@@ -670,7 +669,7 @@ import Footer from "../components/footer.astro";
         bubble: "わりと暇な悪魔「いつデーモンいけます」",
         tag: "DAJARE",
         title: "わりと暇な悪魔「いつデーモンいけます」",
-        body: "",
+        body: "Xより",
         sourceUrl: "https://x.com/i/status/1855132655941304833",
       },
       {
@@ -678,7 +677,7 @@ import Footer from "../components/footer.astro";
         bubble: "あんまり納得できてない大富豪、イロン・マスク",
         tag: "DAJARE",
         title: "あんまり納得できてない大富豪、イロン・マスク",
-        body: "",
+        body: "Xより",
         sourceUrl: "https://x.com/i/status/1942805149988114825",
       },
       {
@@ -686,45 +685,103 @@ import Footer from "../components/footer.astro";
         bubble: "徒歩移動で、トホホ〜😅",
         tag: "DAJARE",
         title: "徒歩移動で、トホホ〜😅",
-        body: "",
-        sourceUrl:
-          "https://x.com/Rine_Yaguruma/status/1859021640702849380?s=20",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/1859021640702849380",
       },
       {
         id: "w8",
         bubble: "カレーが、辛(かれ)ェ〜笑",
         tag: "DAJARE",
         title: "カレーが、辛(かれ)ェ〜笑",
-        body: "",
-        sourceUrl:
-          "https://x.com/Rine_Yaguruma/status/1938430093124374571?s=20",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/1938430093124374571",
       },
       {
         id: "w9",
         bubble: "花粉にギャフン",
         tag: "DAJARE",
         title: "花粉にギャフン",
-        body: "",
-        sourceUrl:
-          "https://x.com/Rine_Yaguruma/status/1883877445021135179?s=20",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/1883877445021135179",
       },
       {
-        id: "w9",
+        id: "w10",
         bubble: "抹消しまっしょう",
         tag: "DAJARE",
         title: "抹消しまっしょう",
-        body: "",
-        sourceUrl:
-          "https://x.com/Rine_Yaguruma/status/2042213422134378979?s=20",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/2042213422134378979",
       },
       {
         id: "w11",
         bubble: "IKEAに、行けや。",
         tag: "DAJARE",
         title: "IKEAに、行けや。",
-        body: "",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/1774393131615826133",
+      },
+      {
+        id: "w12",
+        bubble: "でもさ、否定から入るのってよくないと思うよ",
+        tag: "TWEET",
+        title: "でもさ、否定から入るのってよくないと思うよ",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/2070870517238919580",
+      },
+      {
+        id: "w13",
+        bubble:
+          "デカフェラテという表記を指差し、「これってデカいカフェラテってことですか？」と聞き、大恥をかいた寒い冬の夜",
+        tag: "TWEET",
+        title:
+          "デカフェラテという表記を指差し、「これってデカいカフェラテってことですか？」と聞き、大恥をかいた寒い冬の夜",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/2001278037267231078",
+      },
+      {
+        id: "w14",
+        bubble: "クスクス美味しいな　笑うな　俺を",
+        tag: "TWEET",
+        title: "クスクス美味しいな　笑うな　俺を",
+        body: "Xより",
+        sourceUrl: "https://x.com/Rine_Yaguruma/status/2046559133638500393",
+      },
+      {
+        id: "w15",
+        bubble: "人は寝てはいけない時間に寝る時、一番幸せを感じるのである",
+        tag: "TWEET",
+        title: "人は寝てはいけない時間に寝る時、一番幸せを感じるのである",
+        body: "Xより",
+        sourceUrl: "https://x.com/rine_yaguruma/status/2035688354969526612",
+      },
+      {
+        id: "w16",
+        bubble: "にじさんじに入った理由も「内側から潰してやろう」って",
+        tag: "SAYING",
+        title: "にじさんじに入った理由も「内側から潰してやろう」って",
+        body: "【雑談コラボ】ほぼ初対面！ゆるゆる喋る昼活【にじさんじ/矢車りね/石神のぞみ】より",
         sourceUrl:
-          "https://x.com/Rine_Yaguruma/status/1774393131615826133?s=20",
+          "https://www.youtube.com/live/7P2_1XnSYP4?si=9s4oS03kWeM-cQ5p&t=4014",
+      },
+      {
+        id: "w17",
+        bubble: "え、唐揚げって死語？みんなの世界で。",
+        tag: "SAYING",
+        title: "え、唐揚げって死語？みんなの世界で。",
+        body: "【雑談】みんなから”記憶”をインストールする配信【にじさんじ/矢車りね】より",
+        sourceUrl:
+          "https://www.youtube.com/live/b-y9DWKgpLg?si=f-0CAS3UzCaOFL3x&t=532",
+      },
+      {
+        id: "w18",
+        bubble:
+          "金魚のフン比べって単語もしかして存在しない？矢車の好きな言葉なんだけど。",
+        tag: "SAYING",
+        title:
+          "金魚のフン比べって単語もしかして存在しない？矢車の好きな言葉なんだけど。",
+        body: "【【スイカゲーム】ハロウィンですがスケジュール管理がカスなので30分でカボチャ【にじさんじ/矢車りね】より",
+        sourceUrl:
+          "https://www.youtube.com/live/2WnkBHq7oXg?si=drmpmMejTL3AZtnz&t=677",
       },
     ];
 
