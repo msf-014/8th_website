@@ -201,7 +201,6 @@ import Footer from "../components/footer.astro";
     .words-canvas {
       width: 1900px;
       margin: 0 auto;
-      position: relative;
       background: #b5e6c6;
     }
 
@@ -221,6 +220,7 @@ import Footer from "../components/footer.astro";
       top: 56px;
       left: 64px;
       max-width: 380px;
+      z-index: 4;
     }
     .intro .eyebrow {
       font-family: "Zen Kaku Gothic New", sans-serif;
@@ -235,9 +235,12 @@ import Footer from "../components/footer.astro";
     }
     .intro p {
       font-family: "Noto Sans JP", sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 2;
       color: #333;
+      padding: 4px 12px;
+      border: 1px solid #000;
+      background: #b5e6c6;
     }
 
     .character {
@@ -335,7 +338,11 @@ import Footer from "../components/footer.astro";
       width: 0;
       height: 0;
       border-style: solid;
-      transition: background-color 0.2s ease;
+    }
+
+    :global(.bubble::after) {
+      /* 本体(.bubble)のホバー時の色変化(0.2s)とタイミングを揃える */
+      transition: border-color 0.2s ease;
     }
 
     :global(.dir-b .bubble::before) {
@@ -566,12 +573,12 @@ import Footer from "../components/footer.astro";
         max-width: calc(100% - 32px);
       }
       .intro .eyebrow {
-        font-size: 11px;
+        font-size: 8px;
         padding: 3px 10px;
         margin-bottom: 8px;
       }
       .intro p {
-        font-size: 12px;
+        font-size: 7px;
         line-height: 1.7;
       }
 
@@ -588,26 +595,26 @@ import Footer from "../components/footer.astro";
       }
 
       :global(.dir-b .bubble::before) {
-        border-width: 11px 10px 0 10px;
-        margin-left: -10px;
+        border-width: 9px 8px 0;
+        margin-left: -5px;
         bottom: -10px;
         z-index: -1;
       }
       :global(.dir-b .bubble::after) {
-        border-width: 9px 8px 0 8px;
-        margin-left: -8px;
-        bottom: -7.5px;
+        border-width: 12px 10px 0;
+        margin-left: -7px;
+        bottom: -9px;
       }
       :global(.dir-t .bubble::before) {
-        border-width: 0 10px 11px 10px;
-        margin-left: -10px;
-        top: -9px;
+        border-width: 0 8px 9px;
+        margin-left: -5px;
+        top: -10px;
         z-index: -1;
       }
       :global(.dir-t .bubble::after) {
-        border-width: 0 8px 9px 8px;
-        margin-left: -8px;
-        top: -7.5px;
+        border-width: 0 10px 12px;
+        margin-left: -7px;
+        top: -9px;
       }
 
       .modal {
