@@ -123,12 +123,23 @@ import Footer from "../components/footer.astro";
         { from: "名前", msg: "これはテストメッセージです。" },
       ];
 
-      const CARD_W = 156,
-        CARD_H = 120,
-        MARGIN = 40,
+      // スマホ判定（768px未満）
+      function isMobile() {
+        return window.innerWidth < 767;
+      }
+
+      // デバイスに応じたカードサイズを返す
+      function cardSize() {
+        return isMobile()
+          ? { w: 100, h: 100 } // スマホ用
+          : { w: 156, h: 120 }; // PC用
+      }
+
+      const MARGIN = 8,
         MAX_TRIES = 120;
 
       function autoPlace(items, areaW, areaH) {
+        const { w: CARD_W, h: CARD_H } = cardSize();
         const placed = [];
         items.forEach((m, i) => {
           let best = null,
@@ -140,8 +151,8 @@ import Footer from "../components/footer.astro";
             placed.forEach((p) => {
               const dx = Math.abs(x - p.x),
                 dy = Math.abs(y - p.y);
-              if (dx < CARD_W + 12 && dy < CARD_H + 12) {
-                overlap += (CARD_W + 12 - dx) * (CARD_H + 12 - dy);
+              if (dx < CARD_W + 8 && dy < CARD_H + 8) {
+                overlap += (CARD_W + 8 - dx) * (CARD_H + 8 - dy);
               }
             });
             if (-overlap > bestScore) {
@@ -158,13 +169,15 @@ import Footer from "../components/footer.astro";
         const board = document.getElementById("board");
         if (!board) return;
         board.querySelectorAll(".sticky").forEach((el) => el.remove());
+
+        const mobile = isMobile();
         const W = board.offsetWidth,
           H = board.offsetHeight;
         const placed = autoPlace(messages, W, H);
 
         placed.forEach((m, i) => {
           const el = document.createElement("div");
-          el.className = "sticky";
+          el.className = "sticky" + (mobile ? " sticky--sm" : "");
           el.style.cssText = `left:${m.x}px;top:${m.y}px;z-index:${m.z};opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;`;
 
           const fromEl = document.createElement("span");
@@ -197,7 +210,6 @@ import Footer from "../components/footer.astro";
 
       function openModal(m) {
         document.getElementById("m-from").textContent = m.from;
-
         const msgEl = document.getElementById("m-msg");
         msgEl.innerHTML = "";
         m.msg.forEach((text) => {
@@ -205,7 +217,6 @@ import Footer from "../components/footer.astro";
           p.textContent = text;
           msgEl.appendChild(p);
         });
-
         document.getElementById("modal-backdrop").classList.add("open");
       }
 
@@ -221,8 +232,7 @@ import Footer from "../components/footer.astro";
             closeModal();
         });
 
-      // DOMが確実に準備できてから実行
-      document.addEventListener("astro:page-load", buildBoard);
+      document.addEventListener("DOMContentLoaded", buildBoard);
     </script>
 
     <Footer />
@@ -592,6 +602,11 @@ import Footer from "../components/footer.astro";
           white-space: nowrap;
           font-size: 11px;
           padding: 4px 8px;
+          color: #fce2ed;
+          -webkit-text-stroke-width: 2px;
+          -webkit-text-fill-color: #000;
+          paint-order: stroke fill;
+          z-index: 1;
         }
 
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
@@ -606,106 +621,86 @@ import Footer from "../components/footer.astro";
           animation-iteration-count: infinite;
         }
 
-        @keyframes marquee-loop {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(var(--marquee-distance, 0px));
-          }
-        }
-
         :global(.marquee-item) {
           display: inline-block;
           white-space: nowrap;
         }
         /* ---- ここまで ---- */
 
-        .back_btn {
-          width: 40px;
-          height: 40px;
+        :global(.sticky--sm) {
+          width: 78px;
+          min-height: 64px;
+          padding: 5px 6px 8px;
+          gap: 2px;
+          clip-path: polygon(
+            0 0,
+            calc(100% - 8px) 0,
+            100% 8px,
+            100% 100%,
+            0 100%
+          );
+        }
+        :global(.sticky--sm::before) {
+          width: 8px;
+          height: 8px;
+        }
+        :global(.sticky--sm::after) {
+          width: 7px;
+          height: 7px;
         }
 
-        .back_arrow {
-          font-size: 16px;
+        :global(.sticky .s-from) {
+          font-size: 9px;
+          font-weight: 700;
+          color: #c42222;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          border-bottom: 1px solid #f7c5c5;
+          padding-bottom: 5px;
+          font-family: "Noto Sans JP", sans-serif;
+        }
+        :global(.sticky--sm .s-from) {
+          font-size: 6px;
+          padding-bottom: 2px;
         }
 
-        .chronology {
-          max-width: 50vh;
-          margin: 0 10px;
+        :global(.sticky .s-msg) {
+          font-size: 12px;
+          font-weight: 900;
+          color: #c42222;
+          line-height: 1.25;
+          flex: 1;
+          font-family: "Noto Sans JP", sans-serif;
+        }
+        :global(.sticky--sm .s-msg) {
+          font-size: 8px;
+          line-height: 1.15;
+        }
+        :global(.sticky .s-msg p + p) {
+          margin-top: 0.4em;
+        }
+        :global(.sticky--sm .s-msg p + p) {
+          margin-top: 0.2em;
         }
 
-        .chronology_title {
-          padding: 16px 1em;
+        :global(.sticky .s-num) {
+          font-family: "Bebas Neue", monospace;
+          font-size: 9px;
+          color: #c42222;
+          opacity: 0.35;
+          letter-spacing: 0.1em;
+          margin-top: 2px;
         }
-        .chronology_subtitle {
+        :global(.sticky--sm .s-num) {
+          font-size: 6px;
+        }
+
+        .modal {
+          padding: 28px 20px 20px;
+          margin: 2rem;
+        }
+        .modal .m-msg {
           font-size: 20px;
-          letter-spacing: 0.2em;
-          margin: 0 0 2px 0;
-        }
-        .chronology_title h4 {
-          font-size: 13vw;
-        }
-        .chronology_date {
-          font-size: 15px;
-        }
-
-        :global(.timeline-wrap) {
-          padding: 32px 16px;
-          margin-bottom: 60px;
-        }
-
-        :global(.timeline-line) {
-          left: 8px;
-        }
-
-        :global(.marker-col) {
-          width: 16px;
-          flex: 0 0 16px;
-        }
-
-        :global(.marker-circle) {
-          width: 14px;
-          height: 14px;
-          border-width: 2px;
-        }
-
-        :global(.content-col) {
-          padding-left: 16px;
-          gap: 20px;
-        }
-
-        :global(.item-year) {
-          font-size: 12px;
-        }
-
-        :global(.item-title) {
-          font-size: 17px;
-          padding-bottom: 8px;
-        }
-
-        :global(.item-desc) {
-          font-size: 13px;
-          line-height: 1.8;
-        }
-
-        :global(.item-comment) {
-          font-size: 12px;
-          padding: 8px 12px;
-        }
-
-        :global(.like-btn) {
-          font-size: 12px;
-          padding: 5px 12px;
-        }
-
-        :global(.item-youtube) {
-          border-radius: 6px;
-        }
-
-        :global(.yt-play-btn) {
-          width: 52px;
-          height: 36px;
         }
       }
     </style>

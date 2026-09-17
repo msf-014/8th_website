@@ -26,11 +26,11 @@ import Footer from "../components/footer.astro";
           <span class="eyebrow">YAGURUMA WORDS</span>
           <p>
             大矢車様のありがたいお言葉を集めました。<br
-            />吹き出しをクリックすると、詳細を読むことが出来ます。
+            />吹き出しをクリックすると、詳細を読むことが出来ます。<br />
+            下のボタンで絞り込むことも出来ます。
           </p>
         </div>
 
-        <!-- 実際のキャラクター画像/イラストをここに入れてください(現状は空です) -->
         <div class="character" id="character" aria-hidden="true">
           <img class="character_img" src="/icon_1.png" />
           <p>大矢車様</p>
@@ -243,6 +243,38 @@ import Footer from "../components/footer.astro";
       background: #b5e6c6;
     }
 
+    :global(.buttons) {
+      display: flex;
+      align-items: center;
+    }
+
+    :global(.button) {
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 600;
+      padding: 3px 8px;
+      border: 1px solid #000;
+      cursor: pointer;
+      margin: 10px 2px;
+      background-color: #b5e6c6;
+      font-size: 13px;
+    }
+
+    :global(.button:hover) {
+      color: #b5e6c6;
+      background-color: #000;
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+
+    :global(.button.active) {
+      color: #b5e6c6;
+      background-color: #000;
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+
     .character {
       position: absolute;
       top: 50%;
@@ -250,12 +282,17 @@ import Footer from "../components/footer.astro";
       transform: translate(-50%, -50%);
       width: 220px;
       z-index: 3;
-      animation: breathe 6s ease-in-out infinite;
       transform-origin: center;
-      margin: auto;
     }
 
-    .character p {
+    .character_img p {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px;
+      z-index: 3;
+      transform-origin: center;
       display: flex;
       justify-content: center;
       font-family: "Zen Kaku Gothic New", sans-serif;
@@ -265,16 +302,7 @@ import Footer from "../components/footer.astro";
       width: 80%;
       border: 1px solid #000;
       border-radius: 100%;
-    }
-
-    @keyframes breathe {
-      0%,
-      100% {
-        transform: translate(-50%, -50%) scale(1);
-      }
-      50% {
-        transform: translate(-50%, -50%) scale(1.02);
-      }
+      text-align: center;
     }
 
     /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) =====
@@ -287,6 +315,11 @@ import Footer from "../components/footer.astro";
       animation: popOut 0.55s cubic-bezier(0.25, 0.9, 0.35, 1.15) forwards;
       animation-delay: var(--delay, 0s);
     }
+
+    :global(.bubble-wrap.hide) {
+      display: none;
+    }
+
     @keyframes popOut {
       0% {
         transform: translate(-50%, -50%) scale(0.2);
@@ -586,6 +619,10 @@ import Footer from "../components/footer.astro";
         width: 140px;
       }
 
+      :global(.bubble-wrap) {
+        z-index: 0;
+      }
+
       :global(.bubble) {
         width: 132px;
         font-size: 8px;
@@ -609,7 +646,6 @@ import Footer from "../components/footer.astro";
         border-width: 0 8px 9px;
         margin-left: -5px;
         top: -10px;
-        z-index: -1;
       }
       :global(.dir-t .bubble::after) {
         border-width: 0 10px 12px;
@@ -822,40 +858,45 @@ import Footer from "../components/footer.astro";
     const stage = document.getElementById("stage");
     const character = document.getElementById("character");
 
-    const BUBBLE_W = 200; // .bubble の固定幅と合わせる
-    const MIN_GAP = 22; // 吹き出し同士の最低間隔
-    const EDGE_MARGIN = 40; // ボード端からの最低距離(しっぽ・影のはみ出し分含む)
+    const BUBBLE_W = 200;
+    const MIN_GAP = 22;
+    const EDGE_MARGIN = 40;
     const MAX_ATTEMPTS = 400;
 
-    // このページに来たとき(初回表示・View Transitionsでの遷移の両方)に実行する
+    function createButtonsContainer(parent) {
+      const c = document.createElement("div");
+      c.id = "buttons";
+      c.className = "buttons";
+      (parent || document.body).appendChild(c);
+      return c;
+    }
+
     function initWordsPage() {
       const stage = document.getElementById("stage");
-      if (!stage) return; // words ページ以外では何もしない
       const character = document.getElementById("character");
-      if (!character) return;
+      if (!stage || !character) return;
 
-      // 何回呼ばれても実際の配置処理は1回だけにするガード
-      // (直接呼び出し・astro:page-load・その他の再実行経路が
-      //  重なっても、これで確実に1回だけになる)
       if (stage.dataset.wordsInit === "true") return;
       stage.dataset.wordsInit = "true";
-
       function layoutBubbles() {
         const stageRect = { w: stage.clientWidth, h: stage.clientHeight };
         const centerX = stageRect.w / 2;
         const centerY = stageRect.h / 2;
 
         const charEl = character.getBoundingClientRect();
-        // 除外円の半径:キャラクターの実サイズを基準にする
-        // (固定値だとキャラが小さいスマホ表示で除外エリアが相対的に
-        //  広くなりすぎ、吹き出しの置き場所が窮屈になるため)
         const exclusionRadius = Math.max(charEl.width, charEl.height) / 2 + 70;
 
-        const placed: { x: number; y: number; w: number; h: number }[] = [];
+        const placed = [];
+
+        // 既にある .bubble-wrap を一旦クリアする（重複生成を避ける）
+        // もし HTML 側で既に要素を用意しているならこの行をコメントアウトしてください
+        stage.querySelectorAll(".bubble-wrap").forEach((n) => n.remove());
 
         messages.forEach((msg, i) => {
           const wrap = document.createElement("div");
           wrap.className = "bubble-wrap";
+          // ここで tag を data-name に入れる（フィルタで参照）
+          wrap.dataset.name = msg.tag || "UNKNOWN";
           wrap.style.visibility = "hidden";
           wrap.style.left = "0px";
           wrap.style.top = "0px";
@@ -869,7 +910,6 @@ import Footer from "../components/footer.astro";
           stage.appendChild(wrap);
 
           const rect = btn.getBoundingClientRect();
-          // しっぽ(14px)・影・ホバー時の浮き上がり(3px)分の余裕を持たせる
           const w = rect.width + 32;
           const h = rect.height + 32;
 
@@ -900,9 +940,8 @@ import Footer from "../components/footer.astro";
             ok = true;
             break;
           }
+
           if (!ok) {
-            // 通常の試行で見つからなかった場合、除外円の外側を
-            // 少しずつ広げながら、他の吹き出しと重ならない場所を探す
             let foundFallback = false;
             for (let ring = 0; ring < 14 && !foundFallback; ring++) {
               const testRadius =
@@ -934,8 +973,6 @@ import Footer from "../components/footer.astro";
                 break;
               }
             }
-            // それでも見つからない場合のみ、重なりを許容して機械的に配置する
-            // (ここまで来るのは極端に吹き出しが多い/ボードが狭い場合の保険)
             if (!foundFallback) {
               const angle = Math.random() * Math.PI * 2;
               x = centerX + Math.cos(angle) * (exclusionRadius + w / 2 + 20);
@@ -954,8 +991,6 @@ import Footer from "../components/footer.astro";
           placed.push({ x, y, w, h });
 
           const dir = y < centerY ? "dir-b" : "dir-t";
-
-          // 吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りにする
           const norm = Math.max(
             -1,
             Math.min(1, (centerX - x) / (stageRect.w / 2)),
@@ -972,6 +1007,76 @@ import Footer from "../components/footer.astro";
         });
       }
 
+      // --- ボタンコンテナはここで取得または作成（DOM準備後に一度だけ） ---
+      let buttonsContainer = document.getElementById(".buttons");
+      if (!buttonsContainer) {
+        const intro = stage.querySelector(".intro");
+        buttonsContainer = createButtonsContainer(intro || stage);
+      }
+
+      // --- タグ一覧を正しく作る（スプレッドで展開） ---
+      const tagSet = new Set(
+        (messages || []).map((m) => (m.tag || "UNKNOWN").trim()),
+      );
+      const tags = ["ALL", ...Array.from(tagSet)]; // ← 修正点
+
+      // --- ボタン生成 ---
+      function createTagButtons(tags) {
+        buttonsContainer.innerHTML = "";
+        tags.forEach((tag, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "button";
+          btn.dataset.name = tag;
+          btn.textContent = tag;
+          if (idx === 0) btn.classList.add("active");
+          buttonsContainer.appendChild(btn);
+        });
+        console.log(
+          "createTagButtons:",
+          tags,
+          "count:",
+          buttonsContainer.querySelectorAll(".button").length,
+        );
+      }
+
+      // --- クリック処理（デリゲーション） ---
+      function onButtonsClick(e) {
+        const btn = e.target.closest(".button");
+        if (!btn || !buttonsContainer.contains(btn)) return;
+        buttonsContainer
+          .querySelector(".button.active")
+          ?.classList.remove("active");
+        btn.classList.add("active");
+        const name = btn.dataset.name;
+        document.querySelectorAll(".bubble-wrap").forEach((c) => {
+          c.classList.toggle("hide", name !== "ALL" && c.dataset.name !== name);
+        });
+      }
+
+      // イベントは一度だけ登録（重複登録を避ける）
+      buttonsContainer.removeEventListener("click", onButtonsClick);
+      buttonsContainer.addEventListener("click", onButtonsClick);
+
+      // --- 実行フロー（フォント待ち→配置→ボタン生成） ---
+      const run = () => {
+        if (typeof layoutBubbles === "function") layoutBubbles();
+        createTagButtons(tags);
+      };
+
+      if (document.fonts && document.fonts.status !== "loaded") {
+        document.fonts.ready.then(run);
+      } else {
+        run();
+      }
+
+      console.log(
+        "initWordsPage finished. buttonsContainer:",
+        buttonsContainer,
+      );
+
+      // DOM 準備後に初期化（Astroなら client:load / is:client を使ってください）
+      document.addEventListener("DOMContentLoaded", initWordsPage);
       // Webフォントの読み込みが完了してからサイズを測って配置する
       // (先に測ってしまうと、後からフォントが差し替わった時に
       //  箱のサイズが変わり、位置がズレて見える)
