@@ -255,6 +255,7 @@ import Footer from "../components/footer.astro";
       border: 1px solid #000;
       cursor: pointer;
       margin: 10px 2px;
+      color: #000;
       background-color: #b5e6c6;
       font-size: 13px;
     }
@@ -285,24 +286,18 @@ import Footer from "../components/footer.astro";
       transform-origin: center;
     }
 
-    .character_img p {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 220px;
-      z-index: 3;
-      transform-origin: center;
-      display: flex;
-      justify-content: center;
-      font-family: "Zen Kaku Gothic New", sans-serif;
-    }
-
     .character img {
+      display: block;
       width: 80%;
       border: 1px solid #000;
       border-radius: 100%;
       text-align: center;
+    }
+
+    .character p {
+      display: flex;
+      justify-content: center;
+      font-family: "Zen Kaku Gothic New", sans-serif;
     }
 
     /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) =====
@@ -615,8 +610,17 @@ import Footer from "../components/footer.astro";
         line-height: 1.7;
       }
 
+      :global(.button) {
+        font-size: 12px;
+      }
+
       .character {
         width: 140px;
+      }
+
+      .character p {
+        font-family: "Zen Kaku Gothic New", sans-serif;
+        font-weight: 400;
       }
 
       :global(.bubble-wrap) {
@@ -1032,12 +1036,6 @@ import Footer from "../components/footer.astro";
           if (idx === 0) btn.classList.add("active");
           buttonsContainer.appendChild(btn);
         });
-        console.log(
-          "createTagButtons:",
-          tags,
-          "count:",
-          buttonsContainer.querySelectorAll(".button").length,
-        );
       }
 
       // --- クリック処理（デリゲーション） ---
@@ -1069,11 +1067,6 @@ import Footer from "../components/footer.astro";
       } else {
         run();
       }
-
-      console.log(
-        "initWordsPage finished. buttonsContainer:",
-        buttonsContainer,
-      );
 
       // DOM 準備後に初期化（Astroなら client:load / is:client を使ってください）
       document.addEventListener("DOMContentLoaded", initWordsPage);
@@ -1155,5 +1148,21 @@ import Footer from "../components/footer.astro";
     // View Transitionsでの遷移(このサイトで実際に発火するかは環境依存)にも対応。
     // 上のガードにより、両方発火しても実行は1回だけになる
     document.addEventListener("astro:page-load", initWordsPage);
+
+    // 1. #character のボックスを可視化
+    document.getElementById("character").style.outline = "2px dashed red";
+
+    // 2. stage と words-canvas の実サイズ確認
+    console.log("stage", document.querySelector(".stage").clientWidth);
+    console.log(
+      "words-canvas",
+      document.querySelector(".words-canvas").clientWidth,
+    );
+
+    // 3. body の余白確認
+    console.log("body margin", getComputedStyle(document.body).margin);
+
+    console.log(document.querySelector(".stage").getBoundingClientRect());
+    console.log(document.getElementById("character").getBoundingClientRect());
   </script>
 </BaseLayout>
