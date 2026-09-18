@@ -16,7 +16,20 @@ import Footer from "../components/footer.astro";
           <span class="back_arrow">←</span>
         </a>
       </div>
-      <div class="midashi"></div>
+      <div class="page">
+        <div class="page_content">
+          <div class="content">
+            <div class="heading">主催</div>
+            <div class="page_body">
+              <p>Masahiro Fujiita</p>
+            </div>
+            <div class="heading">サイト構築</div>
+            <div class="page_body">
+              <p>sotono</p><p>Masahiro Fujita</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <style>
@@ -135,6 +148,39 @@ import Footer from "../components/footer.astro";
       .back_arrow {
         font-size: 20px;
         line-height: 1;
+      }
+
+      .page {
+        font-family: "Zen Kaku Gothic New", sans-serif;
+        width: 1900px;
+        margin: 0 auto;
+        background: #e6e6e6;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+      }
+
+      .page_content {
+        padding: 4rem 2.5rem;
+      }
+
+      .content_sub {
+        border-bottom: 1px solid #000;
+        padding: 2rem 0;
+      }
+
+      .heading {
+        font-weight: 800;
+        margin-bottom: 1rem;
+      }
+
+      .page_body {
+        font-family: "Zen Kaku Gothic New", sans-serif;
+        line-height: 2;
+        margin-bottom: 1rem;
+      }
+
+      .page_body p + p {
+        margin-top: 0.75rem;
       }
 
       /* ==================== スマホ対応 ==================== */
