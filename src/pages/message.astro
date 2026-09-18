@@ -112,7 +112,13 @@ import Footer from "../components/footer.astro";
             "応援してるぞ矢車、いつか曲書かせろください",
           ],
         },
-        { from: "名前", msg: "これはテストメッセージです。" },
+        {
+          from: "匿名希望",
+          msg: [
+            "活動8周年おめでとうございます！",
+            "これまでもこれからもずっと大好きです！！",
+          ],
+        },
         { from: "名前", msg: "これはテストメッセージです。" },
         { from: "名前", msg: "これはテストメッセージです。" },
         { from: "名前", msg: "これはテストメッセージです。" },
@@ -132,11 +138,11 @@ import Footer from "../components/footer.astro";
       function cardSize() {
         return isMobile()
           ? { w: 100, h: 100 } // スマホ用
-          : { w: 156, h: 120 }; // PC用
+          : { w: 150, h: 120 }; // PC用
       }
 
-      const MARGIN = 8,
-        MAX_TRIES = 120;
+      const MARGIN = 50;
+      MAX_TRIES = 120;
 
       function autoPlace(items, areaW, areaH) {
         const { w: CARD_W, h: CARD_H } = cardSize();
