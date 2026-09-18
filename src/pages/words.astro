@@ -289,15 +289,16 @@ import Footer from "../components/footer.astro";
     .character img {
       display: block;
       width: 80%;
+      margin: 0 auto;
       border: 1px solid #000;
       border-radius: 100%;
-      text-align: center;
     }
 
     .character p {
       display: flex;
       justify-content: center;
       font-family: "Zen Kaku Gothic New", sans-serif;
+      margin-top: 8px;
     }
 
     /* ===== 吹き出し(JSで位置を決定・その場でポップする軌道) =====
@@ -890,7 +891,40 @@ import Footer from "../components/footer.astro";
         const charEl = character.getBoundingClientRect();
         const exclusionRadius = Math.max(charEl.width, charEl.height) / 2 + 70;
 
-        const placed = [];
+        // intro(SPEECH BUBBLESの説明文)の除外エリア(矩形+余白)
+        const stageBox = stage.getBoundingClientRect();
+        const introEl = document.querySelector(".intro");
+        const introBox = introEl ? introEl.getBoundingClientRect() : null;
+        const INTRO_PAD = 50;
+        const introRect = introBox
+          ? {
+              left: introBox.left - stageBox.left - INTRO_PAD,
+              top: introBox.top - stageBox.top - INTRO_PAD,
+              right: introBox.right - stageBox.left + INTRO_PAD,
+              bottom: introBox.bottom - stageBox.top + INTRO_PAD,
+            }
+          : null;
+
+        function overlapsIntro(
+          x: number,
+          y: number,
+          w: number,
+          h: number,
+        ): boolean {
+          if (!introRect) return false;
+          const left = x - w / 2,
+            right = x + w / 2;
+          const top = y - h / 2,
+            bottom = y + h / 2;
+          return (
+            left < introRect.right &&
+            right > introRect.left &&
+            top < introRect.bottom &&
+            bottom > introRect.top
+          );
+        }
+
+        const placed: { x: number; y: number; w: number; h: number }[] = [];
 
         // 既にある .bubble-wrap を一旦クリアする（重複生成を避ける）
         // もし HTML 側で既に要素を用意しているならこの行をコメントアウトしてください
@@ -946,6 +980,8 @@ import Footer from "../components/footer.astro";
           }
 
           if (!ok) {
+            // 通常の試行で見つからなかった場合、除外円の外側を
+            // 少しずつ広げながら、他の吹き出しやintroと重ならない場所を探す
             let foundFallback = false;
             for (let ring = 0; ring < 14 && !foundFallback; ring++) {
               const testRadius =
@@ -963,6 +999,8 @@ import Footer from "../components/footer.astro";
                   stageRect.h - EDGE_MARGIN - h / 2,
                 );
 
+                if (overlapsIntro(tx, ty, w, h)) continue;
+
                 const overlapsFallback = placed.some((p) => {
                   return (
                     Math.abs(tx - p.x) < (w + p.w) / 2 + MIN_GAP &&
@@ -977,24 +1015,51 @@ import Footer from "../components/footer.astro";
                 break;
               }
             }
+            // それでも見つからない場合のみ、重なりを許容して機械的に配置する
+            // (introとの重なりだけは最後まで避ける)
             if (!foundFallback) {
-              const angle = Math.random() * Math.PI * 2;
-              x = centerX + Math.cos(angle) * (exclusionRadius + w / 2 + 20);
-              y = centerY + Math.sin(angle) * (exclusionRadius + h / 2 + 20);
-              x = Math.min(
-                Math.max(x, EDGE_MARGIN + w / 2),
-                stageRect.w - EDGE_MARGIN - w / 2,
-              );
-              y = Math.min(
-                Math.max(y, EDGE_MARGIN + h / 2),
-                stageRect.h - EDGE_MARGIN - h / 2,
-              );
+              let safe = false;
+              for (let t = 0; t < 120; t++) {
+                const angle = Math.random() * Math.PI * 2;
+                let tx =
+                  centerX + Math.cos(angle) * (exclusionRadius + w / 2 + 20);
+                let ty =
+                  centerY + Math.sin(angle) * (exclusionRadius + h / 2 + 20);
+                tx = Math.min(
+                  Math.max(tx, EDGE_MARGIN + w / 2),
+                  stageRect.w - EDGE_MARGIN - w / 2,
+                );
+                ty = Math.min(
+                  Math.max(ty, EDGE_MARGIN + h / 2),
+                  stageRect.h - EDGE_MARGIN - h / 2,
+                );
+                if (overlapsIntro(tx, ty, w, h)) continue;
+                x = tx;
+                y = ty;
+                safe = true;
+                break;
+              }
+              // それでもダメなら、introのある角と対角のコーナーへ確実に配置する
+              if (!safe && introRect) {
+                const introCenterX = (introRect.left + introRect.right) / 2;
+                const introCenterY = (introRect.top + introRect.bottom) / 2;
+                x =
+                  introCenterX < centerX
+                    ? stageRect.w - EDGE_MARGIN - w / 2
+                    : EDGE_MARGIN + w / 2;
+                y =
+                  introCenterY < centerY
+                    ? stageRect.h - EDGE_MARGIN - h / 2
+                    : EDGE_MARGIN + h / 2;
+              }
             }
           }
 
           placed.push({ x, y, w, h });
 
           const dir = y < centerY ? "dir-b" : "dir-t";
+
+          // 吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りにする
           const norm = Math.max(
             -1,
             Math.min(1, (centerX - x) / (stageRect.w / 2)),
@@ -1148,21 +1213,5 @@ import Footer from "../components/footer.astro";
     // View Transitionsでの遷移(このサイトで実際に発火するかは環境依存)にも対応。
     // 上のガードにより、両方発火しても実行は1回だけになる
     document.addEventListener("astro:page-load", initWordsPage);
-
-    // 1. #character のボックスを可視化
-    document.getElementById("character").style.outline = "2px dashed red";
-
-    // 2. stage と words-canvas の実サイズ確認
-    console.log("stage", document.querySelector(".stage").clientWidth);
-    console.log(
-      "words-canvas",
-      document.querySelector(".words-canvas").clientWidth,
-    );
-
-    // 3. body の余白確認
-    console.log("body margin", getComputedStyle(document.body).margin);
-
-    console.log(document.querySelector(".stage").getBoundingClientRect());
-    console.log(document.getElementById("character").getBoundingClientRect());
   </script>
 </BaseLayout>
