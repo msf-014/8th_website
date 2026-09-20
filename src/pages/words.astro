@@ -606,17 +606,17 @@ import Footer from "../components/footer.astro";
         max-width: calc(100% - 32px);
       }
       .intro .eyebrow {
-        font-size: 8px;
+        font-size: 6px;
         padding: 3px 10px;
         margin-bottom: 8px;
       }
       .intro p {
-        font-size: 7px;
+        font-size: 6px;
         line-height: 1.7;
       }
 
       :global(.button) {
-        font-size: 12px;
+        font-size: 8px;
       }
 
       .character {
@@ -630,6 +630,10 @@ import Footer from "../components/footer.astro";
 
       :global(.bubble-wrap) {
         z-index: 0;
+      }
+
+      :global(.bubble-wrap:hover) {
+        z-index: 1;
       }
 
       :global(.bubble) {
