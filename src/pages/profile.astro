@@ -4,28 +4,33 @@ import Footer from "../components/footer.astro";
 
 // ====== 編集ポイント ======
 // イラスト: public/ 配下に置いたパスを指定（空文字ならプレースホルダー表示）
-const illustSrc = "";
+const illustSrc = "260921_yaguruma_touka.png";
 const illustrator = "奏音"; // "illustration by ___" の名前
 
 // 各種リンク（プロフィールの上に並ぶ 3 つ）
 const links = [
-  { label: "タレントページ", href: "#", icon: "talent" },
-  { label: "X", href: "#", icon: "x" },
-  { label: "YouTube", href: "#", icon: "youtube" },
+  {
+    label: "タレントページ",
+    href: "https://www.nijisanji.jp/talents/l/rine-yaguruma",
+    icon: "talent",
+  },
+  { label: "X", href: "https://x.com/Rine_Yaguruma", icon: "x" },
+  {
+    label: "YouTube",
+    href: "https://www.youtube.com/channel/UCvzVB-EYuHFXHZrObB8a_Og",
+    icon: "youtube",
+  },
 ];
 
 // 『誕生日』以下のプロフィール。値は仮なので差し替えてください
 const profile = [
   { label: "誕生日", value: "1993.8.2" },
+  { label: "デビュー", value: "2018.09.28" },
   { label: "年齢", value: "11歳" },
   { label: "身長", value: "141cm" },
-  { label: "好きなもの", value: "矢車菊の花" },
-  { label: "苦手なもの", value: "トマト、ネギ" },
-  { label: "趣味", value: "—" },
   { label: "ファンネーム", value: "矢字馬" },
   { label: "ハッシュタグ", value: "—" },
-  { label: "ママ（イラスト）", value: "—" },
-  { label: "デビュー", value: "2018.09.28" },
+  { label: "ママ（イラスト）", value: "CH₃(めちるき)" },
 ];
 
 const nameChars = ["矢", "車", "り", "ね"];
