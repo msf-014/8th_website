@@ -316,6 +316,10 @@ import Footer from "../components/footer.astro";
       display: none;
     }
 
+    :global(.bubble-wrap:hover) {
+      z-index: 50;
+    }
+
     @keyframes popOut {
       0% {
         transform: translate(-50%, -50%) scale(0.2);
@@ -913,7 +917,7 @@ import Footer from "../components/footer.astro";
         const stageBox = stage.getBoundingClientRect();
         const introEl = document.querySelector(".intro");
         const introBox = introEl ? introEl.getBoundingClientRect() : null;
-        const INTRO_PAD = 50;
+        const INTRO_PAD = 32;
         const introRect = introBox
           ? {
               left: introBox.left - stageBox.left - INTRO_PAD,

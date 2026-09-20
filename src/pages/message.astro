@@ -164,7 +164,7 @@ import Footer from "../components/footer.astro";
         },
       ];
 
-      // スマホ判定（768px未満）
+      // スマホ判定（767px未満）
       function isMobile() {
         return window.innerWidth < 767;
       }
@@ -178,6 +178,11 @@ import Footer from "../components/footer.astro";
 
       const MARGIN = 50;
       MAX_TRIES = 120;
+
+      // ホバー時に scale(1.06) と translateY(-3px) で少し膨らむ分の余白。
+      // この分だけ配置可能エリアを内側に狭めておくことで、
+      // ホバーしても画面端からはみ出さないようにする。
+      const HOVER_BUFFER = 10;
 
       function autoPlace(items, areaW, areaH) {
         const { w: CARD_W, h: CARD_H } = cardSize();
@@ -243,6 +248,20 @@ import Footer from "../components/footer.astro";
 
           el.addEventListener("click", () => openModal(m));
           board.appendChild(el);
+
+          // 文章量によって実際の高さは CARD_H と異なることがあるため、
+          // DOMに追加した「あとの実サイズ」を測ってから位置をクランプする。
+          // これによりテキストが長くて縦にはみ出すケースと、
+          // ホバー拡大で外側にはみ出すケースの両方を防ぐ。
+          const actualW = el.offsetWidth;
+          const actualH = el.offsetHeight;
+          const maxLeft = Math.max(MARGIN, W - actualW - HOVER_BUFFER);
+          const maxTop = Math.max(MARGIN, H - actualH - HOVER_BUFFER);
+          const clampedLeft = Math.min(Math.max(m.x, HOVER_BUFFER), maxLeft);
+          const clampedTop = Math.min(Math.max(m.y, HOVER_BUFFER), maxTop);
+          el.style.left = clampedLeft + "px";
+          el.style.top = clampedTop + "px";
+
           setTimeout(() => {
             el.style.opacity = "1";
           }, i * 50);
@@ -273,7 +292,31 @@ import Footer from "../components/footer.astro";
             closeModal();
         });
 
-      document.addEventListener("DOMContentLoaded", buildBoard);
+      // board要素の「実際の描画サイズ」が確定してから配置する。
+      // DOMContentLoaded直後だとCSSがまだ適用しきれておらず
+      // offsetWidthが0のまま計算されてしまうことがあるため、
+      // ResizeObserverで幅が確定したタイミングを検知する。
+      const boardEl = document.getElementById("board");
+      let hasBuilt = false;
+
+      if (boardEl) {
+        const ro = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const w = entry.contentRect.width;
+            const h = entry.contentRect.height;
+            if (w > 0 && h > 0) {
+              buildBoard();
+              hasBuilt = true;
+            }
+          }
+        });
+        ro.observe(boardEl);
+      }
+
+      // 念のためのフォールバック（ResizeObserver未対応環境向け）
+      window.addEventListener("load", () => {
+        if (!hasBuilt) buildBoard();
+      });
     </script>
 
     <Footer />
@@ -691,7 +734,7 @@ import Footer from "../components/footer.astro";
         }
 
         :global(.sticky .s-from) {
-          font-size: 9px;
+          font-size: 7px;
           font-weight: 700;
           color: #c42222;
           letter-spacing: 0.1em;
@@ -701,12 +744,12 @@ import Footer from "../components/footer.astro";
           font-family: "Noto Sans JP", sans-serif;
         }
         :global(.sticky--sm .s-from) {
-          font-size: 6px;
+          font-size: 5px;
           padding-bottom: 2px;
         }
 
         :global(.sticky .s-msg) {
-          font-size: 12px;
+          font-size: 8px;
           font-weight: 900;
           color: #c42222;
           line-height: 1.25;
@@ -714,26 +757,26 @@ import Footer from "../components/footer.astro";
           font-family: "Noto Sans JP", sans-serif;
         }
         :global(.sticky--sm .s-msg) {
-          font-size: 8px;
+          font-size: 5px;
           line-height: 1.15;
         }
         :global(.sticky .s-msg p + p) {
-          margin-top: 0.4em;
+          margin-top: 0.3em;
         }
         :global(.sticky--sm .s-msg p + p) {
-          margin-top: 0.2em;
+          margin-top: 0.1em;
         }
 
         :global(.sticky .s-num) {
           font-family: "Bebas Neue", monospace;
-          font-size: 9px;
+          font-size: 5px;
           color: #c42222;
           opacity: 0.35;
           letter-spacing: 0.1em;
           margin-top: 2px;
         }
         :global(.sticky--sm .s-num) {
-          font-size: 6px;
+          font-size: 3px;
         }
 
         .modal {
