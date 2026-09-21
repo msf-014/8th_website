@@ -3,6 +3,73 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/footer.astro";
+
+/**
+ * ============================================================
+ *  クレジット編集エリア
+ * ============================================================
+ *  名前を追加したいときは、各項目の `names` 配列に書き足すだけでOKです。
+ *
+ *    names: ["山田太郎", "Jane Doe"]
+ *
+ *  リンクを付けたい場合は、文字列の代わりにオブジェクトで書きます。
+ *
+ *    names: ["山田太郎", { name: "Jane Doe", url: "https://example.com" }]
+ *
+ *  `names` が空 [] のあいだは「準備中」と表示されます。
+ *  項目そのものを増やしたい場合は、配列に { id, en, label, names } を1つ追加してください。
+ *    en    ... 大きく表示される英語の見出し
+ *    label ... その下に表示される日本語の見出し
+ * ============================================================
+ */
+type Person = string | { name: string; url?: string };
+
+const credits: {
+  id: string;
+  en: string;
+  label: string;
+  names: Person[];
+}[] = [
+  {
+    id: "organizer",
+    en: "ORGANIZER",
+    label: "主催",
+    names: ["Masahiro Fujiita"],
+  },
+  {
+    id: "site",
+    en: "SITE BUILD",
+    label: "サイト構築",
+    names: ["sotono", "Masahiro Fujita"],
+  },
+  {
+    id: "illustration",
+    en: "ILLUSTRATION",
+    label: "イラスト",
+    names: [], // ← ここに名前を追加
+  },
+  {
+    id: "timeline",
+    en: "TIMELINE",
+    label: "年表",
+    names: [], // ← ここに名前を追加
+  },
+  {
+    id: "words",
+    en: "WORDS",
+    label: "言葉",
+    names: [], // ← ここに名前を追加
+  },
+  {
+    id: "message",
+    en: "MESSAGE",
+    label: "メッセージ",
+    names: [], // ← ここに名前を追加
+  },
+];
+
+// 文字列でもオブジェクトでも受け取れるように揃える
+const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
 ---
 
 <BaseLayout>
@@ -19,14 +86,42 @@ import Footer from "../components/footer.astro";
       <div class="page">
         <div class="page_content">
           <div class="content">
-            <div class="heading">主催</div>
-            <div class="page_body">
-              <p>Masahiro Fujiita</p>
-            </div>
-            <div class="heading">サイト構築</div>
-            <div class="page_body">
-              <p>sotono</p><p>Masahiro Fujita</p>
-            </div>
+            {
+              credits.map((section) => (
+                <section class="credit_section" data-section={section.id}>
+                  <div class="heading">
+                    <h3 class="heading_en">{section.en}</h3>
+                    <p class="heading_ja">{section.label}</p>
+                  </div>
+                  <div class="page_body">
+                    {section.names.length > 0 ? (
+                      <ul class="name_list">
+                        {section.names.map((person) => {
+                          const { name, url } = normalize(person);
+                          return (
+                            <li class="name_item">
+                              {url ? (
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {name}
+                                </a>
+                              ) : (
+                                <span>{name}</span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    ) : (
+                      <p class="name_empty">準備中</p>
+                    )}
+                  </div>
+                </section>
+              ))
+            }
           </div>
         </div>
       </div>
@@ -168,23 +263,131 @@ import Footer from "../components/footer.astro";
         padding: 2rem 0;
       }
 
+      /* ==================== クレジット各項目 ==================== */
+
+      /* 項目1つ分: 左半分に「項目名」、右半分に「名前」 */
+      .credit_section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 2rem;
+        align-items: start;
+        padding: 2.5rem 0;
+        border-bottom: 1px solid #000;
+      }
+
+      .credit_section:first-child {
+        padding-top: 0;
+      }
+
+      .credit_section:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      /* 項目名: 背景なし。英語を大きく、日本語は従来サイズ */
       .heading {
+        color: #000;
+      }
+
+      .heading_en {
+        font-family: "acumin-variable", sans-serif;
+        font-variation-settings:
+          "wght" 400,
+          "wdth" 100,
+          "slnt" 0;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 72px;
+        line-height: 1;
+        letter-spacing: -0.06em;
+      }
+
+      .heading_ja {
+        font-family: "Zen Kaku Gothic New", sans-serif;
+        font-size: 1rem;
         font-weight: 800;
-        margin-bottom: 1rem;
+        line-height: 1.5;
+        margin-top: 0.75rem;
+      }
+
+      /* 偶数番目の項目は左右を入れ替える:
+         見出しは右(右揃え)、名前は左 */
+      .credit_section:nth-child(even) .heading {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+      }
+
+      .credit_section:nth-child(even) .page_body {
+        grid-column: 1;
+        grid-row: 1;
       }
 
       .page_body {
         font-family: "Zen Kaku Gothic New", sans-serif;
         line-height: 2;
-        margin-bottom: 1rem;
+        margin-bottom: 0;
       }
 
-      .page_body p + p {
-        margin-top: 0.75rem;
+      /* 名前: 線で囲んだラベルを横に並べる */
+      .name_list {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .name_item {
+        font-size: 1.25rem;
+        font-weight: 500;
+        line-height: 1;
+        border: 1px solid #000;
+        border-radius: 999px;
+        background: #fff;
+      }
+
+      .name_item span,
+      .name_item a {
+        display: block;
+        padding: 0.7rem 1.25rem;
+        color: #000;
+        text-decoration: none;
+      }
+
+      .name_item a {
+        border-radius: 999px;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      .name_item a:hover,
+      .name_item a:focus-visible {
+        background: #000;
+        color: #e6e6e6;
+      }
+
+      /* 名前がまだ入っていない項目 */
+      .name_empty {
+        display: inline-block;
+        font-size: 1rem;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.45);
+        padding: 0.7rem 1.25rem;
+        border: 1px dashed rgba(0, 0, 0, 0.45);
+        border-radius: 999px;
       }
 
       /* ==================== スマホ対応 ==================== */
       @media (max-width: 768px) {
+        .page {
+          width: 100%; /* 1900px固定だと横にはみ出すため */
+        }
+
+        .page_content {
+          padding: 2.5rem 1rem;
+        }
+
         .contents_texto {
           padding: 10px 12px;
           gap: 12px;
@@ -213,6 +416,47 @@ import Footer from "../components/footer.astro";
           white-space: nowrap;
           font-size: 11px;
           padding: 4px 8px;
+        }
+
+        /* 項目名を上、名前を下に縦積み */
+        .credit_section {
+          grid-template-columns: 1fr;
+          row-gap: 0.9rem;
+          padding: 1.5rem 0;
+        }
+
+        .heading_en {
+          font-size: 12vw;
+        }
+
+        .heading_ja {
+          margin-top: 0.5rem;
+        }
+
+        /* 1カラムに戻すが、見出し→名前の順は保ち、
+           偶数番目の項目は右寄せにして左右の交互配置を維持する */
+        .credit_section:nth-child(even) .heading {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .credit_section:nth-child(even) .page_body {
+          grid-column: 1;
+          grid-row: 2;
+          text-align: right;
+        }
+
+        .credit_section:nth-child(even) .name_list {
+          justify-content: flex-end;
+        }
+
+        .name_item {
+          font-size: 1.05rem;
+        }
+
+        .name_item span,
+        .name_item a {
+          padding: 0.6rem 1rem;
         }
 
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
@@ -249,84 +493,6 @@ import Footer from "../components/footer.astro";
 
         .back_arrow {
           font-size: 16px;
-        }
-
-        .chronology {
-          max-width: 50vh;
-          margin: 0 10px;
-        }
-
-        .chronology_title {
-          padding: 16px 1em;
-        }
-        .chronology_subtitle {
-          font-size: 20px;
-          letter-spacing: 0.2em;
-          margin: 0 0 2px 0;
-        }
-        .chronology_title h4 {
-          font-size: 13vw;
-        }
-        .chronology_date {
-          font-size: 15px;
-        }
-
-        :global(.timeline-wrap) {
-          padding: 32px 16px;
-          margin-bottom: 60px;
-        }
-
-        :global(.timeline-line) {
-          left: 8px;
-        }
-
-        :global(.marker-col) {
-          width: 16px;
-          flex: 0 0 16px;
-        }
-
-        :global(.marker-circle) {
-          width: 14px;
-          height: 14px;
-          border-width: 2px;
-        }
-
-        :global(.content-col) {
-          padding-left: 16px;
-          gap: 20px;
-        }
-
-        :global(.item-year) {
-          font-size: 12px;
-        }
-
-        :global(.item-title) {
-          font-size: 17px;
-          padding-bottom: 8px;
-        }
-
-        :global(.item-desc) {
-          font-size: 13px;
-          line-height: 1.8;
-        }
-
-        :global(.item-comment) {
-          font-size: 12px;
-          padding: 8px 12px;
-        }
-
-        :global(.like-btn) {
-          font-size: 12px;
-          padding: 5px 12px;
-        }
-
-        :global(.item-youtube) {
-          border-radius: 6px;
-        }
-
-        :global(.yt-play-btn) {
-          width: 52px;
-          height: 36px;
         }
       }
     </style>
