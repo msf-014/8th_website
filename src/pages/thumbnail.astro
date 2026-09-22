@@ -3,6 +3,149 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/footer.astro";
+
+// frontmatter内、画像リストを用意
+const leftImages = [
+  {
+    src: "/Fy1KkBpaMAAU36N.jpg",
+    title: "作品タイトル 1",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/ByRcUzoXci",
+  },
+  {
+    src: "/GevBW4MaEAA3Iwh.jpg",
+    title:
+      "【みんなで空気読み。4】空気、読めてるよな　なぁ？【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/YZrQHmGZrI",
+  },
+  {
+    src: "/GiG4oblbcAAXo9_.jpg",
+    title:
+      "【#にじさんじスーパーじゃんけん大会】みなさん、じゃんけんって知ってますか？予選H【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/lR7Vb1jGEg",
+  },
+  {
+    src: "/GWiYWSRaoAEyOyq.jpg",
+    title: "【雑談】手動疑似3.0お披露目【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://youtube.com/live/VdheYHhII-0",
+  },
+  {
+    src: "/HCHmFT8bMAEaXZO.jpg",
+    title:
+      "【マインスイーパー】マジで現実を忘れさせてくれ、マインスイーパー【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/EBkGheYVyF",
+  },
+  {
+    src: "/HEZsnb7aEAAYgOe.jpg",
+    title:
+      "【雑談】何かに驚いているようにみえるが、実際は何にも驚いてはいない【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/9jvM7Nvcne",
+  },
+  {
+    src: "/HGK8P7AaMAA475q.jpg",
+    title:
+      "【カラータイル】もうぜーんぶ忘れたい　逃げよう、この現実から【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/pTllVGYTtr",
+  },
+  {
+    src: "/Efd0L6hUYAEn5J_.jpg",
+    title: "【睡眠導入】読む読む読むyp無読む【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/UOBv9pIS3b",
+  },
+  {
+    src: "/F2b9FcMbMAAQpkl.jpg",
+    title:
+      "【カウントダウン雑談】みんなと誕生日を迎えたい！【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://www.youtube.com/live/BdmbAWcfpYo",
+  },
+  {
+    src: "/G2ZwvolbcAA5Qpp.jpg",
+    title:
+      "【Fork Road / 丁字路】究極の二択を迫られるホラゲー【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://www.youtube.com/live/rBNwOm0Zz5w",
+  },
+];
+
+const rightImages = [
+  {
+    src: "/F8JKsJQaAAAsdH_.jpg",
+    title:
+      "【カラータイル】ドキドキ！200点で脱獄！カラータイル監獄編！【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/m3uNodncZJ",
+  },
+  {
+    src: "/G7tkisCawAAUhbJ.jpg",
+    title: "【スイカゲーム】今？【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/G32Hg-qXYAA3uZ1.jpg",
+    title:
+      "【雑談】秋になったということは雑談をするということだ【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/GBqa01IaMAA_l6K.jpg",
+    title: "【雑談】冬の朝なので雑談する縦型配信【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/GKtXlpAaIAAluRo.jpg",
+    title:
+      "【雑談】あ、気が付いた？――そう。ここは、杉林【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/GpCkCW_bQAAyDMK.jpg",
+    title:
+      "【スゴイツヨイトウフ】非常に好評と話題の豆腐ゲー【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/GSMUtmAasAAkd3O.jpg",
+    title:
+      "【僕、アルバイトォォ！！】クビにされたので憂さ晴らしで暴れま～す＾＾【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/GQGXRBdbEAM1mWi.jpg",
+    title: "【雑談】週末が来たことを喜ぶ配信【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/HHdZNI-bYAAP34W.jpg",
+    title:
+      "【雑談】ゴールデンウィーク？そこになければないですね～←そんな…【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+  {
+    src: "/HIBczjObgAAqJms.jpg",
+    title: "【隙マ】勝手に開く隙間を閉じるだけのゲーム【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "/works/left-01",
+  },
+];
+
+// モーダルの前へ/次へで使う「重複なし」の全画像リスト
+const allImages = [...leftImages, ...rightImages];
 ---
 
 <BaseLayout>
@@ -18,275 +161,563 @@ import Footer from "../components/footer.astro";
       </div>
     </div>
 
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
+    <div class="gallery">
+      <div class="gallery_board">
+        <div class="gallery_col gallery_col--up">
+          <div class="gallery_track">
+            {
+              leftImages.map((item) => (
+                <button
+                  type="button"
+                  class="gallery_item"
+                  data-index={allImages.findIndex((i) => i.src === item.src)}
+                >
+                  <img src={item.src} alt={item.title} loading="lazy" />
+                </button>
+              ))
+            }
+            {
+              leftImages.map((item) => (
+                <button
+                  type="button"
+                  class="gallery_item"
+                  data-index={allImages.findIndex((i) => i.src === item.src)}
+                  aria-hidden="true"
+                  tabindex="-1"
+                >
+                  <img src={item.src} alt="" loading="lazy" />
+                </button>
+              ))
+            }
+          </div>
+        </div>
 
-      body {
-        background-color: #fff;
-        position: relative;
-      }
+        <div class="gallery_col gallery_col--down">
+          <div class="gallery_track">
+            {
+              rightImages.map((item) => (
+                <button
+                  type="button"
+                  class="gallery_item"
+                  data-index={allImages.findIndex((i) => i.src === item.src)}
+                >
+                  <img src={item.src} alt={item.title} loading="lazy" />
+                </button>
+              ))
+            }
+            {
+              rightImages.map((item) => (
+                <button
+                  type="button"
+                  class="gallery_item"
+                  data-index={allImages.findIndex((i) => i.src === item.src)}
+                  aria-hidden="true"
+                  tabindex="-1"
+                >
+                  <img src={item.src} alt="" loading="lazy" />
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
 
-      :root {
-        --morph-duration: 0.6s;
+    <!-- モーダル本体 -->
+    <div class="modal" id="thumbModal" aria-hidden="true">
+      <div class="modal_overlay" data-close></div>
 
-        --header-back-color: rgb(255, 249, 158);
-      }
+      <button
+        type="button"
+        class="modal_nav modal_nav--prev"
+        id="modalPrev"
+        aria-label="前の画像"
+      >
+      </button>
 
-      ::view-transition-old(title--message),
-      ::view-transition-new(title--message) {
-        animation-duration: var(--morph-duration);
-      }
+      <div class="modal_inner">
+        <button type="button" class="modal_close" data-close aria-label="閉じる"
+          >✕</button
+        >
+        <img class="modal_img" id="modalImg" src="" alt="" />
+        <div class="modal_text">
+          <h3 class="modal_title" id="modalTitle"></h3>
+          <p class="modal_caption" id="modalCaption"></p>
+          <a
+            class="modal_link"
+            id="modalLink"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer">詳しく見る →</a
+          >
+        </div>
+      </div>
 
-      .bg_reveal {
-        position: fixed;
-        inset: 0;
-        background: rgb(255, 249, 158);
-        background-image: radial-gradient(
-          circle,
-          rgba(120, 80, 200, 0.35) 1px,
-          transparent 1px
-        );
-        background-size: 5px 5px;
-        z-index: -1;
-        transform: scaleY(0);
-        animation: revealBg 0.4s ease forwards;
-        /* transform-origin はJSで動的に設定するため、ここでは指定しない */
-      }
-
-      @keyframes revealBg {
-        from {
-          transform: scaleY(0);
-        }
-        to {
-          transform: scaleY(1);
-        }
-      }
-
-      .contents-list {
-        display: block;
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-      }
-
-      .contents_texto {
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-        padding: 14px 16px 14px;
-        white-space: nowrap;
-        position: relative;
-        display: flex; /* 追加 */
-        align-items: center; /* h2とボタンを縦中央揃え */
-        gap: 24px; /* h2とボタンの間隔 */
-        background: rgb(255, 249, 158);
-      }
-
-      .content_label {
-        position: absolute;
-        top: 14px;
-        right: 16px;
-        font-size: 15px;
-        color: #000;
-        font-family: "Zen Kaku Gothic New", sans-serif;
-        font-weight: 800;
-        padding: 6px 14px;
-      }
-
-      .contents_texto h2 {
-        font-size: 110px;
-        font-family: "acumin-variable", sans-serif;
-        font-variation-settings:
-          "wght" 400,
-          "wdth" 100,
-          "slnt" 0;
-        font-style: normal;
-        align-items: center;
-        line-height: 1;
-        letter-spacing: -0.06em;
-        position: relative;
-      }
-
-      .back_btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        border: 2px solid #000;
-        border-radius: 50%;
-        text-decoration: none;
-        color: #000;
-        flex-shrink: 0; /* ボタンが縮まないようにする */
-        transition:
-          background 0.2s,
-          color 0.2s;
-      }
-
-      .back_btn:hover {
-        background: #000;
-        color: #e6e6e6;
-      }
-
-      .back_arrow {
-        font-size: 20px;
-        line-height: 1;
-      }
-
-      /* ==================== スマホ対応 ==================== */
-      @media (max-width: 768px) {
-        .contents_texto {
-          padding: 10px 12px;
-          gap: 12px;
-          white-space: normal;
-          overflow: hidden;
-        }
-
-        .contents_texto h2 {
-          flex: 1 1 0%;
-          min-width: 0;
-          font-size: 15vw;
-          overflow-x: hidden;
-          overflow-y: hidden;
-          white-space: nowrap;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          font-size: 15vw;
-        }
-
-        .content_label {
-          top: 10px;
-          right: 66px;
-          max-width: 88px;
-          box-sizing: border-box;
-          overflow-x: hidden;
-          white-space: nowrap;
-          font-size: 11px;
-          padding: 4px 8px;
-          color: rgb(255, 249, 158);
-          -webkit-text-stroke-width: 2px;
-          -webkit-text-fill-color: #000;
-          paint-order: stroke fill;
-          z-index: 1;
-        }
-
-        /* ---- ここから無限ループ・マーキー用のスタイル ---- */
-        :global(.marquee-track) {
-          display: inline-flex;
-          white-space: nowrap;
-        }
-
-        :global(.marquee-track.is-scrolling) {
-          animation-name: marquee-loop;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
-
-        @keyframes marquee-loop {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(var(--marquee-distance, 0px));
-          }
-        }
-
-        :global(.marquee-item) {
-          display: inline-block;
-          white-space: nowrap;
-        }
-        /* ---- ここまで ---- */
-
-        .back_btn {
-          width: 40px;
-          height: 40px;
-        }
-
-        .back_arrow {
-          font-size: 16px;
-        }
-
-        .chronology {
-          max-width: 50vh;
-          margin: 0 10px;
-        }
-
-        .chronology_title {
-          padding: 16px 1em;
-        }
-        .chronology_subtitle {
-          font-size: 20px;
-          letter-spacing: 0.2em;
-          margin: 0 0 2px 0;
-        }
-        .chronology_title h4 {
-          font-size: 13vw;
-        }
-        .chronology_date {
-          font-size: 15px;
-        }
-
-        :global(.timeline-wrap) {
-          padding: 32px 16px;
-          margin-bottom: 60px;
-        }
-
-        :global(.timeline-line) {
-          left: 8px;
-        }
-
-        :global(.marker-col) {
-          width: 16px;
-          flex: 0 0 16px;
-        }
-
-        :global(.marker-circle) {
-          width: 14px;
-          height: 14px;
-          border-width: 2px;
-        }
-
-        :global(.content-col) {
-          padding-left: 16px;
-          gap: 20px;
-        }
-
-        :global(.item-year) {
-          font-size: 12px;
-        }
-
-        :global(.item-title) {
-          font-size: 17px;
-          padding-bottom: 8px;
-        }
-
-        :global(.item-desc) {
-          font-size: 13px;
-          line-height: 1.8;
-        }
-
-        :global(.item-comment) {
-          font-size: 12px;
-          padding: 8px 12px;
-        }
-
-        :global(.like-btn) {
-          font-size: 12px;
-          padding: 5px 12px;
-        }
-
-        :global(.item-youtube) {
-          border-radius: 6px;
-        }
-
-        :global(.yt-play-btn) {
-          width: 52px;
-          height: 36px;
-        }
-      }
-    </style>
+      <button
+        type="button"
+        class="modal_nav modal_nav--next"
+        id="modalNext"
+        aria-label="次の画像"
+      >
+      </button>
+    </div>
   </body>
+
+  <Footer />
+
+  <script define:vars={{ allImages }}>
+    const modal = document.getElementById("thumbModal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalCaption = document.getElementById("modalCaption");
+    const modalLink = document.getElementById("modalLink");
+    const modalText = document.querySelector(".modal_text");
+    const btnPrev = document.getElementById("modalPrev");
+    const btnNext = document.getElementById("modalNext");
+
+    let currentIndex = 0;
+
+    function showImage(index) {
+      modalImg.classList.remove("is-visible");
+      modalText.classList.remove("is-visible");
+
+      setTimeout(() => {
+        const item = allImages[index];
+        modalImg.src = item.src;
+        modalImg.alt = item.title || "";
+        modalTitle.textContent = item.title || "";
+        modalCaption.textContent = item.caption || "";
+
+        if (item.link) {
+          modalLink.href = item.link;
+          modalLink.classList.remove("is-hidden");
+        } else {
+          modalLink.removeAttribute("href");
+          modalLink.classList.add("is-hidden");
+        }
+
+        requestAnimationFrame(() => {
+          modalImg.classList.add("is-visible");
+          modalText.classList.add("is-visible");
+        });
+      }, 150);
+    }
+
+    function openModal(index) {
+      currentIndex = index;
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      showImage(currentIndex);
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      modalImg.classList.remove("is-visible");
+      modalText.classList.remove("is-visible");
+    }
+
+    function goPrev() {
+      currentIndex = (currentIndex - 1 + allImages.length) % allImages.length;
+      showImage(currentIndex);
+    }
+
+    function goNext() {
+      currentIndex = (currentIndex + 1) % allImages.length;
+      showImage(currentIndex);
+    }
+
+    document.querySelectorAll(".gallery_item").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.index);
+        if (!Number.isNaN(index)) openModal(index);
+      });
+    });
+
+    modal.querySelectorAll("[data-close]").forEach((el) => {
+      el.addEventListener("click", closeModal);
+    });
+
+    btnPrev.addEventListener("click", goPrev);
+    btnNext.addEventListener("click", goNext);
+
+    document.addEventListener("keydown", (e) => {
+      if (!modal.classList.contains("is-open")) return;
+      if (e.key === "Escape") closeModal();
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+    });
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #fff;
+      position: relative;
+    }
+
+    :root {
+      --morph-duration: 0.6s;
+
+      --header-back-color: rgb(255, 249, 158);
+    }
+
+    ::view-transition-old(title--message),
+    ::view-transition-new(title--message) {
+      animation-duration: var(--morph-duration);
+    }
+
+    .bg_reveal {
+      position: fixed;
+      inset: 0;
+      background: rgb(255, 249, 158);
+      background-image: radial-gradient(
+        circle,
+        rgba(120, 80, 200, 0.35) 1px,
+        transparent 1px
+      );
+      background-size: 5px 5px;
+      z-index: -1;
+      transform: scaleY(0);
+      animation: revealBg 0.4s ease forwards;
+      /* transform-origin はJSで動的に設定するため、ここでは指定しない */
+    }
+
+    @keyframes revealBg {
+      from {
+        transform: scaleY(0);
+      }
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    .contents-list {
+      display: block;
+      box-shadow:
+        0 -1px 0 0 #000,
+        0 1px 0 0 #000;
+    }
+
+    .contents_texto {
+      box-shadow:
+        0 -1px 0 0 #000,
+        0 1px 0 0 #000;
+      padding: 14px 16px 14px;
+      white-space: nowrap;
+      position: relative;
+      display: flex; /* 追加 */
+      align-items: center; /* h2とボタンを縦中央揃え */
+      gap: 24px; /* h2とボタンの間隔 */
+      background: rgb(255, 249, 158);
+      z-index: 2;
+    }
+
+    .content_label {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 15px;
+      color: #000;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      font-weight: 800;
+      padding: 6px 14px;
+    }
+
+    .contents_texto h2 {
+      font-size: 110px;
+      font-family: "acumin-variable", sans-serif;
+      font-variation-settings:
+        "wght" 400,
+        "wdth" 100,
+        "slnt" 0;
+      font-style: normal;
+      align-items: center;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      position: relative;
+    }
+
+    .back_btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #000;
+      flex-shrink: 0; /* ボタンが縮まないようにする */
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+
+    .back_btn:hover {
+      background: #000;
+      color: #e6e6e6;
+    }
+
+    .back_arrow {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .gallery {
+      width: 1900px;
+      margin: 0 auto;
+      border-left: 1px solid #000;
+      border-right: 1px solid #000;
+    }
+
+    .gallery_board {
+      display: flex;
+      gap: 25px;
+      height: 1022px;
+      overflow: hidden;
+      padding: 0 16px;
+      box-sizing: border-box;
+      background: rgb(255, 249, 158);
+      width: 1900px;
+      margin: 0 auto;
+    }
+
+    .gallery_col {
+      flex: 1 1 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gallery_track {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .gallery_col--up .gallery_track {
+      animation: scrollUp 60s linear infinite;
+    }
+
+    .gallery_col--down .gallery_track {
+      animation: scrollDown 60s linear infinite;
+    }
+
+    @keyframes scrollUp {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-50%);
+      }
+    }
+
+    @keyframes scrollDown {
+      from {
+        transform: translateY(-50%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .gallery_item {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .gallery_item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery_item:hover img {
+      transform: scale(1.05);
+    }
+
+    /* ---- モーダル ---- */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal_overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.is-open .modal_overlay {
+      opacity: 1;
+    }
+
+    .modal_inner {
+      position: relative;
+      max-width: 82vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .modal_img {
+      max-width: 82vw;
+      max-height: 70vh;
+      width: auto;
+      height: auto;
+      display: block;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: scale(0.9);
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .modal_img.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .modal_text {
+      max-width: 82vw;
+      margin-top: 16px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal_text.is-visible {
+      opacity: 1;
+    }
+
+    .modal_title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      margin-bottom: 6px;
+    }
+
+    .modal_caption {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      line-height: 1.6;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      margin-bottom: 12px;
+    }
+
+    .modal_link {
+      display: inline-block;
+      color: #fff;
+      font-size: 13px;
+      text-decoration: none;
+      border-bottom: 1px solid #fff;
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .modal_link:hover {
+      opacity: 0.6;
+    }
+
+    .modal_link.is-hidden {
+      display: none;
+    }
+
+    .modal_close {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: transparent;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal_nav {
+      position: relative;
+      z-index: 1;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: transparent;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin: 0 24px;
+      transition:
+        background 0.2s,
+        color 0.2s;
+    }
+
+    .modal_nav:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      .gallery {
+        flex-direction: row;
+        gap: 8px;
+      }
+
+      .modal_nav {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        margin: 0 8px;
+      }
+
+      .modal_inner {
+        max-width: 68vw;
+      }
+
+      .modal_img {
+        max-width: 68vw;
+        max-height: 70vh;
+      }
+    }
+  </style>
 </BaseLayout>

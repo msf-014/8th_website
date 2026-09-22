@@ -49,22 +49,51 @@ const credits: {
     names: [], // ← ここに名前を追加
   },
   {
-    id: "timeline",
-    en: "TIMELINE",
+    id: "chronology",
+    en: "CHRONOLOGY",
     label: "年表",
-    names: [], // ← ここに名前を追加
+    names: [
+      "IKE",
+      "奏音",
+      "結城",
+      "かぶと",
+      "黒糖侍",
+      "オールドキング",
+      "五穀米",
+    ], // ← ここに名前を追加
   },
   {
     id: "words",
     en: "WORDS",
     label: "言葉",
-    names: [], // ← ここに名前を追加
+    names: ["にて", "Masahiro Fujita"], // ← ここに名前を追加
   },
   {
     id: "message",
     en: "MESSAGE",
     label: "メッセージ",
-    names: [], // ← ここに名前を追加
+    names: [
+      "匿名希望",
+      "モスモスオ",
+      "奏音",
+      "みどり",
+      "ふじみや。",
+      "Sotono",
+      "早川",
+      "nu",
+      "ダダダダ",
+      "オールドキング",
+      "Haruu",
+      "レッセイ",
+      "かぶと",
+      "結城",
+      "IKE",
+      "おとがめなし子",
+      "藤",
+      "ゆかん。",
+      "らぴ♡",
+      "冬野",
+    ], // ← ここに名前を追加
   },
 ];
 
@@ -341,9 +370,6 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
         font-size: 1.25rem;
         font-weight: 500;
         line-height: 1;
-        border: 1px solid #000;
-        border-radius: 999px;
-        background: #fff;
       }
 
       .name_item span,
