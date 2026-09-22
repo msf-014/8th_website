@@ -73,6 +73,12 @@ const leftImages = [
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
     link: "https://www.youtube.com/live/rBNwOm0Zz5w",
   },
+  {
+    src: "/Gqz78Z6WMAA0Dfo.jpg",
+    title: "【雑談】サジェスト汚染配信【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/RfWv7UU91y",
+  },
 ];
 
 const rightImages = [
@@ -87,60 +93,67 @@ const rightImages = [
     src: "/G7tkisCawAAUhbJ.jpg",
     title: "【スイカゲーム】今？【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/Gikvq9CFr0",
   },
   {
     src: "/G32Hg-qXYAA3uZ1.jpg",
     title:
       "【雑談】秋になったということは雑談をするということだ【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/DrUN30bMYY",
   },
   {
     src: "/GBqa01IaMAA_l6K.jpg",
     title: "【雑談】冬の朝なので雑談する縦型配信【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/mtMIk4P3Or",
   },
   {
     src: "/GKtXlpAaIAAluRo.jpg",
     title:
       "【雑談】あ、気が付いた？――そう。ここは、杉林【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "youtube.com/live/0ctNtk8Tffo?si=VJMe7yFEKRfWk-Bg",
   },
   {
     src: "/GpCkCW_bQAAyDMK.jpg",
     title:
       "【スゴイツヨイトウフ】非常に好評と話題の豆腐ゲー【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/fGzyUIBCMt",
   },
   {
     src: "/GSMUtmAasAAkd3O.jpg",
     title:
       "【僕、アルバイトォォ！！】クビにされたので憂さ晴らしで暴れま～す＾＾【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/FCqEuORyuT",
   },
   {
     src: "/GQGXRBdbEAM1mWi.jpg",
     title: "【雑談】週末が来たことを喜ぶ配信【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/dGTMsGhOOe",
   },
   {
     src: "/HHdZNI-bYAAP34W.jpg",
     title:
       "【雑談】ゴールデンウィーク？そこになければないですね～←そんな…【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/itzWcniG6D",
   },
   {
     src: "/HIBczjObgAAqJms.jpg",
     title: "【隙マ】勝手に開く隙間を閉じるだけのゲーム【にじさんじ/矢車りね】",
     caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
-    link: "/works/left-01",
+    link: "https://t.co/ppMgieXNxP",
+  },
+  {
+    src: "/GBnSfL8aUAAJOAH.jpg",
+    title:
+      "【Jisatsu | 自撮】チラズアート新作！心霊映像とか余裕っしょｗ【にじさんじ/矢車りね】",
+    caption: "ここに説明文が入ります。制作背景や使用ツールなど自由に。",
+    link: "https://t.co/VDyElNQaB4",
   },
 ];
 
@@ -220,6 +233,36 @@ const allImages = [...leftImages, ...rightImages];
             }
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- スマホ用: 横1行トラック -->
+    <div class="gallery_mobile">
+      <div class="gallery_mobile_track">
+        {
+          allImages.map((item) => (
+            <button
+              type="button"
+              class="gallery_item"
+              data-index={allImages.indexOf(item)}
+            >
+              <img src={item.src} alt={item.title} loading="lazy" />
+            </button>
+          ))
+        }
+        {
+          allImages.map((item) => (
+            <button
+              type="button"
+              class="gallery_item"
+              data-index={allImages.indexOf(item)}
+              aria-hidden="true"
+              tabindex="-1"
+            >
+              <img src={item.src} alt="" loading="lazy" />
+            </button>
+          ))
+        }
       </div>
     </div>
 
@@ -697,10 +740,87 @@ const allImages = [...leftImages, ...rightImages];
       color: #000;
     }
 
+    .gallery_mobile {
+      display: none;
+    }
+
     @media (max-width: 768px) {
+      .contents_texto {
+        padding: 10px 12px;
+        gap: 12px;
+        white-space: normal;
+        overflow: hidden;
+      }
+
+      .contents_texto h2 {
+        flex: 1 1 0%;
+        min-width: 0;
+        font-size: 15vw;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        font-size: 15vw;
+      }
+
+      .content_label {
+        top: 10px;
+        right: 66px;
+        max-width: 100px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        white-space: nowrap;
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+
+      .back_btn {
+        width: 40px;
+        height: 40px;
+      }
+
+      .back_arrow {
+        font-size: 16px;
+      }
+
+      /* PC用の縦2列を隠す */
       .gallery {
-        flex-direction: row;
-        gap: 8px;
+        display: none;
+      }
+
+      /* スマホ用の横1行を表示 */
+      .gallery_mobile {
+        display: block;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        padding: 8px;
+        box-sizing: border-box;
+        background: rgb(255, 249, 158);
+      }
+
+      .gallery_mobile_track {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        animation: scrollUpMobile 40s linear infinite;
+      }
+
+      .gallery_mobile_track .gallery_item {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        flex-shrink: 0;
+      }
+
+      @keyframes scrollUpMobile {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-50%);
+        }
       }
 
       .modal_nav {
