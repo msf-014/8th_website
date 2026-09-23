@@ -233,13 +233,22 @@ import Footer from "../components/footer.astro";
         {
           from: "あんこあら",
           msg: [
-            "8周年、本当に本当におめでとうございます🎊",
-            "いつもの配信も、ありえないバズり方をするネタツイも、",
-            "超絶カッコいいラップも、shorts動画の軽快な3Dも、",
-            "(冷静に考えてオーストラリアから定期的に日本に帰ってきてくれるの凄すぎないかい？？？)",
-            "どれもこれも最高に楽しませてくれてマジで𝑩𝑰𝑮 𝑳𝑶𝑽𝑬…",
-            "YouTubeとTwitter両方の通知をオンにさせたのは矢車、、、あんたが初めてだよ、、、それくらい何かしらの更新を楽しみにしています！！！",
-            "これからも矢車のペースで末長く続けてくれたら嬉しいです😭応援することしか出来ないんですが矢車の毎日に幸あれ！！！！！！！！",
+            ["8周年、本当に本当におめでとうございます🎊"],
+            [
+              "いつもの配信も、",
+              "ありえないバズり方をするネタツイも、",
+              "超絶カッコいいラップも、",
+              "shorts動画の軽快な3Dも、",
+              "(冷静に考えてオーストラリアから定期的に日本に帰ってきてくれるの凄すぎないかい？？？)",
+              "どれもこれも最高に楽しませてくれてマジで",
+              "𝑩𝑰𝑮 𝑳𝑶𝑽𝑬…",
+            ],
+            [
+              "YouTubeとTwitter両方の通知をオンにさせたのは矢車、、、あんたが初めてだよ、、、それくらい何かしらの更新を楽しみにしています！！！",
+            ],
+            [
+              "これからも矢車のペースで末長く続けてくれたら嬉しいです😭応援することしか出来ないんですが矢車の毎日に幸あれ！！！！！！！！",
+            ],
           ],
         },
         {
@@ -260,6 +269,72 @@ import Footer from "../components/footer.astro";
         {
           from: "めいぷる",
           msg: ["矢車、このまま10周年までかっ飛ばしてってくれ"],
+        },
+        {
+          from: "にて",
+          msg: [
+            ["8周年おめでとう!!!ありがとう!!!"],
+            [
+              "日々色んな姿を見せてくれる矢車から目が離せません…",
+              "異国の地でライバー、学業(たくさんの宿題!)、お手伝い、自炊…と頑張っている矢車を本当に尊敬しています!!",
+              "ロックながらも真面目に努力する姿が大好きです🫶",
+              "これからもどんどん調子に乗ってくれ👊",
+            ],
+            [
+              "矢車の9年目がたくさんの優しさと美味しいものに囲まれていますように…💐",
+            ],
+          ],
+        },
+        {
+          from: "タカトウ",
+          msg: [
+            [
+              "8周年おめでとうございます",
+              "GTAきっかで矢車さんのことを知りその後の配信を見るようになって気がつけばファンになっていました",
+            ],
+            [
+              "オーストラリアの生活と配信大変だとは思いますがこれからも配信楽しみに待っています",
+            ],
+          ],
+        },
+        {
+          from: "匿名希望",
+          msg: [
+            ["8周年おめでとうございます。"],
+            [
+              "私生活も大変な中いつもたのしい配信ありがとう",
+              "もっともっとやりたいことが形に出来るようこれからも応援させてね",
+            ],
+          ],
+        },
+        {
+          from: "mmm",
+          msg: [
+            "8周年おめでとうございます！",
+            "たくさんの楽しい時間をくれてありがとう！",
+            "これからもライバーとして、プロツイッタラーとしてのご活躍を楽しみにしてます。",
+          ],
+        },
+        {
+          from: "黒糖侍",
+          msg: [
+            "デビュー8周年おめでとうございます！！お祝いさせてくれてありがと～！！",
+            "こうしてお祝いの言葉をお伝えできることをとても嬉しく有難く感じております。",
+            "楽しいや嬉しい、事あるごとに驚きを与えてくれる矢車のことがずっと大好きです。",
+            "これからも末永く、矢車の気の赴くまま自由に楽しく健康に活動を続けていただけますと幸いです。",
+          ],
+        },
+        {
+          from: "塔市",
+          msg: [
+            ["りねちゃん8周年おめでとう〜！"],
+            [
+              "配信を見ている時間が、いつの間にか日々の楽しみのひとつになっていて、",
+              "「今日もりねちゃんの配信がある！」と思えることがとても嬉しいです。",
+              "いつもたくさん元気を貰ってます！ありがとう！",
+            ],
+            ["9年目も、りねちゃんらしく楽しく進んでいってください！"],
+          ],
         },
       ];
 
@@ -320,6 +395,24 @@ import Footer from "../components/footer.astro";
         return placed;
       }
 
+      // msg は「段落の配列。各段落はさらに行の配列」という二重構造。
+      // 例: [["1行目", "2行目(同じ段落)"], ["別の段落"]]
+      // 段落ごとに<p>を作り、その中の行は<br>で区切ることで、
+      // 「改行」と「段落」の余白を別々に表現できるようにする。
+      function renderMessage(container, msg) {
+        msg.forEach((paragraph) => {
+          // 段落を文字列でうっかり書いてしまった場合（例: "本文"）も
+          // 1行だけの段落として扱えるように、配列に正規化しておく。
+          const lines = Array.isArray(paragraph) ? paragraph : [paragraph];
+          const p = document.createElement("p");
+          lines.forEach((line, idx) => {
+            if (idx > 0) p.appendChild(document.createElement("br"));
+            p.appendChild(document.createTextNode(line));
+          });
+          container.appendChild(p);
+        });
+      }
+
       // 付箋1件分のDOM（中身）を作る共通処理
       function createStickyEl(m, i, mobile) {
         const el = document.createElement("div");
@@ -331,15 +424,11 @@ import Footer from "../components/footer.astro";
 
         const msgEl = document.createElement("div");
         msgEl.className = "s-msg";
-        m.msg.forEach((text) => {
-          const p = document.createElement("p");
-          p.textContent = text;
-          msgEl.appendChild(p);
-        });
+        renderMessage(msgEl, m.msg);
 
         const numEl = document.createElement("span");
         numEl.className = "s-num";
-        numEl.textContent = "REMINDER ——— " + String(i + 1).padStart(4, "0");
+        numEl.textContent = "MESSAGE ——— " + String(i + 1).padStart(4, "0");
 
         el.appendChild(fromEl);
         el.appendChild(msgEl);
@@ -403,11 +492,7 @@ import Footer from "../components/footer.astro";
         document.getElementById("m-from").textContent = m.from;
         const msgEl = document.getElementById("m-msg");
         msgEl.innerHTML = "";
-        m.msg.forEach((text) => {
-          const p = document.createElement("p");
-          p.textContent = text;
-          msgEl.appendChild(p);
-        });
+        renderMessage(msgEl, m.msg);
         document.getElementById("modal-backdrop").classList.add("open");
       }
 
@@ -824,6 +909,15 @@ import Footer from "../components/footer.astro";
           z-index: 1;
         }
 
+        .back_btn {
+          width: 40px;
+          height: 40px;
+        }
+
+        .back_arrow {
+          font-size: 16px;
+        }
+
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
         :global(.marquee-track) {
           display: inline-flex;
@@ -841,6 +935,10 @@ import Footer from "../components/footer.astro";
           white-space: nowrap;
         }
         /* ---- ここまで ---- */
+
+        :global(.sticky) {
+          border: 1px solid #c42222;
+        }
 
         :global(.sticky--sm) {
           width: 78px;
@@ -881,7 +979,7 @@ import Footer from "../components/footer.astro";
 
         :global(.sticky .s-msg) {
           font-size: 8px;
-          font-weight: 900;
+          font-weight: 700;
           color: #c42222;
           line-height: 1.25;
           flex: 1;
