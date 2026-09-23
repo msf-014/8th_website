@@ -3,6 +3,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/footer.astro";
+
+const image = [
+  {
+    src: "IMG_0287.jpg",
+    title: "あんこあら",
+  },
+];
+
+const allImages = [...image];
 ---
 
 <BaseLayout>
@@ -17,6 +26,25 @@ import Footer from "../components/footer.astro";
         </a>
       </div>
     </div>
+    <div class="illust_bord">
+      <div class="illust_contents">
+        <div class="illust_list">
+          {
+            image.map((item) => (
+              <button
+                type="button"
+                class="gallery_item"
+                data-index={allImages.findIndex((i) => i.src === item.src)}
+              >
+                <img src={item.src} alt={item.title} loading="lazy" />
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <Footer />
 
     <style>
       * {
@@ -138,6 +166,33 @@ import Footer from "../components/footer.astro";
       .back_arrow {
         font-size: 20px;
         line-height: 1;
+      }
+
+      .illust_bord {
+        width: 1900px;
+        margin: 0 auto;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+      }
+
+      .illust_contents {
+        display: flex;
+        gap: 25px;
+        height: 1022px;
+        overflow: hidden;
+        padding: 16px;
+        box-sizing: border-box;
+        background: rgb(200, 220, 255);
+        width: 1900px;
+        margin: 0 auto;
+      }
+
+      .illust_list {
+        display: block;
+      }
+
+      .illust_list img {
+        width: 50vh;
       }
 
       /* ==================== スマホ対応 ==================== */
