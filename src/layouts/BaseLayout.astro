@@ -44,6 +44,18 @@ const {
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
     <title>{title}</title>
+    <!-- OGP画像 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Rinalia" />
+    <meta property="og:url" content=`https://8th.rn-ygrm.workers.dev/` />
+    <meta
+      property="og:description"
+      content="グラフィックデザイナー Masahiro Fujitaの個人サイトです。"
+    />
+    <meta property="og:image" content="/ogp.png" />
+    <meta property="og:site_name" content="Rinalia" />
+    <meta name="twitter:image" content="/ogp.png" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <Header overlay={headerOverlay} />
