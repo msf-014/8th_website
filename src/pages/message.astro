@@ -211,6 +211,52 @@ import Footer from "../components/footer.astro";
             "歌い踊りきれまくる貴女が大好きです！これからも長く推せますように！",
           ],
         },
+        {
+          from: "匿名希望",
+          msg: [
+            "矢車8周年おめでとう！！！",
+            "私が矢車を本格的に応援しはじめて6年が経ちました！いつも矢車の配信に元気をもらい、いろんなことに挑戦する矢車を尊敬しています！",
+            "8年間活動続けてくれてありがとう！",
+            "これからの矢車りねにも幸あれ",
+          ],
+        },
+        {
+          from: "水那",
+          msg: [
+            "矢車8周年おめでとう🥳👏🎉",
+            "日々進化する矢車を見れてとっても幸せだし",
+            "これからも進化する矢車をずっとずっと応援してます🔥",
+            "出会ってくれて本当にありがとう🙂‍↕️",
+            "大好き！！！！！！！！！！",
+          ],
+        },
+        {
+          from: "あんこあら",
+          msg: [
+            "8周年、本当に本当におめでとうございます🎊",
+            "いつもの配信も、ありえないバズり方をするネタツイも、",
+            "超絶カッコいいラップも、shorts動画の軽快な3Dも、",
+            "(冷静に考えてオーストラリアから定期的に日本に帰ってきてくれるの凄すぎないかい？？？)",
+            "どれもこれも最高に楽しませてくれてマジで𝑩𝑰𝑮 𝑳𝑶𝑽𝑬…",
+            "YouTubeとTwitter両方の通知をオンにさせたのは矢車、、、あんたが初めてだよ、、、それくらい何かしらの更新を楽しみにしています！！！",
+            "これからも矢車のペースで末長く続けてくれたら嬉しいです😭応援することしか出来ないんですが矢車の毎日に幸あれ！！！！！！！！",
+          ],
+        },
+        {
+          from: "匿名希望",
+          msg: [
+            "りねちゃん8周年おめでとうございます！",
+            "3Dお披露目の時には今以上に最高の時なんて来ないだろうなと思っていたのに、気付けば配信に加えて歌やダンスもいっぱい披露してくれて最高が更新されていきます！",
+            "色々な姿を見せてくれてありがとう！これからも応援してます！",
+          ],
+        },
+        {
+          from: "五穀米",
+          msg: [
+            "8周年おめでとうございます！",
+            "矢車のやりたいこと、頑張ってること、これからも応援していますね。",
+          ],
+        },
       ];
 
       // スマホ判定（767px未満）
@@ -233,21 +279,31 @@ import Footer from "../components/footer.astro";
       // ホバーしても画面端からはみ出さないようにする。
       const HOVER_BUFFER = 10;
 
-      function autoPlace(items, areaW, areaH) {
-        const { w: CARD_W, h: CARD_H } = cardSize();
+      // sizes: [{w, h}, ...] 各付箋の「実測サイズ」を渡す。
+      // 固定値ではなく実測値を使うことで、文章が長い付箋も
+      // 正しい大きさとして重なり回避の計算に反映される。
+      function autoPlace(sizes, areaW, areaH) {
         const placed = [];
-        items.forEach((m, i) => {
+        sizes.forEach((s) => {
+          // ホバー拡大分の余白(HOVER_BUFFER)を残して配置範囲を決める
+          const maxX = Math.max(HOVER_BUFFER, areaW - s.w - HOVER_BUFFER);
+          const maxY = Math.max(HOVER_BUFFER, areaH - s.h - HOVER_BUFFER);
           let best = null,
             bestScore = -Infinity;
           for (let t = 0; t < MAX_TRIES; t++) {
-            const x = MARGIN + Math.random() * (areaW - CARD_W - MARGIN * 2);
-            const y = MARGIN + Math.random() * (areaH - CARD_H - MARGIN * 2);
+            const x =
+              HOVER_BUFFER + Math.random() * Math.max(0, maxX - HOVER_BUFFER);
+            const y =
+              HOVER_BUFFER + Math.random() * Math.max(0, maxY - HOVER_BUFFER);
             let overlap = 0;
             placed.forEach((p) => {
               const dx = Math.abs(x - p.x),
                 dy = Math.abs(y - p.y);
-              if (dx < CARD_W + 8 && dy < CARD_H + 8) {
-                overlap += (CARD_W + 8 - dx) * (CARD_H + 8 - dy);
+              // 2つの付箋の「実際の大きさ」の平均＋余白を重なり判定のしきい値にする
+              const gapW = (s.w + p.w) / 2 + MARGIN;
+              const gapH = (s.h + p.h) / 2 + MARGIN;
+              if (dx < gapW && dy < gapH) {
+                overlap += (gapW - dx) * (gapH - dy);
               }
             });
             if (-overlap > bestScore) {
@@ -255,9 +311,36 @@ import Footer from "../components/footer.astro";
               best = { x, y };
             }
           }
-          placed.push({ ...m, x: best.x, y: best.y, z: 10 + i });
+          placed.push({ x: best.x, y: best.y, w: s.w, h: s.h });
         });
         return placed;
+      }
+
+      // 付箋1件分のDOM（中身）を作る共通処理
+      function createStickyEl(m, i, mobile) {
+        const el = document.createElement("div");
+        el.className = "sticky" + (mobile ? " sticky--sm" : "");
+
+        const fromEl = document.createElement("span");
+        fromEl.className = "s-from";
+        fromEl.textContent = m.from;
+
+        const msgEl = document.createElement("div");
+        msgEl.className = "s-msg";
+        m.msg.forEach((text) => {
+          const p = document.createElement("p");
+          p.textContent = text;
+          msgEl.appendChild(p);
+        });
+
+        const numEl = document.createElement("span");
+        numEl.className = "s-num";
+        numEl.textContent = "REMINDER ——— " + String(i + 1).padStart(4, "0");
+
+        el.appendChild(fromEl);
+        el.appendChild(msgEl);
+        el.appendChild(numEl);
+        return el;
       }
 
       function buildBoard() {
@@ -268,49 +351,44 @@ import Footer from "../components/footer.astro";
         const mobile = isMobile();
         const W = board.offsetWidth,
           H = board.offsetHeight;
-        const placed = autoPlace(messages, W, H);
 
-        placed.forEach((m, i) => {
-          const el = document.createElement("div");
-          el.className = "sticky" + (mobile ? " sticky--sm" : "");
-          el.style.cssText = `left:${m.x}px;top:${m.y}px;z-index:${m.z};opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;`;
-
-          const fromEl = document.createElement("span");
-          fromEl.className = "s-from";
-          fromEl.textContent = m.from;
-
-          const msgEl = document.createElement("div");
-          msgEl.className = "s-msg";
-          m.msg.forEach((text) => {
-            const p = document.createElement("p");
-            p.textContent = text;
-            msgEl.appendChild(p);
-          });
-
-          const numEl = document.createElement("span");
-          numEl.className = "s-num";
-          numEl.textContent = "REMINDER ——— " + String(i + 1).padStart(4, "0");
-
-          el.appendChild(fromEl);
-          el.appendChild(msgEl);
-          el.appendChild(numEl);
-
-          el.addEventListener("click", () => openModal(m));
+        // 1. まず全付箋のDOMを作って板に追加し、実際の描画サイズ（特に高さ）を測る。
+        //    幅はCSSで固定だが、高さは文章量によって変わるため、
+        //    先に実測しておくことで重なり回避の計算精度が上がる。
+        const els = messages.map((m, i) => {
+          const el = createStickyEl(m, i, mobile);
+          el.style.cssText =
+            "position:absolute;left:0;top:0;visibility:hidden;opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;";
           board.appendChild(el);
+          return el;
+        });
+        const sizes = els.map((el) => ({
+          w: el.offsetWidth,
+          h: el.offsetHeight,
+        }));
 
-          // 文章量によって実際の高さは CARD_H と異なることがあるため、
-          // DOMに追加した「あとの実サイズ」を測ってから位置をクランプする。
-          // これによりテキストが長くて縦にはみ出すケースと、
-          // ホバー拡大で外側にはみ出すケースの両方を防ぐ。
-          const actualW = el.offsetWidth;
-          const actualH = el.offsetHeight;
-          const maxLeft = Math.max(MARGIN, W - actualW - HOVER_BUFFER);
-          const maxTop = Math.max(MARGIN, H - actualH - HOVER_BUFFER);
-          const clampedLeft = Math.min(Math.max(m.x, HOVER_BUFFER), maxLeft);
-          const clampedTop = Math.min(Math.max(m.y, HOVER_BUFFER), maxTop);
-          el.style.left = clampedLeft + "px";
-          el.style.top = clampedTop + "px";
+        // 2. 実測サイズをもとに、重なりが最小になる位置を計算する
+        const placed = autoPlace(sizes, W, H);
 
+        // 3. 面積が大きい付箋ほど後ろ（z-indexを小さく）、
+        //    小さい付箋ほど手前に来るよう、面積順にz-indexを割り当てる。
+        //    「何番目に配置したか」ではなく「大きさ」で前後関係を決めている。
+        const order = sizes
+          .map((s, i) => ({ i, area: s.w * s.h }))
+          .sort((a, b) => b.area - a.area); // 面積が大きい順（後ろに来るものが先）
+        const zIndexByIndex = {};
+        order.forEach((o, rank) => {
+          zIndexByIndex[o.i] = 10 + rank; // 大きい付箋ほど小さいz-index（＝後ろ）
+        });
+
+        // 4. 位置とz-indexを確定して表示する
+        els.forEach((el, i) => {
+          const p = placed[i];
+          el.style.left = p.x + "px";
+          el.style.top = p.y + "px";
+          el.style.zIndex = String(zIndexByIndex[i]);
+          el.style.visibility = "visible";
+          el.addEventListener("click", () => openModal(messages[i]));
           setTimeout(() => {
             el.style.opacity = "1";
           }, i * 50);
@@ -588,8 +666,8 @@ import Footer from "../components/footer.astro";
         font-family: "Noto Sans JP", sans-serif;
       }
       :global(.sticky .s-msg) {
-        font-size: 15px;
-        font-weight: 900;
+        font-size: 12px;
+        font-weight: 700;
         color: #c42222;
         line-height: 1.25;
         flex: 1;
