@@ -46,7 +46,7 @@ const credits: {
     id: "illustration",
     en: "ILLUSTRATION",
     label: "イラスト",
-    names: [], // ← ここに名前を追加
+    names: ["Masahiro Fujita", "奏音", "あんこあら"], // ← ここに名前を追加
   },
   {
     id: "chronology",
@@ -66,7 +66,7 @@ const credits: {
     id: "words",
     en: "WORDS",
     label: "言葉",
-    names: ["にて", "Masahiro Fujita"], // ← ここに名前を追加
+    names: ["にて", "Masahiro Fujita", "黒糖侍"], // ← ここに名前を追加
   },
   {
     id: "message",
@@ -93,7 +93,14 @@ const credits: {
       "ゆかん。",
       "らぴ♡",
       "冬野",
-    ], // ← ここに名前を追加
+      "IKE",
+      "ダダダダ",
+      "藤",
+      "win",
+      "水那",
+      "あんこあら",
+      "五穀米",
+    ],
   },
 ];
 
@@ -155,6 +162,8 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
         </div>
       </div>
     </div>
+
+    <Footer />
 
     <style>
       * {
@@ -350,6 +359,10 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
       .credit_section:nth-child(even) .page_body {
         grid-column: 1;
         grid-row: 1;
+      }
+
+      .credit_section:not(:nth-child(even)) .name_list {
+        justify-content: flex-end;
       }
 
       .page_body {
