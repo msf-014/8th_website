@@ -26,7 +26,7 @@ import PageFrame from "../components/PageFrame.astro";
             下のボタンで絞り込むことも出来ます。
           </p>
           <div class="buttons" id="buttons"></div>
-          <button type="button" class="button shuffle" id="shuffleBtn" hidden>
+          <button type="button" class="button shuffle" id="shuffleBtn">
             他の言葉を見る
           </button>
         </div>
@@ -174,10 +174,6 @@ import PageFrame from "../components/PageFrame.astro";
       margin-top: 2px;
       background: #000;
       color: #b5e6c6;
-    }
-    /* display: block が hidden 属性(display: none)を上書きしてしまうため明示する */
-    .shuffle[hidden] {
-      display: none;
     }
     .shuffle:hover {
       background: #fff;
@@ -1101,9 +1097,11 @@ import PageFrame from "../components/PageFrame.astro";
 
         queue = queue.filter((m) => !shown.includes(m));
 
-        // 全部が一度に収まる時だけボタンを隠す
+        // 全部が一度に収まる時だけボタンを隠す。display を消すと intro パネルの
+        // 高さが変わり、測った除外エリアとずれて吹き出しが隠れるので visibility で消す
         if (shuffleBtn) {
-          shuffleBtn.hidden = shown.length >= pool.length;
+          shuffleBtn.style.visibility =
+            shown.length >= pool.length ? "hidden" : "";
           shuffleBtn.textContent = `他の言葉を見る (${shown.length}/${pool.length})`;
         }
       }
