@@ -1,0 +1,216 @@
+---
+// 下層ページ共通：英字タイトル・日本語ラベル・戻るボタンのタイトル帯
+interface Props {
+  title: string;
+  label: string;
+}
+const { title, label } = Astro.props;
+---
+
+<div class="contents_texto">
+  <span class="content_label">{label}</span>
+  <h2>{title}</h2>
+  <a href="/" class="back_btn" aria-label="戻る">
+    <span class="back_arrow">←</span>
+  </a>
+</div>
+
+<style>
+  .contents_texto {
+    box-shadow:
+      0 -1px 0 0 #000,
+      0 1px 0 0 #000;
+    padding: 14px 16px;
+    white-space: nowrap;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: var(--page-color);
+    z-index: 1;
+    /* 本文の枠と同じ最大幅で中央に揃える */
+    box-sizing: border-box;
+    width: 100%; /* flex レイアウトの中でも中身の幅に縮まないようにする */
+    max-width: var(--frame-max, 1480px);
+    margin: 0 auto;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+  }
+
+  .content_label {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 15px;
+    color: #000;
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    font-weight: 800;
+    padding: 6px 14px;
+  }
+
+  .contents_texto h2 {
+    margin: 0;
+    font-size: 110px;
+    font-family: "acumin-variable", sans-serif;
+    font-variation-settings:
+      "wght" 400,
+      "wdth" 100,
+      "slnt" 0;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    position: relative;
+  }
+
+  .back_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border: 2px solid #000;
+    border-radius: 50%;
+    text-decoration: none;
+    color: #000;
+    flex-shrink: 0;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+  .back_btn:hover {
+    background: #000;
+    color: var(--page-color);
+  }
+  .back_arrow {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  @media (max-width: 768px) {
+    .contents_texto {
+      padding: 10px 12px;
+      gap: 12px;
+      overflow: hidden;
+      border-left: 0;
+      border-right: 0;
+    }
+
+    /* 流れる文字が帯の余白で消えないよう、左側だけ画面端まで表示領域を広げる */
+    .contents_texto h2 {
+      flex: 1 1 0%;
+      min-width: 0;
+      margin-left: -12px;
+      padding-left: 12px;
+      font-size: 15vw;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    /* タイトルと重なっても読めるよう、ページ色の縁取りを付ける */
+    .content_label {
+      top: 10px;
+      right: 66px;
+      white-space: nowrap;
+      font-size: 11px;
+      padding: 4px 8px;
+      color: var(--page-color);
+      -webkit-text-stroke-width: 2px;
+      -webkit-text-fill-color: #000;
+      paint-order: stroke fill;
+      z-index: 1;
+    }
+
+    .back_btn {
+      width: 40px;
+      height: 40px;
+    }
+    .back_arrow {
+      font-size: 16px;
+    }
+
+    /* はみ出したタイトル・ラベルの無限ループ表示（要素はJSで生成） */
+    :global(.marquee-track) {
+      display: inline-flex;
+      white-space: nowrap;
+    }
+    :global(.marquee-track.is-scrolling) {
+      animation-name: marquee-loop;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    :global(.marquee-item) {
+      display: inline-block;
+      white-space: nowrap;
+    }
+    @keyframes marquee-loop {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(var(--marquee-distance, 0px));
+      }
+    }
+  }
+</style>
+
+<script>
+  /* テキストを複製して隙間なく並べ、CSSアニメーションで左に流し続ける。
+     1周分流れると継ぎ目なく最初に戻る */
+  const MARQUEE_SPEED = 60; // 数値を大きくするほど速く流れる（px/秒）
+  const MARQUEE_START_DELAY = 1000; // 表示されてから動き出すまでの待ち時間(ms)
+
+  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
+  /* スマホでは英字タイトルを長さに関係なく常に流す（日本語ラベルは流さない） */
+  function initAutoScrollTitles() {
+    if (!isMobile()) return;
+    const targets = document.querySelectorAll<HTMLElement>(".contents_texto h2");
+
+    targets.forEach((el) => {
+      if (el.dataset.marqueeBound === "true") return;
+
+      el.dataset.marqueeBound = "true";
+      const text = el.textContent ?? "";
+      // 間隔を表示幅と同じにして、流れている途中で次のタイトルが見えないようにする
+      const gap = el.clientWidth;
+      el.textContent = "";
+
+      const track = document.createElement("span");
+      track.className = "marquee-track";
+
+      const makeItem = (copy: boolean) => {
+        const item = document.createElement("span");
+        item.className = "marquee-item";
+        item.textContent = text;
+        if (copy) {
+          item.setAttribute("aria-hidden", "true");
+          item.style.paddingLeft = `${gap}px`;
+        }
+        return item;
+      };
+      const item1 = makeItem(false);
+      track.append(item1, makeItem(true));
+      el.appendChild(track);
+
+      // 短いタイトルでも途中で右側が空かないよう、1周分＋表示幅が埋まるまで複製を足す
+      const estimate = item1.getBoundingClientRect().width + gap;
+      while (track.scrollWidth < estimate + el.clientWidth) {
+        track.appendChild(makeItem(true));
+      }
+
+      setTimeout(() => {
+        // 1コピー分の幅＋隙間だけ流すと、次の複製がちょうど元の位置に来る。
+        // Webフォント読み込みで幅が変わる場合があるので動き出す直前に測り直す
+        const distance = item1.getBoundingClientRect().width + gap;
+        track.style.setProperty("--marquee-distance", `-${distance}px`);
+        track.style.animationDuration = `${distance / MARQUEE_SPEED}s`;
+        track.classList.add("is-scrolling");
+      }, MARQUEE_START_DELAY);
+    });
+  }
+
+  // astro:page-load は初回表示と ClientRouter の遷移後の両方で発火する
+  document.addEventListener("astro:page-load", () => {
+    initAutoScrollTitles();
+  });
+</script>

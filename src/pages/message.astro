@@ -3,24 +3,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/footer.astro";
+import PageBackground from "../components/PageBackground.astro";
+import PageHeader from "../components/PageHeader.astro";
+import PageFrame from "../components/PageFrame.astro";
 ---
 
 <BaseLayout>
   <body>
-    <div class="bg_reveal" id="bg_reveal"></div>
+    <PageBackground />
     <div class="contents-list" transition:name="title--message">
-      <div class="contents_texto">
-        <span class="content_label">お祝いメッセージ</span>
-        <h2>MESSAGE</h2>
-        <a href="/" class="back_btn" aria-label="戻る">
-          <span class="back_arrow">←</span>
-        </a>
-      </div>
+      <PageHeader title="MESSAGE" label="お祝いメッセージ" />
     </div>
 
-    <div class="board-wrap" id="board-wrap" style="opacity: 0;">
+    <PageFrame class="board-wrap" id="board-wrap">
       <div class="board" id="board"></div>
-    </div>
+    </PageFrame>
 
     <div class="modal-backdrop" id="modal-backdrop">
       <div class="modal" role="dialog" aria-modal="true">
@@ -31,508 +28,535 @@ import Footer from "../components/footer.astro";
     </div>
 
     <!-- is:inline が必須！これがないとAstroがJSを最適化して動かなくなる -->
-    <script is:inline>
-      // is:inline スクリプト内、または別の<script>で
-      const originX = sessionStorage.getItem("revealOriginX") || "50%";
-      const originY = sessionStorage.getItem("revealOriginY") || "50%";
+    <!-- data-astro-rerun: ClientRouter で再訪問したときも付箋を配置し直す。
+         再実行で const の二重宣言にならないよう全体を関数で包む -->
+    <script is:inline data-astro-rerun>
+      (() => {
+        // is:inline スクリプト内、または別の<script>で
+        const originX = sessionStorage.getItem("revealOriginX") || "50%";
+        const originY = sessionStorage.getItem("revealOriginY") || "50%";
 
-      const bgReveal = document.getElementById("bg_reveal");
-      if (bgReveal) {
-        bgReveal.style.transformOrigin = `${originX}px ${originY}px`;
-      }
+        const bgReveal = document.getElementById("bg_reveal");
+        if (bgReveal) {
+          bgReveal.style.transformOrigin = `${originX}px ${originY}px`;
+        }
 
-      const messages = [
-        {
-          from: "かぶと",
-          msg: [
-            "矢車へ。",
-            "8周年おめでとう！",
-            "いつも配信でたくさん元気もらってます！矢車に出会えて本当に幸せです！",
-            "これからも矢車のこと応援させてね！大大大大大好きです〜！！！！",
-          ],
-        },
-        {
-          from: "ゆかん。",
-          msg: [
-            "りねちゃん、8周年おめでとうございます🎉",
-            "いつもたくさんの元気をもらっています！あなたの笑顔が大好き！",
-            "お顔もお歌も最強の11歳🔥",
-            "これからも応援しています♡",
-          ],
-        },
-        {
-          from: "早川",
-          msg: [
-            "8周年おめでとうございます🎉",
-            "いつも元気をありがとう！！",
-            "大好きだ〜〜〜〜！！！",
-          ],
-        },
-        {
-          from: "らぴ♡",
-          msg: [
-            "8周年おめでとうございます！",
-            "矢車さんがオーストラリアに住んでたことが発覚したりラップが上手だったり3Dお披露目も見れたりと色んな活躍が見れて本当に楽しかったです！",
-            "矢車さんが色んなお話してたりゲームに挑戦する度に矢車さんのこと好きだなぁって日に日に好き度が増していきますദ്ദി˶ｰ̀֊ｰ́ )",
-            "8周年も矢車さんのペースで活動をしていってほしいし矢車さんがやりたいことをたくさんできたら嬉しいなと思っています。",
-            "これからも矢車さん大好き！！",
-          ],
-        },
-        {
-          from: "オールドキング",
-          msg: [
-            "8周年本当におめでとうございます！",
-            "デビュー当初見た目で気になって見始めてから喋りに引き込まれて英語やラップの上手さでさらに引き込まれて気づけばずっと見続けていました。",
-            "矢車さんのことが好きな人が最近どんどん増えているのを見ると本当に嬉しく思います。",
-            "本当にいつもたくさん楽しませてくれてありがとう！これからも応援し続けます！",
-          ],
-        },
-        {
-          from: "nu",
-          msg: [
-            "8周年おめでとう🎉",
-            "出会えて良かった！矢車に元気を沢山もらって、笑顔になれる日が増えたよ◎本当にいつもありがとう！！",
-            "矢車りね最高だ〜〜💐",
-          ],
-        },
-        {
-          from: "素晴らしい結城さん",
-          msg: [
-            "８周年おめでとうございます！",
-            "歌も3Dショートも、もちろん配信も色々な形で「楽しい」を届けてくれる矢車のおかげで毎日を生きられてます！",
-            "",
-            "しかもまだ伸びしろを隠してる説まである！楽しみ過ぎる！",
-            "今は落ち着かない日々かもですが、気兼ねなく暴れられる状況になったら、沢山の伝説をみせてくださいね！",
-          ],
-        },
-        {
-          from: "Sotono",
-          msg: [
-            "おめでとうございます！！！！！！！",
-            "応援してるぞ矢車、いつか曲書かせろください",
-          ],
-        },
-        {
-          from: "匿名希望",
-          msg: [
-            "活動8周年おめでとうございます！",
-            "これまでもこれからもずっと大好きです！！",
-          ],
-        },
-        {
-          from: "レッセイ",
-          msg: [
-            "8周年おめでとう！",
-            "にじフェスでMCを任され、登録者数も20万人を突破の快進撃！",
-            "9年目も勢いそのままで突っ走っていけ！",
-          ],
-        },
-        {
-          from: "奏音",
-          msg: [
-            "8周年おめでとうございますーーーー！！",
-            "矢車の雑談がいつもおもろで大好きです💕",
-            "これからもたくさんお話聞かせてください！！",
-            "今年も矢車を応援してます！無理せず頑張ってね！",
-          ],
-        },
-        {
-          from: "みどり",
-          msg: [
-            "矢車さん、デビュー8周年おめでとうございます。",
-            "こんなにも長くたくさん愛されている矢車さんを見られて本当に幸せです。これからも矢車さんが楽しく健やかに配信や様々な活動が出来ますように。",
-            "本当に出会えて良かった。大好き！！",
-          ],
-        },
-        {
-          from: "ふじみや。",
-          msg: [
-            "8周年おめでとう！✨✨8年って本当にすごい🤩💯",
-            "いつもたくさん頑張ってて、それでもオタクのこといっぱい考えてくれる矢車のこと応援できて本当に幸せ！改めていつもありがとう🙂‍↕️💖",
-            "きっと色んな選択肢があった中で、にじさんじに入ってくれて、ずっとにじさんじでいてくれてありがとう。",
-            "9年目もよろしくね👍⭐️",
-          ],
-        },
-        {
-          from: "モスモスオ",
-          msg: [
-            "矢車、8周年おめでとう！",
-            "8周年という日を迎えられる事がとても嬉しいです。",
-            "オーストラリアに住んだり、宿題に追われたりで、大変な中でも楽しい配信をしてくれてありがとう。",
-            "これからも楽しいライバー生活を送れることを祈っています。",
-          ],
-        },
-        {
-          from: "Haruu",
-          msg: [
-            "8年間活動を続けてくれて本当にありがとうございます！",
-            "そのおかげで、「矢車りね」というとっっても可愛くてみんなを笑顔にしてくれる素敵な人物を知ることが出来ました。",
-            "本当にありがとうございます。",
-            "これからも矢車自身が健やかに楽しく過ごして、その一端を矢字馬にも見せてもらえると嬉しいです。",
-            "8周年おめでとうございます！",
-          ],
-        },
-        {
-          from: "冬野",
-          msg: [
-            "デビュー8周年おめでとうございます！！！",
-            "やぐるまの配信から沢山の元気を貰っています！本当に多才で面白くて可愛いくて…。いつも楽しい時間を届けてくれてありがとうございます🌽",
-            "これからも活動応援しています😊",
-          ],
-        },
-        {
-          from: "IKE",
-          msg: [
-            "デビュー8周年！！おめでとうございますー！",
-            "思えばしんどい時も元気が欲しい時も、いつも矢車の笑顔と笑い声と予想の出来ない配信に元気をもらっています！",
-            "これからも矢車の沢山の元気と笑顔を楽しみにしています！",
-          ],
-        },
-        {
-          from: "ダダダダ",
-          msg: [
-            "8周年おめでとうございます！",
-            "躍進を続ける矢車の姿を見れるのがとても嬉しいし、その努力家なところを見て自分も人生頑張ろ～って思えるのでありがたすぎています。",
-            "これからも応援できたら嬉しいし、応援します！！",
-          ],
-        },
-        {
-          from: "藤",
-          msg: [
-            "矢車８周年おめでとう〜〜！！8はさすがにヤバい。偉業。",
-            "ライバーを続けてくれてありがとう。当たり前みたいに居てくれてありがとう。",
-            "矢車のお陰で幸せです。これからもずっっっっと推します！！",
-          ],
-        },
-        {
-          from: "win",
-          msg: [
-            "８周年おめでとうございます。",
-            "歌い踊りきれまくる貴女が大好きです！これからも長く推せますように！",
-          ],
-        },
-        {
-          from: "匿名希望",
-          msg: [
-            "矢車8周年おめでとう！！！",
-            "私が矢車を本格的に応援しはじめて6年が経ちました！いつも矢車の配信に元気をもらい、いろんなことに挑戦する矢車を尊敬しています！",
-            "8年間活動続けてくれてありがとう！",
-            "これからの矢車りねにも幸あれ",
-          ],
-        },
-        {
-          from: "水那",
-          msg: [
-            "矢車8周年おめでとう🥳👏🎉",
-            "日々進化する矢車を見れてとっても幸せだし",
-            "これからも進化する矢車をずっとずっと応援してます🔥",
-            "出会ってくれて本当にありがとう🙂‍↕️",
-            "大好き！！！！！！！！！！",
-          ],
-        },
-        {
-          from: "あんこあら",
-          msg: [
-            ["8周年、本当に本当におめでとうございます🎊"],
-            [
-              "いつもの配信も、",
-              "ありえないバズり方をするネタツイも、",
-              "超絶カッコいいラップも、",
-              "shorts動画の軽快な3Dも、",
-              "(冷静に考えてオーストラリアから定期的に日本に帰ってきてくれるの凄すぎないかい？？？)",
-              "どれもこれも最高に楽しませてくれてマジで",
-              "𝑩𝑰𝑮 𝑳𝑶𝑽𝑬…",
+        const messages = [
+          {
+            from: "かぶと",
+            msg: [
+              "矢車へ。",
+              "8周年おめでとう！",
+              "いつも配信でたくさん元気もらってます！矢車に出会えて本当に幸せです！",
+              "これからも矢車のこと応援させてね！大大大大大好きです〜！！！！",
             ],
-            [
-              "YouTubeとTwitter両方の通知をオンにさせたのは矢車、、、あんたが初めてだよ、、、それくらい何かしらの更新を楽しみにしています！！！",
+          },
+          {
+            from: "ゆかん。",
+            msg: [
+              "りねちゃん、8周年おめでとうございます🎉",
+              "いつもたくさんの元気をもらっています！あなたの笑顔が大好き！",
+              "お顔もお歌も最強の11歳🔥",
+              "これからも応援しています♡",
             ],
-            [
-              "これからも矢車のペースで末長く続けてくれたら嬉しいです😭応援することしか出来ないんですが矢車の毎日に幸あれ！！！！！！！！",
+          },
+          {
+            from: "早川",
+            msg: [
+              "8周年おめでとうございます🎉",
+              "いつも元気をありがとう！！",
+              "大好きだ〜〜〜〜！！！",
             ],
-          ],
-        },
-        {
-          from: "匿名希望",
-          msg: [
-            "りねちゃん8周年おめでとうございます！",
-            "3Dお披露目の時には今以上に最高の時なんて来ないだろうなと思っていたのに、気付けば配信に加えて歌やダンスもいっぱい披露してくれて最高が更新されていきます！",
-            "色々な姿を見せてくれてありがとう！これからも応援してます！",
-          ],
-        },
-        {
-          from: "五穀米",
-          msg: [
-            "8周年おめでとうございます！",
-            "矢車のやりたいこと、頑張ってること、これからも応援していますね。",
-          ],
-        },
-        {
-          from: "めいぷる",
-          msg: ["矢車、このまま10周年までかっ飛ばしてってくれ"],
-        },
-        {
-          from: "にて",
-          msg: [
-            ["8周年おめでとう!!!ありがとう!!!"],
-            [
-              "日々色んな姿を見せてくれる矢車から目が離せません…",
-              "異国の地でライバー、学業(たくさんの宿題!)、お手伝い、自炊…と頑張っている矢車を本当に尊敬しています!!",
-              "ロックながらも真面目に努力する姿が大好きです🫶",
-              "これからもどんどん調子に乗ってくれ👊",
+          },
+          {
+            from: "らぴ♡",
+            msg: [
+              "8周年おめでとうございます！",
+              "矢車さんがオーストラリアに住んでたことが発覚したりラップが上手だったり3Dお披露目も見れたりと色んな活躍が見れて本当に楽しかったです！",
+              "矢車さんが色んなお話してたりゲームに挑戦する度に矢車さんのこと好きだなぁって日に日に好き度が増していきますദ്ദി˶ｰ̀֊ｰ́ )",
+              "8周年も矢車さんのペースで活動をしていってほしいし矢車さんがやりたいことをたくさんできたら嬉しいなと思っています。",
+              "これからも矢車さん大好き！！",
             ],
-            [
-              "矢車の9年目がたくさんの優しさと美味しいものに囲まれていますように…💐",
+          },
+          {
+            from: "オールドキング",
+            msg: [
+              "8周年本当におめでとうございます！",
+              "デビュー当初見た目で気になって見始めてから喋りに引き込まれて英語やラップの上手さでさらに引き込まれて気づけばずっと見続けていました。",
+              "矢車さんのことが好きな人が最近どんどん増えているのを見ると本当に嬉しく思います。",
+              "本当にいつもたくさん楽しませてくれてありがとう！これからも応援し続けます！",
             ],
-          ],
-        },
-        {
-          from: "タカトウ",
-          msg: [
-            [
-              "8周年おめでとうございます",
-              "GTAきっかで矢車さんのことを知りその後の配信を見るようになって気がつけばファンになっていました",
+          },
+          {
+            from: "nu",
+            msg: [
+              "8周年おめでとう🎉",
+              "出会えて良かった！矢車に元気を沢山もらって、笑顔になれる日が増えたよ◎本当にいつもありがとう！！",
+              "矢車りね最高だ〜〜💐",
             ],
-            [
-              "オーストラリアの生活と配信大変だとは思いますがこれからも配信楽しみに待っています",
+          },
+          {
+            from: "素晴らしい結城さん",
+            msg: [
+              "８周年おめでとうございます！",
+              "歌も3Dショートも、もちろん配信も色々な形で「楽しい」を届けてくれる矢車のおかげで毎日を生きられてます！",
+              "",
+              "しかもまだ伸びしろを隠してる説まである！楽しみ過ぎる！",
+              "今は落ち着かない日々かもですが、気兼ねなく暴れられる状況になったら、沢山の伝説をみせてくださいね！",
             ],
-          ],
-        },
-        {
-          from: "匿名希望",
-          msg: [
-            ["8周年おめでとうございます。"],
-            [
-              "私生活も大変な中いつもたのしい配信ありがとう",
-              "もっともっとやりたいことが形に出来るようこれからも応援させてね",
+          },
+          {
+            from: "Sotono",
+            msg: [
+              "おめでとうございます！！！！！！！",
+              "応援してるぞ矢車、いつか曲書かせろください",
             ],
-          ],
-        },
-        {
-          from: "mmm",
-          msg: [
-            "8周年おめでとうございます！",
-            "たくさんの楽しい時間をくれてありがとう！",
-            "これからもライバーとして、プロツイッタラーとしてのご活躍を楽しみにしてます。",
-          ],
-        },
-        {
-          from: "黒糖侍",
-          msg: [
-            "デビュー8周年おめでとうございます！！お祝いさせてくれてありがと～！！",
-            "こうしてお祝いの言葉をお伝えできることをとても嬉しく有難く感じております。",
-            "楽しいや嬉しい、事あるごとに驚きを与えてくれる矢車のことがずっと大好きです。",
-            "これからも末永く、矢車の気の赴くまま自由に楽しく健康に活動を続けていただけますと幸いです。",
-          ],
-        },
-        {
-          from: "塔市",
-          msg: [
-            ["りねちゃん8周年おめでとう〜！"],
-            [
-              "配信を見ている時間が、いつの間にか日々の楽しみのひとつになっていて、",
-              "「今日もりねちゃんの配信がある！」と思えることがとても嬉しいです。",
-              "いつもたくさん元気を貰ってます！ありがとう！",
+          },
+          {
+            from: "匿名希望",
+            msg: [
+              "活動8周年おめでとうございます！",
+              "これまでもこれからもずっと大好きです！！",
             ],
-            ["9年目も、りねちゃんらしく楽しく進んでいってください！"],
-          ],
-        },
-      ];
+          },
+          {
+            from: "レッセイ",
+            msg: [
+              "8周年おめでとう！",
+              "にじフェスでMCを任され、登録者数も20万人を突破の快進撃！",
+              "9年目も勢いそのままで突っ走っていけ！",
+            ],
+          },
+          {
+            from: "奏音",
+            msg: [
+              "8周年おめでとうございますーーーー！！",
+              "矢車の雑談がいつもおもろで大好きです💕",
+              "これからもたくさんお話聞かせてください！！",
+              "今年も矢車を応援してます！無理せず頑張ってね！",
+            ],
+          },
+          {
+            from: "みどり",
+            msg: [
+              "矢車さん、デビュー8周年おめでとうございます。",
+              "こんなにも長くたくさん愛されている矢車さんを見られて本当に幸せです。これからも矢車さんが楽しく健やかに配信や様々な活動が出来ますように。",
+              "本当に出会えて良かった。大好き！！",
+            ],
+          },
+          {
+            from: "ふじみや。",
+            msg: [
+              "8周年おめでとう！✨✨8年って本当にすごい🤩💯",
+              "いつもたくさん頑張ってて、それでもオタクのこといっぱい考えてくれる矢車のこと応援できて本当に幸せ！改めていつもありがとう🙂‍↕️💖",
+              "きっと色んな選択肢があった中で、にじさんじに入ってくれて、ずっとにじさんじでいてくれてありがとう。",
+              "9年目もよろしくね👍⭐️",
+            ],
+          },
+          {
+            from: "モスモスオ",
+            msg: [
+              "矢車、8周年おめでとう！",
+              "8周年という日を迎えられる事がとても嬉しいです。",
+              "オーストラリアに住んだり、宿題に追われたりで、大変な中でも楽しい配信をしてくれてありがとう。",
+              "これからも楽しいライバー生活を送れることを祈っています。",
+            ],
+          },
+          {
+            from: "Haruu",
+            msg: [
+              "8年間活動を続けてくれて本当にありがとうございます！",
+              "そのおかげで、「矢車りね」というとっっても可愛くてみんなを笑顔にしてくれる素敵な人物を知ることが出来ました。",
+              "本当にありがとうございます。",
+              "これからも矢車自身が健やかに楽しく過ごして、その一端を矢字馬にも見せてもらえると嬉しいです。",
+              "8周年おめでとうございます！",
+            ],
+          },
+          {
+            from: "冬野",
+            msg: [
+              "デビュー8周年おめでとうございます！！！",
+              "やぐるまの配信から沢山の元気を貰っています！本当に多才で面白くて可愛いくて…。いつも楽しい時間を届けてくれてありがとうございます🌽",
+              "これからも活動応援しています😊",
+            ],
+          },
+          {
+            from: "IKE",
+            msg: [
+              "デビュー8周年！！おめでとうございますー！",
+              "思えばしんどい時も元気が欲しい時も、いつも矢車の笑顔と笑い声と予想の出来ない配信に元気をもらっています！",
+              "これからも矢車の沢山の元気と笑顔を楽しみにしています！",
+            ],
+          },
+          {
+            from: "ダダダダ",
+            msg: [
+              "8周年おめでとうございます！",
+              "躍進を続ける矢車の姿を見れるのがとても嬉しいし、その努力家なところを見て自分も人生頑張ろ～って思えるのでありがたすぎています。",
+              "これからも応援できたら嬉しいし、応援します！！",
+            ],
+          },
+          {
+            from: "藤",
+            msg: [
+              "矢車８周年おめでとう〜〜！！8はさすがにヤバい。偉業。",
+              "ライバーを続けてくれてありがとう。当たり前みたいに居てくれてありがとう。",
+              "矢車のお陰で幸せです。これからもずっっっっと推します！！",
+            ],
+          },
+          {
+            from: "win",
+            msg: [
+              "８周年おめでとうございます。",
+              "歌い踊りきれまくる貴女が大好きです！これからも長く推せますように！",
+            ],
+          },
+          {
+            from: "匿名希望",
+            msg: [
+              "矢車8周年おめでとう！！！",
+              "私が矢車を本格的に応援しはじめて6年が経ちました！いつも矢車の配信に元気をもらい、いろんなことに挑戦する矢車を尊敬しています！",
+              "8年間活動続けてくれてありがとう！",
+              "これからの矢車りねにも幸あれ",
+            ],
+          },
+          {
+            from: "水那",
+            msg: [
+              "矢車8周年おめでとう🥳👏🎉",
+              "日々進化する矢車を見れてとっても幸せだし",
+              "これからも進化する矢車をずっとずっと応援してます🔥",
+              "出会ってくれて本当にありがとう🙂‍↕️",
+              "大好き！！！！！！！！！！",
+            ],
+          },
+          {
+            from: "あんこあら",
+            msg: [
+              ["8周年、本当に本当におめでとうございます🎊"],
+              [
+                "いつもの配信も、",
+                "ありえないバズり方をするネタツイも、",
+                "超絶カッコいいラップも、",
+                "shorts動画の軽快な3Dも、",
+                "(冷静に考えてオーストラリアから定期的に日本に帰ってきてくれるの凄すぎないかい？？？)",
+                "どれもこれも最高に楽しませてくれてマジで",
+                "𝑩𝑰𝑮 𝑳𝑶𝑽𝑬…",
+              ],
+              [
+                "YouTubeとTwitter両方の通知をオンにさせたのは矢車、、、あんたが初めてだよ、、、それくらい何かしらの更新を楽しみにしています！！！",
+              ],
+              [
+                "これからも矢車のペースで末長く続けてくれたら嬉しいです😭応援することしか出来ないんですが矢車の毎日に幸あれ！！！！！！！！",
+              ],
+            ],
+          },
+          {
+            from: "匿名希望",
+            msg: [
+              "りねちゃん8周年おめでとうございます！",
+              "3Dお披露目の時には今以上に最高の時なんて来ないだろうなと思っていたのに、気付けば配信に加えて歌やダンスもいっぱい披露してくれて最高が更新されていきます！",
+              "色々な姿を見せてくれてありがとう！これからも応援してます！",
+            ],
+          },
+          {
+            from: "五穀米",
+            msg: [
+              "8周年おめでとうございます！",
+              "矢車のやりたいこと、頑張ってること、これからも応援していますね。",
+            ],
+          },
+          {
+            from: "めいぷる",
+            msg: ["矢車、このまま10周年までかっ飛ばしてってくれ"],
+          },
+          {
+            from: "にて",
+            msg: [
+              ["8周年おめでとう!!!ありがとう!!!"],
+              [
+                "日々色んな姿を見せてくれる矢車から目が離せません…",
+                "異国の地でライバー、学業(たくさんの宿題!)、お手伝い、自炊…と頑張っている矢車を本当に尊敬しています!!",
+                "ロックながらも真面目に努力する姿が大好きです🫶",
+                "これからもどんどん調子に乗ってくれ👊",
+              ],
+              [
+                "矢車の9年目がたくさんの優しさと美味しいものに囲まれていますように…💐",
+              ],
+            ],
+          },
+          {
+            from: "タカトウ",
+            msg: [
+              [
+                "8周年おめでとうございます",
+                "GTAきっかで矢車さんのことを知りその後の配信を見るようになって気がつけばファンになっていました",
+              ],
+              [
+                "オーストラリアの生活と配信大変だとは思いますがこれからも配信楽しみに待っています",
+              ],
+            ],
+          },
+          {
+            from: "匿名希望",
+            msg: [
+              ["8周年おめでとうございます。"],
+              [
+                "私生活も大変な中いつもたのしい配信ありがとう",
+                "もっともっとやりたいことが形に出来るようこれからも応援させてね",
+              ],
+            ],
+          },
+          {
+            from: "mmm",
+            msg: [
+              "8周年おめでとうございます！",
+              "たくさんの楽しい時間をくれてありがとう！",
+              "これからもライバーとして、プロツイッタラーとしてのご活躍を楽しみにしてます。",
+            ],
+          },
+          {
+            from: "黒糖侍",
+            msg: [
+              "デビュー8周年おめでとうございます！！お祝いさせてくれてありがと～！！",
+              "こうしてお祝いの言葉をお伝えできることをとても嬉しく有難く感じております。",
+              "楽しいや嬉しい、事あるごとに驚きを与えてくれる矢車のことがずっと大好きです。",
+              "これからも末永く、矢車の気の赴くまま自由に楽しく健康に活動を続けていただけますと幸いです。",
+            ],
+          },
+          {
+            from: "塔市",
+            msg: [
+              ["りねちゃん8周年おめでとう〜！"],
+              [
+                "配信を見ている時間が、いつの間にか日々の楽しみのひとつになっていて、",
+                "「今日もりねちゃんの配信がある！」と思えることがとても嬉しいです。",
+                "いつもたくさん元気を貰ってます！ありがとう！",
+              ],
+              ["9年目も、りねちゃんらしく楽しく進んでいってください！"],
+            ],
+          },
+        ];
 
-      // スマホ判定（767px未満）
-      function isMobile() {
-        return window.innerWidth < 767;
-      }
+        // スマホ判定（767px未満）
+        function isMobile() {
+          return window.innerWidth < 767;
+        }
 
-      // デバイスに応じたカードサイズを返す
-      function cardSize() {
-        return isMobile()
-          ? { w: 100, h: 100 } // スマホ用
-          : { w: 150, h: 120 }; // PC用
-      }
+        // デバイスに応じたカードサイズを返す
+        function cardSize() {
+          return isMobile()
+            ? { w: 100, h: 100 } // スマホ用
+            : { w: 150, h: 120 }; // PC用
+        }
 
-      const MARGIN = 50;
-      MAX_TRIES = 120;
+        const MARGIN = 50;
+        MAX_TRIES = 120;
 
-      // ホバー時に scale(1.06) と translateY(-3px) で少し膨らむ分の余白。
-      // この分だけ配置可能エリアを内側に狭めておくことで、
-      // ホバーしても画面端からはみ出さないようにする。
-      const HOVER_BUFFER = 10;
+        // ホバー時に scale(1.06) と translateY(-3px) で少し膨らむ分の余白。
+        // この分だけ配置可能エリアを内側に狭めておくことで、
+        // ホバーしても画面端からはみ出さないようにする。
+        const HOVER_BUFFER = 10;
 
-      // sizes: [{w, h}, ...] 各付箋の「実測サイズ」を渡す。
-      // 固定値ではなく実測値を使うことで、文章が長い付箋も
-      // 正しい大きさとして重なり回避の計算に反映される。
-      function autoPlace(sizes, areaW, areaH) {
-        const placed = [];
-        sizes.forEach((s) => {
-          // ホバー拡大分の余白(HOVER_BUFFER)を残して配置範囲を決める
-          const maxX = Math.max(HOVER_BUFFER, areaW - s.w - HOVER_BUFFER);
-          const maxY = Math.max(HOVER_BUFFER, areaH - s.h - HOVER_BUFFER);
-          let best = null,
-            bestScore = -Infinity;
-          for (let t = 0; t < MAX_TRIES; t++) {
-            const x =
-              HOVER_BUFFER + Math.random() * Math.max(0, maxX - HOVER_BUFFER);
-            const y =
-              HOVER_BUFFER + Math.random() * Math.max(0, maxY - HOVER_BUFFER);
-            let overlap = 0;
-            placed.forEach((p) => {
-              const dx = Math.abs(x - p.x),
-                dy = Math.abs(y - p.y);
-              // 2つの付箋の「実際の大きさ」の平均＋余白を重なり判定のしきい値にする
-              const gapW = (s.w + p.w) / 2 + MARGIN;
-              const gapH = (s.h + p.h) / 2 + MARGIN;
-              if (dx < gapW && dy < gapH) {
-                overlap += (gapW - dx) * (gapH - dy);
+        // sizes: [{w, h}, ...] 各付箋の「実測サイズ」を渡す。
+        // 固定値ではなく実測値を使うことで、文章が長い付箋も
+        // 正しい大きさとして重なり回避の計算に反映される。
+        function autoPlace(sizes, areaW, areaH) {
+          const placed = [];
+          sizes.forEach((s) => {
+            // ホバー拡大分の余白(HOVER_BUFFER)を残して配置範囲を決める
+            const maxX = Math.max(HOVER_BUFFER, areaW - s.w - HOVER_BUFFER);
+            const maxY = Math.max(HOVER_BUFFER, areaH - s.h - HOVER_BUFFER);
+            let best = null,
+              bestScore = -Infinity;
+            for (let t = 0; t < MAX_TRIES; t++) {
+              const x =
+                HOVER_BUFFER + Math.random() * Math.max(0, maxX - HOVER_BUFFER);
+              const y =
+                HOVER_BUFFER + Math.random() * Math.max(0, maxY - HOVER_BUFFER);
+              let overlap = 0;
+              placed.forEach((p) => {
+                const dx = Math.abs(x - p.x),
+                  dy = Math.abs(y - p.y);
+                // 2つの付箋の「実際の大きさ」の平均＋余白を重なり判定のしきい値にする
+                const gapW = (s.w + p.w) / 2 + MARGIN;
+                const gapH = (s.h + p.h) / 2 + MARGIN;
+                if (dx < gapW && dy < gapH) {
+                  overlap += (gapW - dx) * (gapH - dy);
+                }
+              });
+              if (-overlap > bestScore) {
+                bestScore = -overlap;
+                best = { x, y };
               }
-            });
-            if (-overlap > bestScore) {
-              bestScore = -overlap;
-              best = { x, y };
             }
-          }
-          placed.push({ x: best.x, y: best.y, w: s.w, h: s.h });
-        });
-        return placed;
-      }
-
-      // msg は「段落の配列。各段落はさらに行の配列」という二重構造。
-      // 例: [["1行目", "2行目(同じ段落)"], ["別の段落"]]
-      // 段落ごとに<p>を作り、その中の行は<br>で区切ることで、
-      // 「改行」と「段落」の余白を別々に表現できるようにする。
-      function renderMessage(container, msg) {
-        msg.forEach((paragraph) => {
-          // 段落を文字列でうっかり書いてしまった場合（例: "本文"）も
-          // 1行だけの段落として扱えるように、配列に正規化しておく。
-          const lines = Array.isArray(paragraph) ? paragraph : [paragraph];
-          const p = document.createElement("p");
-          lines.forEach((line, idx) => {
-            if (idx > 0) p.appendChild(document.createElement("br"));
-            p.appendChild(document.createTextNode(line));
+            placed.push({ x: best.x, y: best.y, w: s.w, h: s.h });
           });
-          container.appendChild(p);
-        });
-      }
+          return placed;
+        }
 
-      // 付箋1件分のDOM（中身）を作る共通処理
-      function createStickyEl(m, i, mobile) {
-        const el = document.createElement("div");
-        el.className = "sticky" + (mobile ? " sticky--sm" : "");
+        // msg は「段落の配列。各段落はさらに行の配列」という二重構造。
+        // 例: [["1行目", "2行目(同じ段落)"], ["別の段落"]]
+        // 段落ごとに<p>を作り、その中の行は<br>で区切ることで、
+        // 「改行」と「段落」の余白を別々に表現できるようにする。
+        function renderMessage(container, msg) {
+          msg.forEach((paragraph) => {
+            // 段落を文字列でうっかり書いてしまった場合（例: "本文"）も
+            // 1行だけの段落として扱えるように、配列に正規化しておく。
+            const lines = Array.isArray(paragraph) ? paragraph : [paragraph];
+            const p = document.createElement("p");
+            lines.forEach((line, idx) => {
+              if (idx > 0) p.appendChild(document.createElement("br"));
+              p.appendChild(document.createTextNode(line));
+            });
+            container.appendChild(p);
+          });
+        }
 
-        const fromEl = document.createElement("span");
-        fromEl.className = "s-from";
-        fromEl.textContent = m.from;
+        // 付箋1件分のDOM（中身）を作る共通処理
+        function createStickyEl(m, i, mobile) {
+          const el = document.createElement("div");
+          el.className = "sticky" + (mobile ? " sticky--sm" : "");
 
-        const msgEl = document.createElement("div");
-        msgEl.className = "s-msg";
-        renderMessage(msgEl, m.msg);
+          const fromEl = document.createElement("span");
+          fromEl.className = "s-from";
+          fromEl.textContent = m.from;
 
-        const numEl = document.createElement("span");
-        numEl.className = "s-num";
-        numEl.textContent = "MESSAGE ——— " + String(i + 1).padStart(4, "0");
+          const msgEl = document.createElement("div");
+          msgEl.className = "s-msg";
+          renderMessage(msgEl, m.msg);
 
-        el.appendChild(fromEl);
-        el.appendChild(msgEl);
-        el.appendChild(numEl);
-        return el;
-      }
+          const numEl = document.createElement("span");
+          numEl.className = "s-num";
+          numEl.textContent = "MESSAGE ——— " + String(i + 1).padStart(4, "0");
 
-      function buildBoard() {
-        const board = document.getElementById("board");
-        if (!board) return;
-        board.querySelectorAll(".sticky").forEach((el) => el.remove());
-
-        const mobile = isMobile();
-        const W = board.offsetWidth,
-          H = board.offsetHeight;
-
-        // 1. まず全付箋のDOMを作って板に追加し、実際の描画サイズ（特に高さ）を測る。
-        //    幅はCSSで固定だが、高さは文章量によって変わるため、
-        //    先に実測しておくことで重なり回避の計算精度が上がる。
-        const els = messages.map((m, i) => {
-          const el = createStickyEl(m, i, mobile);
-          el.style.cssText =
-            "position:absolute;left:0;top:0;visibility:hidden;opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;";
-          board.appendChild(el);
+          el.appendChild(fromEl);
+          el.appendChild(msgEl);
+          el.appendChild(numEl);
           return el;
-        });
-        const sizes = els.map((el) => ({
-          w: el.offsetWidth,
-          h: el.offsetHeight,
-        }));
+        }
 
-        // 2. 実測サイズをもとに、重なりが最小になる位置を計算する
-        const placed = autoPlace(sizes, W, H);
+        function buildBoard() {
+          const board = document.getElementById("board");
+          if (!board) return;
+          board.querySelectorAll(".sticky").forEach((el) => el.remove());
 
-        // 3. 面積が大きい付箋ほど後ろ（z-indexを小さく）、
-        //    小さい付箋ほど手前に来るよう、面積順にz-indexを割り当てる。
-        //    「何番目に配置したか」ではなく「大きさ」で前後関係を決めている。
-        const order = sizes
-          .map((s, i) => ({ i, area: s.w * s.h }))
-          .sort((a, b) => b.area - a.area); // 面積が大きい順（後ろに来るものが先）
-        const zIndexByIndex = {};
-        order.forEach((o, rank) => {
-          zIndexByIndex[o.i] = 10 + rank; // 大きい付箋ほど小さいz-index（＝後ろ）
-        });
+          const mobile = isMobile();
+          board.style.height = "";
+          const W = board.offsetWidth;
+          let H = board.offsetHeight;
 
-        // 4. 位置とz-indexを確定して表示する
-        els.forEach((el, i) => {
-          const p = placed[i];
-          el.style.left = p.x + "px";
-          el.style.top = p.y + "px";
-          el.style.zIndex = String(zIndexByIndex[i]);
-          el.style.visibility = "visible";
-          el.addEventListener("click", () => openModal(messages[i]));
-          setTimeout(() => {
-            el.style.opacity = "1";
-          }, i * 50);
-        });
-      }
+          // 1. まず全付箋のDOMを作って板に追加し、実際の描画サイズ（特に高さ）を測る。
+          //    幅はCSSで固定だが、高さは文章量によって変わるため、
+          //    先に実測しておくことで重なり回避の計算精度が上がる。
+          const els = messages.map((m, i) => {
+            const el = createStickyEl(m, i, mobile);
+            el.style.cssText =
+              "position:absolute;left:0;top:0;visibility:hidden;opacity:0;transition:opacity 0.3s,box-shadow 0.14s,transform 0.14s;";
+            board.appendChild(el);
+            return el;
+          });
+          const sizes = els.map((el) => ({
+            w: el.offsetWidth,
+            h: el.offsetHeight,
+          }));
 
-      function openModal(m) {
-        document.getElementById("m-from").textContent = m.from;
-        const msgEl = document.getElementById("m-msg");
-        msgEl.innerHTML = "";
-        renderMessage(msgEl, m.msg);
-        document.getElementById("modal-backdrop").classList.add("open");
-      }
-
-      function closeModal() {
-        document.getElementById("modal-backdrop").classList.remove("open");
-      }
-
-      document.getElementById("m-close").addEventListener("click", closeModal);
-      document
-        .getElementById("modal-backdrop")
-        .addEventListener("click", (e) => {
-          if (e.target === document.getElementById("modal-backdrop"))
-            closeModal();
-        });
-
-      // board要素の「実際の描画サイズ」が確定してから配置する。
-      // DOMContentLoaded直後だとCSSがまだ適用しきれておらず
-      // offsetWidthが0のまま計算されてしまうことがあるため、
-      // ResizeObserverで幅が確定したタイミングを検知する。
-      const boardEl = document.getElementById("board");
-      let hasBuilt = false;
-
-      if (boardEl) {
-        const ro = new ResizeObserver((entries) => {
-          for (const entry of entries) {
-            const w = entry.contentRect.width;
-            const h = entry.contentRect.height;
-            if (w > 0 && h > 0) {
-              buildBoard();
-              hasBuilt = true;
+          // スマホは付箋が大きく重なりやすいので、付箋の総面積に合わせてボードを縦に伸ばす
+          if (mobile) {
+            const totalArea = sizes.reduce((sum, sz) => sum + sz.w * sz.h, 0);
+            const needed = Math.ceil((totalArea * 1.25) / W);
+            if (needed > H) {
+              H = needed;
+              board.style.height = H + "px";
             }
           }
-        });
-        ro.observe(boardEl);
-      }
 
-      // 念のためのフォールバック（ResizeObserver未対応環境向け）
-      window.addEventListener("load", () => {
-        if (!hasBuilt) buildBoard();
-      });
+          // 2. 実測サイズをもとに、重なりが最小になる位置を計算する
+          const placed = autoPlace(sizes, W, H);
+
+          // 3. 面積が大きい付箋ほど後ろ（z-indexを小さく）、
+          //    小さい付箋ほど手前に来るよう、面積順にz-indexを割り当てる。
+          //    「何番目に配置したか」ではなく「大きさ」で前後関係を決めている。
+          const order = sizes
+            .map((s, i) => ({ i, area: s.w * s.h }))
+            .sort((a, b) => b.area - a.area); // 面積が大きい順（後ろに来るものが先）
+          const zIndexByIndex = {};
+          order.forEach((o, rank) => {
+            zIndexByIndex[o.i] = 10 + rank; // 大きい付箋ほど小さいz-index（＝後ろ）
+          });
+
+          // 4. 位置とz-indexを確定して表示する
+          els.forEach((el, i) => {
+            const p = placed[i];
+            el.style.left = p.x + "px";
+            el.style.top = p.y + "px";
+            el.style.zIndex = String(zIndexByIndex[i]);
+            el.style.visibility = "visible";
+            el.addEventListener("click", () => openModal(messages[i]));
+            setTimeout(() => {
+              el.style.opacity = "1";
+            }, i * 50);
+          });
+        }
+
+        function openModal(m) {
+          document.getElementById("m-from").textContent = m.from;
+          const msgEl = document.getElementById("m-msg");
+          msgEl.innerHTML = "";
+          renderMessage(msgEl, m.msg);
+          document.getElementById("modal-backdrop").classList.add("open");
+        }
+
+        function closeModal() {
+          document.getElementById("modal-backdrop").classList.remove("open");
+        }
+
+        document.getElementById("m-close").addEventListener("click", closeModal);
+        document
+          .getElementById("modal-backdrop")
+          .addEventListener("click", (e) => {
+            if (e.target === document.getElementById("modal-backdrop"))
+              closeModal();
+          });
+
+        // board要素の「実際の描画サイズ」が確定してから配置する。
+        // DOMContentLoaded直後だとCSSがまだ適用しきれておらず
+        // offsetWidthが0のまま計算されてしまうことがあるため、
+        // ResizeObserverで幅が確定したタイミングを検知する。
+        const boardEl = document.getElementById("board");
+        let hasBuilt = false;
+
+        if (boardEl) {
+          // buildBoard がボードの高さを変えるため、幅が変わったときだけ配置し直す
+          let lastWidth = 0;
+          const ro = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+              const w = entry.contentRect.width;
+              const h = entry.contentRect.height;
+              if (w > 0 && h > 0 && w !== lastWidth) {
+                lastWidth = w;
+                buildBoard();
+                hasBuilt = true;
+              }
+            }
+          });
+          ro.observe(boardEl);
+        }
+
+        // 念のためのフォールバック（ResizeObserver未対応環境向け）
+        window.addEventListener("load", () => {
+          if (!hasBuilt) buildBoard();
+        });
+        // ClientRouter での遷移時は load が発火しないので、遷移完了時にも確認する
+        document.addEventListener(
+          "astro:page-load",
+          () => {
+            if (!hasBuilt) buildBoard();
+            hasBuilt = true;
+          },
+          { once: true },
+        );
+      })();
     </script>
 
     <Footer />
@@ -555,7 +579,9 @@ import Footer from "../components/footer.astro";
       :root {
         --morph-duration: 0.6s;
 
-        --header-back-color: #fce2ed;
+        --page-color: #fce2ed;
+
+        --header-back-color: var(--page-color);
       }
 
       ::view-transition-old(title--message),
@@ -563,125 +589,8 @@ import Footer from "../components/footer.astro";
         animation-duration: var(--morph-duration);
       }
 
-      .bg_reveal {
-        position: fixed;
-        inset: 0;
-        background: #fce2ed;
-        background-image: radial-gradient(
-          circle,
-          rgba(120, 80, 200, 0.35) 1px,
-          transparent 1px
-        );
-        background-size: 5px 5px;
-        z-index: -1;
-        transform: scaleY(0);
-        animation: revealBg 0.4s ease forwards;
-        /* transform-origin はJSで動的に設定するため、ここでは指定しない */
-      }
-
-      @keyframes revealBg {
-        from {
-          transform: scaleY(0);
-        }
-        to {
-          transform: scaleY(1);
-        }
-      }
-
       .contents-list {
         display: block;
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-      }
-
-      .contents_texto {
-        box-shadow:
-          0 -1px 0 0 #000,
-          0 1px 0 0 #000;
-        padding: 14px 16px 14px;
-        white-space: nowrap;
-        position: relative;
-        display: flex; /* 追加 */
-        align-items: center; /* h2とボタンを縦中央揃え */
-        gap: 24px; /* h2とボタンの間隔 */
-        background: #fce2ed;
-        z-index: 1;
-      }
-
-      .content_label {
-        position: absolute;
-        top: 14px;
-        right: 16px;
-        font-size: 15px;
-        color: #000;
-        font-family: "Zen Kaku Gothic New", sans-serif;
-        font-weight: 800;
-        padding: 6px 14px;
-      }
-
-      .contents_texto h2 {
-        font-size: 110px;
-        font-family: "acumin-variable", sans-serif;
-        font-variation-settings:
-          "wght" 400,
-          "wdth" 100,
-          "slnt" 0;
-        font-style: normal;
-        align-items: center;
-        line-height: 1;
-        letter-spacing: -0.06em;
-        position: relative;
-      }
-
-      .back_btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        border: 2px solid #000;
-        border-radius: 50%;
-        text-decoration: none;
-        color: #000;
-        flex-shrink: 0; /* ボタンが縮まないようにする */
-        transition:
-          background 0.2s,
-          color 0.2s;
-      }
-
-      .back_btn:hover {
-        background: #000;
-        color: #fce2ed;
-      }
-
-      .back_arrow {
-        font-size: 20px;
-        line-height: 1;
-      }
-
-      .board-wrap {
-        width: 100%;
-        max-width: 1900px;
-        margin: 0px auto;
-        border-left: 1px solid #000;
-        border-right: 1px solid #000;
-        margin-top: 1px;
-      }
-
-      #board-wrap {
-        opacity: 0;
-        animation: fadeInContent 0.4s ease forwards;
-        animation-delay: 0.6s; /* モーフィングの再生時間と合わせる */
-      }
-
-      @keyframes fadeInContent {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
       }
 
       .board {
@@ -874,49 +783,6 @@ import Footer from "../components/footer.astro";
 
       /* ==================== スマホ対応 ==================== */
       @media (max-width: 768px) {
-        .contents_texto {
-          padding: 10px 12px;
-          gap: 12px;
-          white-space: normal;
-          overflow: hidden;
-        }
-
-        .contents_texto h2 {
-          flex: 1 1 0%;
-          min-width: 0;
-          font-size: 15vw;
-          overflow-x: hidden;
-          overflow-y: hidden;
-          white-space: nowrap;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          font-size: 15vw;
-        }
-
-        .content_label {
-          top: 10px;
-          right: 66px;
-          max-width: 88px;
-          box-sizing: border-box;
-          overflow-x: hidden;
-          white-space: nowrap;
-          font-size: 11px;
-          padding: 4px 8px;
-          color: #fce2ed;
-          -webkit-text-stroke-width: 2px;
-          -webkit-text-fill-color: #000;
-          paint-order: stroke fill;
-          z-index: 1;
-        }
-
-        .back_btn {
-          width: 40px;
-          height: 40px;
-        }
-
-        .back_arrow {
-          font-size: 16px;
-        }
 
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
         :global(.marquee-track) {
@@ -940,26 +806,27 @@ import Footer from "../components/footer.astro";
           border: 1px solid #c42222;
         }
 
+        /* スマホ用の付箋。読める文字サイズにし、本文は冒頭だけ見せる（全文はタップでモーダル） */
         :global(.sticky--sm) {
-          width: 78px;
-          min-height: 64px;
-          padding: 5px 6px 8px;
-          gap: 2px;
+          width: 150px;
+          min-height: 96px;
+          padding: 8px 10px 10px;
+          gap: 4px;
           clip-path: polygon(
             0 0,
-            calc(100% - 8px) 0,
-            100% 8px,
+            calc(100% - 12px) 0,
+            100% 12px,
             100% 100%,
             0 100%
           );
         }
         :global(.sticky--sm::before) {
-          width: 8px;
-          height: 8px;
+          width: 12px;
+          height: 12px;
         }
         :global(.sticky--sm::after) {
-          width: 7px;
-          height: 7px;
+          width: 11px;
+          height: 11px;
         }
 
         :global(.sticky .s-from) {
@@ -973,8 +840,8 @@ import Footer from "../components/footer.astro";
           font-family: "Noto Sans JP", sans-serif;
         }
         :global(.sticky--sm .s-from) {
-          font-size: 5px;
-          padding-bottom: 2px;
+          font-size: 9px;
+          padding-bottom: 4px;
         }
 
         :global(.sticky .s-msg) {
@@ -986,14 +853,19 @@ import Footer from "../components/footer.astro";
           font-family: "Noto Sans JP", sans-serif;
         }
         :global(.sticky--sm .s-msg) {
-          font-size: 5px;
-          line-height: 1.15;
+          font-size: 10px;
+          line-height: 1.4;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 5;
+          line-clamp: 5;
+          overflow: hidden;
         }
         :global(.sticky .s-msg p + p) {
           margin-top: 0.3em;
         }
         :global(.sticky--sm .s-msg p + p) {
-          margin-top: 0.1em;
+          margin-top: 0.2em;
         }
 
         :global(.sticky .s-num) {
@@ -1005,7 +877,7 @@ import Footer from "../components/footer.astro";
           margin-top: 2px;
         }
         :global(.sticky--sm .s-num) {
-          font-size: 3px;
+          font-size: 7px;
         }
 
         .modal {

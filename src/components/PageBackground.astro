@@ -1,0 +1,31 @@
+---
+// 下層ページ共通：ページ色の上にドットを重ねた背景を上から開く
+---
+
+<div class="bg_reveal" id="bg_reveal"></div>
+
+<style>
+  .bg_reveal {
+    position: fixed;
+    inset: 0;
+    background-color: var(--page-color);
+    background-image: radial-gradient(
+      circle,
+      rgba(120, 80, 200, 0.35) 1px,
+      transparent 1px
+    );
+    background-size: 5px 5px;
+    z-index: -2;
+    transform: scaleY(0);
+    animation: revealBg var(--bg-reveal-duration, 0.4s) ease forwards;
+  }
+
+  @keyframes revealBg {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+</style>

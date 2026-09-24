@@ -19,7 +19,15 @@
     line-height: 1;
     position: fixed;
     bottom: 0;
-    width: 100vw;
+    /* 下層ページのタイトル帯・本文（z-index: 1）より前、モーダル（10〜）より後ろ */
+    z-index: 5;
+    /* 本文の枠と同じ最大幅で中央に揃える */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: var(--frame-max, 1480px);
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
     padding: 16px 24px;
     display: flex;
     background: #fff;
@@ -28,6 +36,39 @@
       0 1px 0 0 #000;
     justify-content: space-between;
     box-sizing: border-box;
+  }
+
+  /* ページの入退場に合わせてフェードする。
+     transform は中央寄せ（translateX）に使っているので opacity だけを動かす */
+  .footer_main {
+    animation: footerIn 0.5s ease backwards;
+    animation-delay: var(--bg-reveal-duration, 0.4s);
+  }
+  :global(html.is-leaving-back) .footer_main,
+  :global(html.is-leaving-top) .footer_main {
+    animation: footerOut 0.35s ease forwards;
+    pointer-events: none;
+  }
+  @keyframes footerIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes footerOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .footer_main {
+      animation: none;
+    }
   }
 
   .about {
@@ -50,6 +91,8 @@
       bottom: 0;
       width: 100%;
       padding: 18px 24px;
+      border-left: 0;
+      border-right: 0;
       display: flex;
       background: #fff;
       box-shadow:
