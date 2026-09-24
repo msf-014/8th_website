@@ -828,7 +828,7 @@ import PageFrame from "../components/PageFrame.astro";
         bubble: "どうも、にじさんじです",
         tag: "DAJARE",
         title: "どうも、にじさんじです",
-        body: "Xより",
+        body: "【地獄銭湯】地獄のドキドキデート【にじさんじ/矢車りね】より",
         sourceUrl:
           "https://x.com/Rine_Yaguruma/status/1314824104789196800?s=20",
       },
@@ -837,7 +837,7 @@ import PageFrame from "../components/PageFrame.astro";
         bubble: "肩　肩がすごく　硬い　肩だけに",
         tag: "SAYING",
         title: "肩　肩がすごく　硬い　肩だけに",
-        body: "【地獄銭湯】地獄のドキドキデート【にじさんじ/矢車りね】より",
+        body: "Xより",
         sourceUrl:
           "https://www.youtube.com/live/aZtxyrEu7p0?si=xfL7YuzYdKeCnzcj&t=105",
       },
@@ -853,8 +853,7 @@ import PageFrame from "../components/PageFrame.astro";
 
       if (stage.dataset.wordsInit === "true") return;
       stage.dataset.wordsInit = "true";
-      const isMobile = () =>
-        window.matchMedia("(max-width: 768px)").matches;
+      const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
 
       type Rect = { left: number; top: number; right: number; bottom: number };
       const hits = (a: Rect, b: Rect) =>
@@ -904,7 +903,9 @@ import PageFrame from "../components/PageFrame.astro";
         }
 
         const obstacles: Rect[] = [rectOf(character, PAD, stageBox)];
-        const imgBox = (character.querySelector("img") || character).getBoundingClientRect();
+        const imgBox = (
+          character.querySelector("img") || character
+        ).getBoundingClientRect();
         const charCenter = {
           x: imgBox.left - stageBox.left + imgBox.width / 2,
           y: imgBox.top - stageBox.top + imgBox.height / 2,
@@ -949,7 +950,9 @@ import PageFrame from "../components/PageFrame.astro";
           btn.innerHTML = msg.bubble;
           // 幅を少し揺らして折り返しを変え、箱の形をバラけさせる(整いすぎ防止)
           // スマホは下限を 100px にしてキャラの両脇(約 100px)にも入るようにする
-          const bw = mobile ? 100 + Math.random() * 44 : 200 * (0.85 + Math.random() * 0.3);
+          const bw = mobile
+            ? 100 + Math.random() * 44
+            : 200 * (0.85 + Math.random() * 0.3);
           btn.style.width = Math.round(bw) + "px";
           wrap.appendChild(btn);
           stage.appendChild(wrap);
@@ -992,17 +995,33 @@ import PageFrame from "../components/PageFrame.astro";
             if (Math.abs(dx) * halfH > Math.abs(dy) * halfW) {
               dir = dx > 0 ? "dir-r" : "dir-l";
               const exitY = y + dy * (halfW / Math.abs(dx));
-              tailY = Math.min(80, Math.max(20, ((exitY - (y - halfH)) / bh) * 100));
+              tailY = Math.min(
+                80,
+                Math.max(20, ((exitY - (y - halfH)) / bh) * 100),
+              );
               const ty = y - halfH + (bh * tailY) / 100;
               const ex = dx > 0 ? x + halfW : x - halfW - TAIL;
-              rect = { left: ex, top: ty - TAIL, right: ex + TAIL, bottom: ty + TAIL };
+              rect = {
+                left: ex,
+                top: ty - TAIL,
+                right: ex + TAIL,
+                bottom: ty + TAIL,
+              };
             } else {
               dir = dy > 0 ? "dir-b" : "dir-t";
               const exitX = dy === 0 ? x : x + dx * (halfH / Math.abs(dy));
-              tailX = Math.min(85, Math.max(15, ((exitX - (x - halfW)) / w) * 100));
+              tailX = Math.min(
+                85,
+                Math.max(15, ((exitX - (x - halfW)) / w) * 100),
+              );
               const tx = x - halfW + (w * tailX) / 100;
               const ey = dy > 0 ? y + halfH : y - halfH - TAIL;
-              rect = { left: tx - TAIL, top: ey, right: tx + TAIL, bottom: ey + TAIL };
+              rect = {
+                left: tx - TAIL,
+                top: ey,
+                right: tx + TAIL,
+                bottom: ey + TAIL,
+              };
             }
             return { dir, tailX, tailY, rect };
           };
@@ -1025,10 +1044,20 @@ import PageFrame from "../components/PageFrame.astro";
           let bestScore = -1;
           for (const g of grid) {
             if (g.left > maxLeft || g.top > maxTop) continue;
-            const r = { left: g.left, top: g.top, right: g.left + w, bottom: g.top + h };
+            const r = {
+              left: g.left,
+              top: g.top,
+              right: g.left + w,
+              bottom: g.top + h,
+            };
             if (obstacles.some((o) => hits(r, o))) continue;
             const box = boxOf(r);
-            const tail = tailFor((r.left + r.right) / 2, (r.top + r.bottom) / 2, w, btnH).rect;
+            const tail = tailFor(
+              (r.left + r.right) / 2,
+              (r.top + r.bottom) / 2,
+              w,
+              btnH,
+            ).rect;
             if (!readable(box, textOf(box), tail)) continue;
             if (!mobile) {
               found = r;
@@ -1077,10 +1106,13 @@ import PageFrame from "../components/PageFrame.astro";
           // 格子に揃いすぎないよう、隙間の範囲内で少しずらす
           // (傾き・ずらしで文字領域に食い込まないよう、小さめに)
           const jitter = 3;
-          const x = (found.left + found.right) / 2 + (Math.random() - 0.5) * jitter;
-          const y = (found.top + found.bottom) / 2 + (Math.random() - 0.5) * jitter;
+          const x =
+            (found.left + found.right) / 2 + (Math.random() - 0.5) * jitter;
+          const y =
+            (found.top + found.bottom) / 2 + (Math.random() - 0.5) * jitter;
           // 傾けると箱が測った矩形より少しはみ出すので、隙間の小さいスマホは控えめに
-          const rot = ((Math.random() - 0.5) * (mobile ? 5 : 6)).toFixed(1) + "deg";
+          const rot =
+            ((Math.random() - 0.5) * (mobile ? 5 : 6)).toFixed(1) + "deg";
           const { dir, tailX, tailY } = tailFor(x, y, w, btnH);
 
           wrap.classList.add(dir);
@@ -1127,7 +1159,9 @@ import PageFrame from "../components/PageFrame.astro";
       }
 
       function onButtonsClick(e: Event) {
-        const btn = (e.target as Element).closest(".button") as HTMLElement | null;
+        const btn = (e.target as Element).closest(
+          ".button",
+        ) as HTMLElement | null;
         if (!btn || !buttonsContainer.contains(btn)) return;
         buttonsContainer
           .querySelector(".button.active")
@@ -1155,7 +1189,9 @@ import PageFrame from "../components/PageFrame.astro";
         charImg && !charImg.complete
           ? new Promise<void>((resolve) => {
               charImg.addEventListener("load", () => resolve(), { once: true });
-              charImg.addEventListener("error", () => resolve(), { once: true });
+              charImg.addEventListener("error", () => resolve(), {
+                once: true,
+              });
             })
           : Promise.resolve();
       const fontsReady =
