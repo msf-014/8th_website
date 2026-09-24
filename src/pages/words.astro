@@ -325,6 +325,42 @@ import PageFrame from "../components/PageFrame.astro";
       border-width: 0 12px 17px;
       border-color: transparent transparent var(--paper) transparent;
     }
+
+    /* 左右の辺の尻尾(キャラの横にある吹き出し用)。辺の中の位置は --tail-y */
+    :global(.dir-r .bubble::before) {
+      right: -13px;
+      top: var(--tail-y, 50%);
+      margin-top: -10px;
+      border-width: 10px 0 10px 13px;
+      border-color: transparent transparent transparent #000;
+    }
+    :global(.dir-r .bubble::after) {
+      right: -11px;
+      top: var(--tail-y, 50%);
+      margin-top: -12px;
+      border-width: 12px 0 12px 17px;
+      border-color: transparent transparent transparent var(--paper);
+    }
+    :global(.dir-r .bubble:hover::after) {
+      border-left-color: var(--mint);
+    }
+    :global(.dir-l .bubble::before) {
+      left: -13px;
+      top: var(--tail-y, 50%);
+      margin-top: -10px;
+      border-width: 10px 13px 10px 0;
+      border-color: transparent #000 transparent transparent;
+    }
+    :global(.dir-l .bubble::after) {
+      left: -11px;
+      top: var(--tail-y, 50%);
+      margin-top: -12px;
+      border-width: 12px 17px 12px 0;
+      border-color: transparent var(--paper) transparent transparent;
+    }
+    :global(.dir-l .bubble:hover::after) {
+      border-right-color: var(--mint);
+    }
     :global(.dir-t .bubble:hover::after) {
       border-bottom-color: var(--mint);
     }
@@ -562,6 +598,26 @@ import PageFrame from "../components/PageFrame.astro";
         border-width: 0 10px 12px;
         margin-left: -7px;
         top: -9px;
+      }
+      :global(.dir-r .bubble::before) {
+        border-width: 8px 0 8px 9px;
+        margin-top: -8px;
+        right: -10px;
+      }
+      :global(.dir-r .bubble::after) {
+        border-width: 10px 0 10px 12px;
+        margin-top: -10px;
+        right: -9px;
+      }
+      :global(.dir-l .bubble::before) {
+        border-width: 8px 9px 8px 0;
+        margin-top: -8px;
+        left: -10px;
+      }
+      :global(.dir-l .bubble::after) {
+        border-width: 10px 12px 10px 0;
+        margin-top: -10px;
+        left: -9px;
       }
 
       .modal {
@@ -854,6 +910,11 @@ import PageFrame from "../components/PageFrame.astro";
         }
 
         const obstacles: Rect[] = [rectOf(character, PAD, stageBox)];
+        const imgBox = (character.querySelector("img") || character).getBoundingClientRect();
+        const charCenter = {
+          x: imgBox.left - stageBox.left + imgBox.width / 2,
+          y: imgBox.top - stageBox.top + imgBox.height / 2,
+        };
         if (introEl) obstacles.push(rectOf(introEl, PAD, stageBox));
 
         // 未表示のものを優先し、足りなければ表示済みからも補って枠を埋める
@@ -874,7 +935,7 @@ import PageFrame from "../components/PageFrame.astro";
           const j = Math.floor(Math.random() * (i + 1));
           [grid[i], grid[j]] = [grid[j], grid[i]];
         }
-        const placed: { box: Rect; text: Rect }[] = [];
+        const placed: { box: Rect; text: Rect; tail: Rect }[] = [];
         const shown: typeof messages = [];
         let misses = 0;
         const TAIL = 14;
@@ -922,8 +983,44 @@ import PageFrame from "../components/PageFrame.astro";
             right: b.right - padX,
             bottom: b.bottom - padY,
           });
-          const readable = (box: Rect, text: Rect) =>
-            placed.every((p) => !hits(box, p.text) && !hits(text, p.box));
+          // しっぽはキャラ(画像の中心)へ向ける。吹き出し中心からキャラ中心へ引いた
+          // 直線が箱のどの辺を抜けるかで上下左右を決め、辺上の位置もその交点にする。
+          // 戻り値の rect はしっぽの三角形が占める範囲(他の文字に乗せない判定用)
+          const tailFor = (x: number, y: number, w: number, bh: number) => {
+            const dx = charCenter.x - x;
+            const dy = charCenter.y - y;
+            const halfW = w / 2;
+            const halfH = bh / 2;
+            let dir: string;
+            let tailX = 50;
+            let tailY = 50;
+            let rect: Rect;
+            if (Math.abs(dx) * halfH > Math.abs(dy) * halfW) {
+              dir = dx > 0 ? "dir-r" : "dir-l";
+              const exitY = y + dy * (halfW / Math.abs(dx));
+              tailY = Math.min(80, Math.max(20, ((exitY - (y - halfH)) / bh) * 100));
+              const ty = y - halfH + (bh * tailY) / 100;
+              const ex = dx > 0 ? x + halfW : x - halfW - TAIL;
+              rect = { left: ex, top: ty - TAIL, right: ex + TAIL, bottom: ty + TAIL };
+            } else {
+              dir = dy > 0 ? "dir-b" : "dir-t";
+              const exitX = dy === 0 ? x : x + dx * (halfH / Math.abs(dy));
+              tailX = Math.min(85, Math.max(15, ((exitX - (x - halfW)) / w) * 100));
+              const tx = x - halfW + (w * tailX) / 100;
+              const ey = dy > 0 ? y + halfH : y - halfH - TAIL;
+              rect = { left: tx - TAIL, top: ey, right: tx + TAIL, bottom: ey + TAIL };
+            }
+            return { dir, tailX, tailY, rect };
+          };
+          // 相手の箱・しっぽが自分の文字に、自分の箱・しっぽが相手の文字に乗らない
+          const readable = (box: Rect, text: Rect, tail: Rect) =>
+            placed.every(
+              (p) =>
+                !hits(box, p.text) &&
+                !hits(tail, p.text) &&
+                !hits(text, p.box) &&
+                !hits(text, p.tail),
+            );
 
           // 置ける候補の中から選ぶ。PC は空きに余裕があるので最初に見つかった場所(=乱数)。
           // スマホは面積が足りないので、周囲(枠の縁・キャラ・他の吹き出し)に
@@ -937,7 +1034,8 @@ import PageFrame from "../components/PageFrame.astro";
             const r = { left: g.left, top: g.top, right: g.left + w, bottom: g.top + h };
             if (obstacles.some((o) => hits(r, o))) continue;
             const box = boxOf(r);
-            if (!readable(box, textOf(box))) continue;
+            const tail = tailFor((r.left + r.right) / 2, (r.top + r.bottom) / 2, w, btnH).rect;
+            if (!readable(box, textOf(box), tail)) continue;
             if (!mobile) {
               found = r;
               break;
@@ -972,7 +1070,13 @@ import PageFrame from "../components/PageFrame.astro";
 
           {
             const box = boxOf(found);
-            placed.push({ box, text: textOf(box) });
+            const tail = tailFor(
+              (found.left + found.right) / 2,
+              (found.top + found.bottom) / 2,
+              w,
+              btnH,
+            ).rect;
+            placed.push({ box, text: textOf(box), tail });
           }
           shown.push(msg);
 
@@ -983,18 +1087,14 @@ import PageFrame from "../components/PageFrame.astro";
           const y = (found.top + found.bottom) / 2 + (Math.random() - 0.5) * jitter;
           // 傾けると箱が測った矩形より少しはみ出すので、隙間の小さいスマホは控えめに
           const rot = ((Math.random() - 0.5) * (mobile ? 5 : 6)).toFixed(1) + "deg";
-          const centerX = stageW / 2;
-          const centerY = stageH / 2;
-          // しっぽはキャラの方(上下)へ向け、辺の中の位置は横方向の距離で寄せる
-          const dir = y < centerY ? "dir-b" : "dir-t";
-          const norm = Math.max(-1, Math.min(1, (centerX - x) / (stageW / 2)));
-          const tailX = Math.min(80, Math.max(20, 50 + norm * 30));
+          const { dir, tailX, tailY } = tailFor(x, y, w, btnH);
 
           wrap.classList.add(dir);
           wrap.style.left = x + "px";
           wrap.style.top = y + "px";
           wrap.style.visibility = "visible";
           wrap.style.setProperty("--tail-x", tailX + "%");
+          wrap.style.setProperty("--tail-y", tailY + "%");
           wrap.style.setProperty("--rot", rot);
           wrap.style.setProperty("--delay", (shown.length - 1) * 0.06 + "s");
         }
