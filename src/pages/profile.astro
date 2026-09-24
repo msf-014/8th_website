@@ -308,6 +308,13 @@ const nameChars = ["矢", "車", "り", "ね"];
       body {
         background-color: #fff;
         position: relative;
+        -webkit-touch-callout: none; /* リンク長押しのポップアップメニューを禁止 */
+        -webkit-user-select: none; /* 文字選択を禁止（Safari/Chrome用） */
+        user-select: none; /* 文字選択を禁止（標準） */
+      }
+
+      img {
+        pointer-events: none;
       }
 
       :root {

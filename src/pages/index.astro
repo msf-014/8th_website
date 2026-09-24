@@ -144,6 +144,16 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       --footer-height: 48px;
     }
 
+    img {
+      pointer-events: none;
+    }
+
+    body {
+      -webkit-touch-callout: none; /* リンク長押しのポップアップメニューを禁止 */
+      -webkit-user-select: none; /* 文字選択を禁止（Safari/Chrome用） */
+      user-select: none; /* 文字選択を禁止（標準） */
+    }
+
     #loading-screen {
       position: fixed;
       inset: 0;
