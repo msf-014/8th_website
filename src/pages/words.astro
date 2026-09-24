@@ -11,8 +11,8 @@ import PageFrame from "../components/PageFrame.astro";
 <BaseLayout>
   <body>
     <PageBackground />
-    <div class="contents-list" transition:name="title--words">
-      <PageHeader title="WORDS" label="言葉" />
+    <div class="contents-list">
+      <PageHeader title="WORDS" label="言葉" transitionName="title--words" />
     </div>
 
     <!-- words-canvas は contents-list の外(兄弟要素)にする -->

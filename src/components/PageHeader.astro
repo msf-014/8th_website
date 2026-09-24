@@ -3,11 +3,15 @@
 interface Props {
   title: string;
   label: string;
+  /* トップのメニュー項目と morph させる View Transition 名。
+     全幅のラッパーではなく最大幅を持つこの帯に付けないと、
+     広い画面では遷移中に最大幅を超えた帯が描かれる */
+  transitionName?: string;
 }
-const { title, label } = Astro.props;
+const { title, label, transitionName } = Astro.props;
 ---
 
-<div class="contents_texto">
+<div class="contents_texto" transition:name={transitionName}>
   <span class="content_label">{label}</span>
   <h2>{title}</h2>
   <a href="/" class="back_btn" aria-label="戻る">
