@@ -67,6 +67,22 @@ const {
 </html>
 
 <style is:global>
+  /* サイト全体の最大幅。ヘッダー・タイトル帯・本文の枠・フッター・トップページで共有する */
+  :root {
+    --frame-max: 1480px;
+    /* スクロールしないページ（プロフィール等）でも中央の位置がずれないよう、スクロールバー分を常に確保する */
+    scrollbar-gutter: stable;
+  }
+
+  /*
+    下層ページのタイトル帯。transition:name で独立した重なりになるため、
+    帯そのものを前面に出して、下の本文枠に下線（box-shadow）が隠れないようにする。
+  */
+  .contents-list {
+    position: relative;
+    z-index: 1;
+  }
+
   /*
     戻るボタン(.back_btn)クリック時の退場アニメーション。
     タイトル帯(.contents_texto)はトップのリストへモーフするので残し、
@@ -110,6 +126,9 @@ const {
     width: 100%;
     height: 100%;
     scroll-behavior: smooth;
+    /* 横方向にはスクロールさせない（強くスワイプしたときにページ全体が横にずれるのを防ぐ） */
+    overflow-x: clip;
+    overscroll-behavior-x: none;
 
     user-select: none;
     -webkit-user-select: none;
@@ -118,6 +137,14 @@ const {
     -khtml-user-select: none;
     -webkit-user-drag: none;
     -khtml-user-drag: none;
+  }
+
+  /* body は中身に合わせて伸ばし、最後の要素の margin も内側に収める。
+     height: 100% 固定だと末尾の余白がページの高さに数えられず、固定フッターの裏に隠れる */
+  body {
+    height: auto;
+    min-height: 100%;
+    display: flow-root;
   }
 
   img {
@@ -187,6 +214,9 @@ const {
 
   document.addEventListener("astro:after-swap", () => {
     leavingBack = false;
-    document.documentElement.classList.remove("is-leaving-back");
+    document.documentElement.classList.remove(
+      "is-leaving-back",
+      "is-leaving-top",
+    );
   });
 </script>

@@ -3,20 +3,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/header.astro";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/footer.astro";
+import PageBackground from "../components/PageBackground.astro";
+import PageHeader from "../components/PageHeader.astro";
+import PageFrame from "../components/PageFrame.astro";
 ---
 
 <BaseLayout>
   <body>
-    <div class="bg_reveal" id="bg_reveal"></div>
+    <PageBackground />
     <div class="contents-list" transition:name="title--credit">
-      <div class="contents_texto">
-        <span class="content_label">免責事項</span>
-        <h2>DISCLAIMER</h2>
-        <a href="/" class="back_btn" aria-label="戻る">
-          <span class="back_arrow">←</span>
-        </a>
-      </div>
-      <div class="page">
+      <PageHeader title="DISCLAIMER" label="免責事項" />
+      <PageFrame class="page">
         <div class="page_content">
           <div class="content_sub">
             <div class="heading">本サイトについて</div>
@@ -47,7 +44,7 @@ import Footer from "../components/footer.astro";
             </div>
           </div>
         </div>
-      </div>
+      </PageFrame>
     </div>
   </body>
 
@@ -65,7 +62,9 @@ import Footer from "../components/footer.astro";
     :root {
       --morph-duration: 0.6s;
 
-      --header-back-color: rgb(230, 230, 230);
+      --page-color: #e6e6e6;
+
+      --header-back-color: var(--page-color);
     }
 
     ::view-transition-old(title--message),
@@ -73,109 +72,12 @@ import Footer from "../components/footer.astro";
       animation-duration: var(--morph-duration);
     }
 
-    .bg_reveal {
-      position: fixed;
-      inset: 0;
-      background: rgb(230, 230, 230);
-      background-image: radial-gradient(
-        circle,
-        rgba(120, 80, 200, 0.35) 1px,
-        transparent 1px
-      );
-      background-size: 5px 5px;
-      z-index: -1;
-      transform: scaleY(0);
-      animation: revealBg 0.4s ease forwards;
-      /* transform-origin はJSで動的に設定するため、ここでは指定しない */
-    }
-
-    @keyframes revealBg {
-      from {
-        transform: scaleY(0);
-      }
-      to {
-        transform: scaleY(1);
-      }
-    }
-
     .contents-list {
       display: block;
-      box-shadow:
-        0 -1px 0 0 #000,
-        0 1px 0 0 #000;
-    }
-
-    .contents_texto {
-      box-shadow:
-        0 -1px 0 0 #000,
-        0 1px 0 0 #000;
-      padding: 14px 16px 14px;
-      white-space: nowrap;
-      position: relative;
-      display: flex; /* 追加 */
-      align-items: center; /* h2とボタンを縦中央揃え */
-      gap: 24px; /* h2とボタンの間隔 */
-      background: rgb(230, 230, 230);
-    }
-
-    .content_label {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      font-size: 15px;
-      color: #000;
-      font-family: "Zen Kaku Gothic New", sans-serif;
-      font-weight: 800;
-      padding: 6px 14px;
-    }
-
-    .contents_texto h2 {
-      font-size: 110px;
-      font-family: "acumin-variable", sans-serif;
-      font-variation-settings:
-        "wght" 400,
-        "wdth" 100,
-        "slnt" 0;
-      font-style: normal;
-      align-items: center;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      position: relative;
-    }
-
-    .back_btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      border: 2px solid #000;
-      border-radius: 50%;
-      text-decoration: none;
-      color: #000;
-      flex-shrink: 0; /* ボタンが縮まないようにする */
-      transition:
-        background 0.2s,
-        color 0.2s;
-    }
-
-    .back_btn:hover {
-      background: #000;
-      color: #e6e6e6;
-    }
-
-    .back_arrow {
-      font-size: 20px;
-      line-height: 1;
     }
 
     .page {
       font-family: "Zen Kaku Gothic New", sans-serif;
-      width: 1900px;
-      margin: 0 auto;
-      background: #e6e6e6;
-      border-left: 1px solid #000;
-      border-right: 1px solid #000;
     }
 
     .page_content {
@@ -204,35 +106,6 @@ import Footer from "../components/footer.astro";
 
     /* ==================== スマホ対応 ==================== */
     @media (max-width: 768px) {
-      .contents_texto {
-        padding: 10px 12px;
-        gap: 12px;
-        white-space: normal;
-        overflow: hidden;
-      }
-
-      .contents_texto h2 {
-        flex: 1 1 0%;
-        min-width: 0;
-        font-size: 15vw;
-        overflow-x: hidden;
-        overflow-y: hidden;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        font-size: 15vw;
-      }
-
-      .content_label {
-        top: 10px;
-        right: 66px;
-        max-width: 88px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        white-space: nowrap;
-        font-size: 11px;
-        padding: 4px 8px;
-      }
 
       /* ---- ここから無限ループ・マーキー用のスタイル ---- */
       :global(.marquee-track) {
@@ -260,15 +133,6 @@ import Footer from "../components/footer.astro";
         white-space: nowrap;
       }
       /* ---- ここまで ---- */
-
-      .back_btn {
-        width: 40px;
-        height: 40px;
-      }
-
-      .back_arrow {
-        font-size: 16px;
-      }
 
       .chronology {
         max-width: 50vh;

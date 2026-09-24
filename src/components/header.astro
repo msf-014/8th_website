@@ -22,11 +22,21 @@ const { overlay = false, headerColor = "#fff" } = Astro.props;
       position: relative;
       background: var(--header-back-color);
       z-index: 0;
+      /* 下層ページは本文の枠と同じ最大幅で中央に揃える */
+      box-sizing: border-box;
+      max-width: var(--frame-max, 1480px);
+      margin: 0 auto;
+      border-left: 1px solid #000;
+      border-right: 1px solid #000;
     }
     .site-header.overlay {
       position: absolute;
       top: 0;
       left: 0;
+      right: 0;
+      /* トップページも本文と同じ最大幅で中央に揃える */
+      max-width: var(--frame-max, 1480px);
+      margin: 0 auto;
     }
     .header {
       padding: 0 30px 0 30px;
@@ -58,6 +68,10 @@ const { overlay = false, headerColor = "#fff" } = Astro.props;
 
     /* ==================== スマホ対応 ==================== */
     @media (max-width: 768px) {
+      .site-header:not(.overlay) {
+        border-left: 0;
+        border-right: 0;
+      }
       .header h2 {
         padding: 15px 0;
         font-size: 15px;

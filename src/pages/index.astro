@@ -184,6 +184,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     .content_list {
       display: block;
       box-shadow: 0 -1px 0 0 #000;
+      /* 最後の項目が固定フッターに隠れず、スクロールして押せるようにする */
+      padding-bottom: var(--footer-height);
     }
 
     a .contents {
@@ -213,8 +215,14 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       transition: background 0.3s transform 0.5s;
     }
 
+    /* 下層ページと同じ最大幅で中央に揃える */
     .main-wrapper {
       position: relative;
+      box-sizing: border-box;
+      max-width: var(--frame-max, 1480px);
+      margin: 0 auto;
+      border-left: 1px solid #000;
+      border-right: 1px solid #000;
     }
 
     .content_texto {
@@ -326,6 +334,9 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
     /* メインビジュアルは退場中にゆっくり沈めて、視線をタイトルへ寄せる */
     .main_visual {
+      /* 左右の帯（::before / ::after）をメインビジュアルの範囲に収める。
+         基準が .main-wrapper だと帯が一覧の裏まで伸び、遷移中に項目が抜けると見えてしまう */
+      position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr 1fr; /* 左・中央1/3・右 */
       width: 100%;
@@ -340,9 +351,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       left: 0;
       bottom: 0;
       width: 50px; /* 太さ */
-      background: #fff; /* 色 */
+      background: #a0b8f4; /* メインビジュアルの背景と同色 */
       pointer-events: none;
-      border-right: 1px solid #000;
     }
 
     /* 右のライン */
@@ -353,9 +363,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       right: 0;
       bottom: 0;
       width: 50px; /* 太さ */
-      background: #fff; /* 色 */
+      background: #a0b8f4; /* メインビジュアルの背景と同色 */
       pointer-events: none;
-      border-left: 1px solid #000;
     }
 
     .main_visual_left {
@@ -378,9 +387,21 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       background: #a0b8f4; /* とりあえず空白 */
     }
 
+    /* 下層ページへ移るとき、メインビジュアルも一覧（slideDown 0.4s）と一緒にフェードしながら沈める */
     .main-wrapper.is-leaving .main_visual {
-      opacity: 0;
-      transform: translateY(24px);
+      animation: visualOut 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes visualOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(24px);
+      }
     }
 
     @keyframes slideDown {
@@ -398,6 +419,15 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     @media (max-width: 768px) {
       #loading-screen img {
         width: 150px;
+      }
+
+      .content_list {
+        padding-bottom: 45px; /* スマホのフッター高さ */
+      }
+
+      .main-wrapper {
+        border-left: 0;
+        border-right: 0;
       }
 
       .content_texto {
@@ -510,6 +540,18 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       .contents.is-armed {
         background: var(--hover-bg);
       }
+
+      /* スマホでは選択中の項目と、それより上の項目をまとめて上へスライドさせる
+         （選択中の項目が上の項目を覆って押せなくなるのを防ぐ）。
+         タップで残る :hover のずれは使わない */
+      .contents:hover {
+        transform: none;
+      }
+      .contents.is-armed,
+      .contents.is-lifted,
+      .contents.is-leaving-target {
+        transform: translateY(-39px);
+      }
     }
   </style>
   <script data-astro-rerun is:inline>
@@ -569,6 +611,11 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         contentsEls.forEach((el) => {
           if (el !== except) el.classList.remove("is-armed");
         });
+        // 選択中の項目より上の項目も一緒に持ち上げる
+        const armedIndex = [...contentsEls].indexOf(except);
+        contentsEls.forEach((el, i) => {
+          el.classList.toggle("is-lifted", armedIndex > -1 && i < armedIndex);
+        });
       };
 
       contentsEls.forEach((link) => {
@@ -581,6 +628,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
               return;
             }
             e.preventDefault();
+            // 矢印だけ引っ込め、項目は持ち上げたまま遷移させる
+            link.classList.add("is-lifted");
             link.classList.remove("is-armed");
             setTimeout(() => {
               allowNavigate = true;
@@ -598,6 +647,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       const startExit = (href) => {
         document.querySelector(".main-wrapper")?.classList.add("is-leaving");
+        // フッターも一覧と一緒にフェードアウトさせる（BaseLayout の after-swap で外す）
+        document.documentElement.classList.add("is-leaving-top");
         contentsEls.forEach((el) => {
           if (el.getAttribute("data-href") === href) {
             el.classList.add("is-leaving-target");

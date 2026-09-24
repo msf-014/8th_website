@@ -1,0 +1,55 @@
+---
+// 下層ページ共通：本文を囲む枠。左右の罫線・最大幅・背景色・フェードインを揃える
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"div">;
+const { class: className, ...rest } = Astro.props;
+---
+
+<div class:list={["page_frame", className]} {...rest}>
+  <slot />
+</div>
+
+<style>
+  .page_frame {
+    /* 中身の margin を枠の外へ突き抜けさせない（ページ末尾の余白が消えてフッターに隠れるため） */
+    display: flow-root;
+    position: relative;
+    /* 中の z-index（付箋・吹き出しなど）を枠の内側に閉じ込め、固定フッターより前に出さない */
+    isolation: isolate;
+    box-sizing: border-box;
+    width: 100%; /* flex レイアウトの中でも中身の幅に縮まないようにする */
+    /* ヘッダー・タイトル帯・フッターと揃える。ページごとに --frame-max で変更できる */
+    max-width: var(--frame-max, 1480px);
+    /* 上：タイトル帯の下線（box-shadow 1px）と隙間なく接続
+       下：固定フッターの高さ分あけ、最下部がフッターに隠れないようにする */
+    margin: -1px auto 48px;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    background: var(--page-color);
+    /* backwards：待機中は開始状態を保ち、終了後は transform を残さない
+       （transform が残ると中の position: fixed の基準が枠になる） */
+    animation: pageFrameIn 0.5s ease backwards;
+    animation-delay: var(--bg-reveal-duration, 0.4s);
+  }
+
+  @keyframes pageFrameIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* スマホは左右に背景のドットを少し見せる。
+     vh に依存させるとアドレスバーの伸縮で幅が動くため固定値にする */
+  @media (max-width: 768px) {
+    .page_frame {
+      width: auto; /* 左右 10px の余白ぶん狭める（100% だとはみ出す） */
+      margin: -1px 10px 44px;
+    }
+  }
+</style>

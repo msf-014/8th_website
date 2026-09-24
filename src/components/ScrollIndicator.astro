@@ -1,0 +1,76 @@
+---
+// 縦に長いページ（年表・クレジット）用：ページのスクロール位置を示す縦線＋点。
+// プロフィールの右カラムと同じ見た目。ページがスクロールしないときは表示しない
+---
+
+<div class="scroll_indicator" id="scroll_indicator" aria-hidden="true">
+  <span class="scroll_indicator_dot" id="scroll_indicator_dot"></span>
+</div>
+
+<style>
+  .scroll_indicator {
+    position: fixed;
+    top: 30vh;
+    bottom: 30vh;
+    /* 本文の枠（最大幅 --frame-max で中央寄せ）の右端から 22px 内側 */
+    right: calc(max(0px, (100% - var(--frame-max, 1480px)) / 2) + 22px);
+    width: 1px;
+    background: #000;
+    z-index: 4; /* 本文より前、固定フッター（5）より後ろ */
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+
+  .scroll_indicator.is-active {
+    opacity: 1;
+    transform: scaleY(1);
+    transition-delay: 0.6s; /* 本文のフェードインのあとに伸ばす */
+  }
+
+  .scroll_indicator_dot {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    margin-left: -4.5px;
+    border-radius: 50%;
+    background: #000;
+    transition: transform 0.15s linear;
+  }
+
+  @media (max-width: 768px) {
+    .scroll_indicator {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function updateScrollIndicator() {
+    const bar = document.getElementById("scroll_indicator");
+    const dot = document.getElementById("scroll_indicator_dot");
+    if (!bar || !dot) return;
+
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.classList.toggle("is-active", max > 1);
+    const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    const track = bar.clientHeight - dot.offsetHeight;
+    dot.style.transform = `translateY(${p * track}px)`;
+  }
+
+  // 要素はページ遷移で差し替わるので、毎回IDで取り直す（リスナーは1回だけ登録）
+  window.addEventListener("scroll", updateScrollIndicator, { passive: true });
+  window.addEventListener("resize", updateScrollIndicator);
+  document.addEventListener("astro:page-load", () => {
+    updateScrollIndicator();
+    // 画像や動的に生成される中身（年表など）でページの高さが変わったら再計算する
+    // （body は遷移ごとに差し替わるので、そのたびに監視し直す）
+    new ResizeObserver(updateScrollIndicator).observe(document.body);
+  });
+</script>
