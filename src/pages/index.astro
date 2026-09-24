@@ -415,6 +415,35 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       }
     }
 
+    /* ==================== PC: メインビジュアルを画面いっぱいに固定 ==================== */
+    /* メインビジュアルを画面の高さいっぱいで sticky にし、その後ろに続く一覧が
+       スクロールで下から画像の上へスライドしてくる。画像は動かない */
+    @media (min-width: 769px) {
+      .main_visual {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        max-height: none;
+        z-index: 0;
+      }
+
+      .main_visual_center {
+        height: 100%;
+        min-height: 0;
+      }
+
+      .main_visual_center img {
+        height: 100%;
+        max-height: none;
+      }
+
+      /* 一覧はメインビジュアルより手前に重なる */
+      .main_container {
+        position: relative;
+        z-index: 1;
+      }
+    }
+
     /* ==================== スマホ対応 ==================== */
     @media (max-width: 768px) {
       #loading-screen img {
