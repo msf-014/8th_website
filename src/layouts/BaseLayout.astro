@@ -151,6 +151,13 @@ const {
     -webkit-user-drag: none;
     pointer-events: none;
   }
+
+  /* タップした瞬間に出るブラウザ標準の青いハイライトを全体で消す
+     (トップの一覧・戻るボタン・吹き出し・絞り込みボタンなど) */
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
   img[draggable="true"] {
     -webkit-user-drag: auto;
   }
