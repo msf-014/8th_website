@@ -377,6 +377,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     }
 
     .main_visual_center {
+      /* 画像が上へスライドした分の下地も、画像・左右と同じ水色で埋める */
+      background: #a0b8f4;
     }
 
     .main_visual_center img {
@@ -431,6 +433,7 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         height: calc(100vh - var(--footer-height));
         max-height: none;
         z-index: 0;
+        overflow: hidden; /* 上へスライドした画像を枠内に収める */
         /* 中央列は画像の幅(高さ 100vh に合わせた幅)にし、残りを左右で分ける */
         grid-template-columns: 1fr auto 1fr;
       }
@@ -440,8 +443,12 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         min-height: 0;
       }
 
-      /* 画像は高さ基準で画面いっぱい(フッター分を除く)。幅は比率どおり(9:16) */
+      /* 画像は高さ基準で画面いっぱい(フッター分を除く)。幅は比率どおり(9:16)。
+         --hero-shift はスクロール量に応じて JS が更新し、一覧が上がってくるのに合わせて
+         画像も上へスライドさせる(一覧に隠れる分をずらして見せる) */
       .main_visual_center img {
+        transform: translateY(var(--hero-shift, 0px));
+        will-change: transform;
         height: calc(100vh - var(--footer-height));
         width: auto;
         max-width: 100%;
@@ -638,9 +645,60 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       .contents.is-leaving-target {
         transform: translateY(-39px);
       }
+
+      /* スマホの項目は白背景(PC のカラフル半透明は使わない)。選択中はページ色。
+         タップした瞬間にブラウザ標準の青いハイライトが出ないようにする */
+      .contents {
+        background: #fff;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .contents.is-armed,
+      .contents.is-leaving-target {
+        background: var(--hover-bg);
+      }
+
+      /* 最後の項目(CREDIT)が選択で 39px 浮くと下に隙間ができるので、
+         同じ背景色の帯(::after)で埋める。帯にも当たり判定を持たせる */
+      .content_list .contents:last-child::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 39px;
+        background: inherit;
+        box-shadow: 0 1px 0 0 #000;
+        opacity: 0;
+      }
+      .content_list .contents:last-child.is-armed::after,
+      .content_list .contents:last-child.is-leaving-target::after {
+        opacity: 1;
+      }
     }
   </style>
   <script data-astro-rerun is:inline>
+    // PC: 一覧が下から上がってくるのに合わせて、メインビジュアルの画像を上へスライドさせる。
+    // スクロール量 × 係数 だけ上へ動かす。一覧が全部出た時に矢車の顔が一覧の上に
+    // 来る量(1 だと普通のスクロールと同じになるので少し控えめに)
+    (function () {
+      const HERO_SHIFT_RATIO = 0.85;
+      const mv = document.querySelector(".main_visual");
+      if (!mv) return;
+      const isPc = window.matchMedia("(min-width: 769px)");
+      let raf = 0;
+      const update = () => {
+        raf = 0;
+        const shift = isPc.matches ? -window.scrollY * HERO_SHIFT_RATIO : 0;
+        mv.style.setProperty("--hero-shift", shift.toFixed(1) + "px");
+      };
+      const onScroll = () => {
+        if (!raf) raf = requestAnimationFrame(update);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      isPc.addEventListener("change", update);
+      update();
+    })();
+
     (function () {
       const MIN_DISPLAY_TIME = 2500;
       const loader = document.getElementById("loading-screen");
