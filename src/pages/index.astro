@@ -472,6 +472,12 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       .content_list .contents:last-child {
         clip-path: inset(-1px 0 -1px 0);
       }
+
+      /* 最後の項目は下に重なる項目がなく、ホバーで 39px 浮くとその下に隙間ができるので動かさない */
+      .content_list .contents:last-child:hover,
+      .content_list .contents:last-child.is-leaving-target {
+        transform: none;
+      }
     }
 
     /* ==================== スマホ対応 ==================== */
