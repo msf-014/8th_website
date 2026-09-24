@@ -12,7 +12,11 @@ import PageFrame from "../components/PageFrame.astro";
   <body>
     <PageBackground />
     <div class="contents-list">
-      <PageHeader title="MESSAGE" label="お祝いメッセージ" transitionName="title--message" />
+      <PageHeader
+        title="MESSAGE"
+        label="お祝いメッセージ"
+        transitionName="title--message"
+      />
     </div>
 
     <PageFrame class="board-wrap" id="board-wrap">
@@ -336,6 +340,20 @@ import PageFrame from "../components/PageFrame.astro";
               ["9年目も、りねちゃんらしく楽しく進んでいってください！"],
             ],
           },
+          {
+            from: "Masahiro Fujita",
+            msg: [
+              ["矢車～～！！8周年おめでとう～！！！"],
+              [
+                "矢車が日々、色んなことを頑張っている姿を見て",
+                "自分も頑張らないとなと、勝手に背中を押されています。",
+                "俺が何かに挑戦しようと思えるのは、多分あなたのお陰です。いつもありがとう。",
+              ],
+              [
+                "これからも自分のペースで！永く楽しく活動してくれよな～！これからもよろしく！",
+              ],
+            ],
+          },
         ];
 
         // スマホ判定（767px未満）
@@ -447,12 +465,22 @@ import PageFrame from "../components/PageFrame.astro";
               const prevH = H;
               H += s.h + MARGIN;
               grid = grid.concat(
-                makeGrid(edge, Math.max(edge, prevH - s.h), areaW - edge, H - edge),
+                makeGrid(
+                  edge,
+                  Math.max(edge, prevH - s.h),
+                  areaW - edge,
+                  H - edge,
+                ),
               );
             }
             if (!found) {
               // ここには来ないはずだが、万一の時は左上に置く
-              found = { left: edge, top: edge, right: edge + s.w, bottom: edge + s.h };
+              found = {
+                left: edge,
+                top: edge,
+                right: edge + s.w,
+                bottom: edge + s.h,
+              };
             }
             placed.push({ box: found, text: textOf(found) });
             result.push({ x: found.left, y: found.top, w: s.w, h: s.h });
@@ -580,7 +608,9 @@ import PageFrame from "../components/PageFrame.astro";
           document.getElementById("modal-backdrop").classList.remove("open");
         }
 
-        document.getElementById("m-close").addEventListener("click", closeModal);
+        document
+          .getElementById("m-close")
+          .addEventListener("click", closeModal);
         document
           .getElementById("modal-backdrop")
           .addEventListener("click", (e) => {
@@ -595,7 +625,9 @@ import PageFrame from "../components/PageFrame.astro";
         const boardEl = document.getElementById("board");
         let hasBuilt = false;
         // Webフォントの読み込み前に測ると、後で付箋の高さが変わって文字が隠れる
-        const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+        const fontsReady = document.fonts
+          ? document.fonts.ready
+          : Promise.resolve();
         const build = () => fontsReady.then(buildBoard);
 
         if (boardEl) {
@@ -856,7 +888,6 @@ import PageFrame from "../components/PageFrame.astro";
 
       /* ==================== スマホ対応 ==================== */
       @media (max-width: 768px) {
-
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
         :global(.marquee-track) {
           display: inline-flex;
