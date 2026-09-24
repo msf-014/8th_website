@@ -11,8 +11,8 @@ import PageFrame from "../components/PageFrame.astro";
 <BaseLayout>
   <body>
     <PageBackground />
-    <div class="contents-list" transition:name="title--words">
-      <PageHeader title="WORDS" label="言葉" />
+    <div class="contents-list">
+      <PageHeader title="WORDS" label="言葉" transitionName="title--words" />
     </div>
 
     <!-- words-canvas は contents-list の外(兄弟要素)にする -->
@@ -25,6 +25,10 @@ import PageFrame from "../components/PageFrame.astro";
             />吹き出しをクリックすると、詳細を読むことが出来ます。<br />
             下のボタンで絞り込むことも出来ます。
           </p>
+          <div class="buttons" id="buttons"></div>
+          <button type="button" class="button shuffle" id="shuffleBtn">
+            他の言葉を見る
+          </button>
         </div>
 
         <div class="character" id="character" aria-hidden="true">
@@ -165,6 +169,17 @@ import PageFrame from "../components/PageFrame.astro";
         color 0.2s;
     }
 
+    .shuffle {
+      display: block;
+      margin-top: 2px;
+      background: #000;
+      color: #b5e6c6;
+    }
+    .shuffle:hover {
+      background: #fff;
+      color: #000;
+    }
+
     :global(.button.active) {
       color: #b5e6c6;
       background-color: #000;
@@ -204,13 +219,12 @@ import PageFrame from "../components/PageFrame.astro";
     :global(.bubble-wrap) {
       position: absolute;
       z-index: 2;
+      /* left/top は吹き出しの中心。アニメーションが無効でも中心基準を保つ。
+         --rot は JS が付ける微妙な傾き(ごちゃっと感) */
+      transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
       opacity: 0;
       animation: popOut 0.55s cubic-bezier(0.25, 0.9, 0.35, 1.15) forwards;
       animation-delay: var(--delay, 0s);
-    }
-
-    :global(.bubble-wrap.hide) {
-      display: none;
     }
 
     :global(.bubble-wrap:hover) {
@@ -219,15 +233,15 @@ import PageFrame from "../components/PageFrame.astro";
 
     @keyframes popOut {
       0% {
-        transform: translate(-50%, -50%) scale(0.2);
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.2);
         opacity: 0;
       }
       60% {
-        transform: translate(-50%, -50%) scale(1.08);
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.08);
         opacity: 1;
       }
       100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1);
         opacity: 1;
       }
     }
@@ -306,6 +320,42 @@ import PageFrame from "../components/PageFrame.astro";
       margin-left: -12px;
       border-width: 0 12px 17px;
       border-color: transparent transparent var(--paper) transparent;
+    }
+
+    /* 左右の辺の尻尾(キャラの横にある吹き出し用)。辺の中の位置は --tail-y */
+    :global(.dir-r .bubble::before) {
+      right: -13px;
+      top: var(--tail-y, 50%);
+      margin-top: -10px;
+      border-width: 10px 0 10px 13px;
+      border-color: transparent transparent transparent #000;
+    }
+    :global(.dir-r .bubble::after) {
+      right: -11px;
+      top: var(--tail-y, 50%);
+      margin-top: -12px;
+      border-width: 12px 0 12px 17px;
+      border-color: transparent transparent transparent var(--paper);
+    }
+    :global(.dir-r .bubble:hover::after) {
+      border-left-color: var(--mint);
+    }
+    :global(.dir-l .bubble::before) {
+      left: -13px;
+      top: var(--tail-y, 50%);
+      margin-top: -10px;
+      border-width: 10px 13px 10px 0;
+      border-color: transparent #000 transparent transparent;
+    }
+    :global(.dir-l .bubble::after) {
+      left: -11px;
+      top: var(--tail-y, 50%);
+      margin-top: -12px;
+      border-width: 12px 17px 12px 0;
+      border-color: transparent var(--paper) transparent transparent;
+    }
+    :global(.dir-l .bubble:hover::after) {
+      border-right-color: var(--mint);
     }
     :global(.dir-t .bubble:hover::after) {
       border-bottom-color: var(--mint);
@@ -500,7 +550,7 @@ import PageFrame from "../components/PageFrame.astro";
       }
 
       .character {
-        width: 140px;
+        width: 110px;
       }
 
       .character p {
@@ -544,6 +594,26 @@ import PageFrame from "../components/PageFrame.astro";
         border-width: 0 10px 12px;
         margin-left: -7px;
         top: -9px;
+      }
+      :global(.dir-r .bubble::before) {
+        border-width: 8px 0 8px 9px;
+        margin-top: -8px;
+        right: -10px;
+      }
+      :global(.dir-r .bubble::after) {
+        border-width: 10px 0 10px 12px;
+        margin-top: -10px;
+        right: -9px;
+      }
+      :global(.dir-l .bubble::before) {
+        border-width: 8px 9px 8px 0;
+        margin-top: -8px;
+        left: -10px;
+      }
+      :global(.dir-l .bubble::after) {
+        border-width: 10px 12px 10px 0;
+        margin-top: -10px;
+        left: -9px;
       }
 
       .modal {
@@ -756,7 +826,7 @@ import PageFrame from "../components/PageFrame.astro";
           "https://www.youtube.com/live/qYoTp91LxYw?si=zXT3UZ2OWxhBRPd3&t=24036",
       },
       {
-        id: "w22",
+        id: "w24",
         bubble: "どうも、にじさんじです",
         tag: "DAJARE",
         title: "どうも、にじさんじです",
@@ -775,21 +845,8 @@ import PageFrame from "../components/PageFrame.astro";
       },
     ];
 
-    const stage = document.getElementById("stage");
-    const character = document.getElementById("character");
-
-    const BUBBLE_W = 200;
     const MIN_GAP = 22;
     const EDGE_MARGIN = 40;
-    const MAX_ATTEMPTS = 400;
-
-    function createButtonsContainer(parent) {
-      const c = document.createElement("div");
-      c.id = "buttons";
-      c.className = "buttons";
-      (parent || document.body).appendChild(c);
-      return c;
-    }
 
     function initWordsPage() {
       const stage = document.getElementById("stage");
@@ -798,215 +855,267 @@ import PageFrame from "../components/PageFrame.astro";
 
       if (stage.dataset.wordsInit === "true") return;
       stage.dataset.wordsInit = "true";
+      const isMobile = () =>
+        window.matchMedia("(max-width: 768px)").matches;
+
+      type Rect = { left: number; top: number; right: number; bottom: number };
+      const hits = (a: Rect, b: Rect) =>
+        a.left < b.right &&
+        a.right > b.left &&
+        a.top < b.bottom &&
+        a.bottom > b.top;
+      const rectOf = (el: Element, pad: number, base: DOMRect): Rect => {
+        const b = el.getBoundingClientRect();
+        return {
+          left: b.left - base.left - pad,
+          top: b.top - base.top - pad,
+          right: b.right - base.left + pad,
+          bottom: b.bottom - base.top + pad,
+        };
+      };
+
+      // 枠は固定サイズなので、全部は置けない。重ならずに置ける分だけ表示し、
+      // 「他の言葉を見る」で残りと入れ替える。queue は「まだ表示していない言葉」
+      let activeTag = "ALL";
+      let queue: typeof messages = [];
+      const shuffleBtn = document.getElementById("shuffleBtn");
+
+      function poolFor(tag: string) {
+        return messages.filter((m) => tag === "ALL" || m.tag === tag);
+      }
+
       function layoutBubbles() {
-        const stageRect = { w: stage.clientWidth, h: stage.clientHeight };
-        const centerX = stageRect.w / 2;
-        const centerY = stageRect.h / 2;
+        const mobile = isMobile();
+        const stageW = stage.clientWidth;
+        const stageH = stage.clientHeight;
+        const gap = mobile ? 6 : MIN_GAP;
+        const edge = mobile ? 10 : EDGE_MARGIN;
+        const PAD = mobile ? 6 : 28;
 
-        const charEl = character.getBoundingClientRect();
-        const exclusionRadius = Math.max(charEl.width, charEl.height) / 2 + 70;
-
-        // intro(SPEECH BUBBLESの説明文)の除外エリア(矩形+余白)
-        const stageBox = stage.getBoundingClientRect();
-        const introEl = document.querySelector(".intro");
-        const introBox = introEl ? introEl.getBoundingClientRect() : null;
-        const INTRO_PAD = 32;
-        const introRect = introBox
-          ? {
-              left: introBox.left - stageBox.left - INTRO_PAD,
-              top: introBox.top - stageBox.top - INTRO_PAD,
-              right: introBox.right - stageBox.left + INTRO_PAD,
-              bottom: introBox.bottom - stageBox.top + INTRO_PAD,
-            }
-          : null;
-
-        function overlapsIntro(
-          x: number,
-          y: number,
-          w: number,
-          h: number,
-        ): boolean {
-          if (!introRect) return false;
-          const left = x - w / 2,
-            right = x + w / 2;
-          const top = y - h / 2,
-            bottom = y + h / 2;
-          return (
-            left < introRect.right &&
-            right > introRect.left &&
-            top < introRect.bottom &&
-            bottom > introRect.top
-          );
-        }
-
-        const placed: { x: number; y: number; w: number; h: number }[] = [];
-
-        // 既にある .bubble-wrap を一旦クリアする（重複生成を避ける）
-        // もし HTML 側で既に要素を用意しているならこの行をコメントアウトしてください
         stage.querySelectorAll(".bubble-wrap").forEach((n) => n.remove());
 
-        messages.forEach((msg, i) => {
+        const stageBox = stage.getBoundingClientRect();
+        const introEl = stage.querySelector(".intro");
+
+        // スマホは intro が枠の最下部に固定されているので、キャラは枠全体ではなく
+        // 「intro より上の吹き出しエリア」の中央に置く(PC は CSS の 50% のまま)
+        character.style.top = "";
+        if (mobile && introEl) {
+          const introTop = introEl.getBoundingClientRect().top - stageBox.top;
+          character.style.top = introTop / 2 + "px";
+        }
+
+        const obstacles: Rect[] = [rectOf(character, PAD, stageBox)];
+        const imgBox = (character.querySelector("img") || character).getBoundingClientRect();
+        const charCenter = {
+          x: imgBox.left - stageBox.left + imgBox.width / 2,
+          y: imgBox.top - stageBox.top + imgBox.height / 2,
+        };
+        if (introEl) obstacles.push(rectOf(introEl, PAD, stageBox));
+
+        // 未表示のものを優先し、足りなければ表示済みからも補って枠を埋める
+        const pool = poolFor(activeTag);
+        if (queue.length === 0) queue = pool.slice();
+        const order = [...queue, ...pool.filter((m) => !queue.includes(m))];
+
+        // 置き場所の候補は枠内の格子点。乱数で順番を崩し、置けるところを先頭から探す
+        // (完全な乱数だと狭い枠で置ける場所を見落として早く諦めてしまう)
+        const STEP = 8;
+        const grid: { left: number; top: number }[] = [];
+        for (let top = edge; top <= stageH - edge; top += STEP) {
+          for (let left = edge; left <= stageW - edge; left += STEP) {
+            grid.push({ left, top });
+          }
+        }
+        for (let i = grid.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [grid[i], grid[j]] = [grid[j], grid[i]];
+        }
+        const placed: { box: Rect; text: Rect; tail: Rect }[] = [];
+        const shown: typeof messages = [];
+        let misses = 0;
+        const TAIL = 14;
+
+        for (const msg of order) {
+          // PC は数個続けて置けなければ満杯とみなす。スマホは小さい吹き出しなら
+          // 隙間に入ることが多いので、最後まで試す
+          if (!mobile && misses >= 4) break;
+
           const wrap = document.createElement("div");
           wrap.className = "bubble-wrap";
-          // ここで tag を data-name に入れる（フィルタで参照）
           wrap.dataset.name = msg.tag || "UNKNOWN";
           wrap.style.visibility = "hidden";
-          wrap.style.left = "0px";
-          wrap.style.top = "0px";
-
           const btn = document.createElement("button");
           btn.className = "bubble";
           btn.dataset.modal = msg.id;
           btn.innerHTML = msg.bubble;
-
+          // 幅を少し揺らして折り返しを変え、箱の形をバラけさせる(整いすぎ防止)
+          // スマホは下限を 100px にしてキャラの両脇(約 100px)にも入るようにする
+          const bw = mobile ? 100 + Math.random() * 44 : 200 * (0.85 + Math.random() * 0.3);
+          btn.style.width = Math.round(bw) + "px";
           wrap.appendChild(btn);
           stage.appendChild(wrap);
 
-          const rect = btn.getBoundingClientRect();
-          const w = rect.width + 32;
-          const h = rect.height + 32;
+          // ポップアニメーションの scale の影響を受けない offset 値で測る
+          // しっぽは上下どちらか一方にしか出ないが、向きは位置が決まるまで分からない
+          // ので両側に確保する。スマホは隙間が貴重なので片側+αに抑える
+          const w = btn.offsetWidth;
+          const btnH = btn.offsetHeight;
+          const h = btnH + (mobile ? TAIL + 4 : TAIL * 2);
+          const maxLeft = stageW - edge - w;
+          const maxTop = stageH - edge - h;
+          // 文字領域 = 箱から padding を除いた内側。箱同士は少し重なってもよいが、
+          // 相手の箱がこの領域に乗ると読めなくなるので、それだけを禁止する
+          const cs = getComputedStyle(btn);
+          const padX = parseFloat(cs.paddingLeft);
+          const padY = parseFloat(cs.paddingTop);
+          const boxOf = (r: Rect): Rect => {
+            const top = r.top + (h - btnH) / 2;
+            return { left: r.left, top, right: r.right, bottom: top + btnH };
+          };
+          const textOf = (b: Rect): Rect => ({
+            left: b.left + padX,
+            top: b.top + padY,
+            right: b.right - padX,
+            bottom: b.bottom - padY,
+          });
+          // しっぽはキャラ(画像の中心)へ向ける。吹き出し中心からキャラ中心へ引いた
+          // 直線が箱のどの辺を抜けるかで上下左右を決め、辺上の位置もその交点にする。
+          // 戻り値の rect はしっぽの三角形が占める範囲(他の文字に乗せない判定用)
+          const tailFor = (x: number, y: number, w: number, bh: number) => {
+            const dx = charCenter.x - x;
+            const dy = charCenter.y - y;
+            const halfW = w / 2;
+            const halfH = bh / 2;
+            let dir: string;
+            let tailX = 50;
+            let tailY = 50;
+            let rect: Rect;
+            if (Math.abs(dx) * halfH > Math.abs(dy) * halfW) {
+              dir = dx > 0 ? "dir-r" : "dir-l";
+              const exitY = y + dy * (halfW / Math.abs(dx));
+              tailY = Math.min(80, Math.max(20, ((exitY - (y - halfH)) / bh) * 100));
+              const ty = y - halfH + (bh * tailY) / 100;
+              const ex = dx > 0 ? x + halfW : x - halfW - TAIL;
+              rect = { left: ex, top: ty - TAIL, right: ex + TAIL, bottom: ty + TAIL };
+            } else {
+              dir = dy > 0 ? "dir-b" : "dir-t";
+              const exitX = dy === 0 ? x : x + dx * (halfH / Math.abs(dy));
+              tailX = Math.min(85, Math.max(15, ((exitX - (x - halfW)) / w) * 100));
+              const tx = x - halfW + (w * tailX) / 100;
+              const ey = dy > 0 ? y + halfH : y - halfH - TAIL;
+              rect = { left: tx - TAIL, top: ey, right: tx + TAIL, bottom: ey + TAIL };
+            }
+            return { dir, tailX, tailY, rect };
+          };
+          // 相手の箱・しっぽが自分の文字に、自分の箱・しっぽが相手の文字に乗らない
+          const readable = (box: Rect, text: Rect, tail: Rect) =>
+            placed.every(
+              (p) =>
+                !hits(box, p.text) &&
+                !hits(tail, p.text) &&
+                !hits(text, p.box) &&
+                !hits(text, p.tail),
+            );
 
-          let x = 0,
-            y = 0,
-            ok = false;
-          for (let a = 0; a < MAX_ATTEMPTS; a++) {
-            x =
-              EDGE_MARGIN +
-              w / 2 +
-              Math.random() * (stageRect.w - w - EDGE_MARGIN * 2);
-            y =
-              EDGE_MARGIN +
-              h / 2 +
-              Math.random() * (stageRect.h - h - EDGE_MARGIN * 2);
-
-            const distFromCenter = Math.hypot(x - centerX, y - centerY);
-            if (distFromCenter < exclusionRadius) continue;
-            if (overlapsIntro(x, y, w, h)) continue;
-
-            const overlaps = placed.some((p) => {
-              return (
-                Math.abs(x - p.x) < (w + p.w) / 2 + MIN_GAP &&
-                Math.abs(y - p.y) < (h + p.h) / 2 + MIN_GAP
-              );
-            });
-            if (overlaps) continue;
-
-            ok = true;
-            break;
+          // 置ける候補の中から選ぶ。PC は空きに余裕があるので最初に見つかった場所(=乱数)。
+          // スマホは面積が足りないので、周囲(枠の縁・キャラ・他の吹き出し)に
+          // 接している数が多い候補を優先し、空きを細切れにしない。
+          // 同点は格子の順(=乱数)なので散らばり方はランダムのまま
+          let found: Rect | null = null;
+          const candidates: { r: Rect; score: number }[] = [];
+          let bestScore = -1;
+          for (const g of grid) {
+            if (g.left > maxLeft || g.top > maxTop) continue;
+            const r = { left: g.left, top: g.top, right: g.left + w, bottom: g.top + h };
+            if (obstacles.some((o) => hits(r, o))) continue;
+            const box = boxOf(r);
+            const tail = tailFor((r.left + r.right) / 2, (r.top + r.bottom) / 2, w, btnH).rect;
+            if (!readable(box, textOf(box), tail)) continue;
+            if (!mobile) {
+              found = r;
+              break;
+            }
+            const near = {
+              left: r.left - gap - STEP,
+              top: r.top - gap - STEP,
+              right: r.right + gap + STEP,
+              bottom: r.bottom + gap + STEP,
+            };
+            let score = 0;
+            if (near.left <= edge) score++;
+            if (near.right >= stageW - edge) score++;
+            if (near.top <= edge) score++;
+            if (near.bottom >= stageH - edge) score++;
+            for (const o of obstacles) if (hits(near, o)) score++;
+            for (const p of placed) if (hits(near, p.box)) score++;
+            candidates.push({ r, score });
+            if (score > bestScore) bestScore = score;
+          }
+          if (mobile && candidates.length > 0) {
+            // 最高点だけだと行が揃って整いすぎるので、ほぼ最高点の中からランダムに選ぶ
+            const good = candidates.filter((c) => c.score >= bestScore - 1);
+            found = good[Math.floor(Math.random() * good.length)].r;
           }
 
-          if (!ok) {
-            // 通常の試行で見つからなかった場合、除外円の外側を
-            // 少しずつ広げながら、他の吹き出しやintroと重ならない場所を探す
-            let foundFallback = false;
-            for (let ring = 0; ring < 14 && !foundFallback; ring++) {
-              const testRadius =
-                exclusionRadius + Math.max(w, h) / 2 + ring * 20;
-              for (let t = 0; t < 24; t++) {
-                const angle = Math.random() * Math.PI * 2;
-                let tx = centerX + Math.cos(angle) * testRadius;
-                let ty = centerY + Math.sin(angle) * testRadius;
-                tx = Math.min(
-                  Math.max(tx, EDGE_MARGIN + w / 2),
-                  stageRect.w - EDGE_MARGIN - w / 2,
-                );
-                ty = Math.min(
-                  Math.max(ty, EDGE_MARGIN + h / 2),
-                  stageRect.h - EDGE_MARGIN - h / 2,
-                );
-
-                if (overlapsIntro(tx, ty, w, h)) continue;
-
-                const overlapsFallback = placed.some((p) => {
-                  return (
-                    Math.abs(tx - p.x) < (w + p.w) / 2 + MIN_GAP &&
-                    Math.abs(ty - p.y) < (h + p.h) / 2 + MIN_GAP
-                  );
-                });
-                if (overlapsFallback) continue;
-
-                x = tx;
-                y = ty;
-                foundFallback = true;
-                break;
-              }
-            }
-            // それでも見つからない場合のみ、重なりを許容して機械的に配置する
-            // (introとの重なりだけは最後まで避ける)
-            if (!foundFallback) {
-              let safe = false;
-              for (let t = 0; t < 120; t++) {
-                const angle = Math.random() * Math.PI * 2;
-                let tx =
-                  centerX + Math.cos(angle) * (exclusionRadius + w / 2 + 20);
-                let ty =
-                  centerY + Math.sin(angle) * (exclusionRadius + h / 2 + 20);
-                tx = Math.min(
-                  Math.max(tx, EDGE_MARGIN + w / 2),
-                  stageRect.w - EDGE_MARGIN - w / 2,
-                );
-                ty = Math.min(
-                  Math.max(ty, EDGE_MARGIN + h / 2),
-                  stageRect.h - EDGE_MARGIN - h / 2,
-                );
-                if (overlapsIntro(tx, ty, w, h)) continue;
-                x = tx;
-                y = ty;
-                safe = true;
-                break;
-              }
-              // それでもダメなら、introのある角と対角のコーナーへ確実に配置する
-              if (!safe && introRect) {
-                const introCenterX = (introRect.left + introRect.right) / 2;
-                const introCenterY = (introRect.top + introRect.bottom) / 2;
-                x =
-                  introCenterX < centerX
-                    ? stageRect.w - EDGE_MARGIN - w / 2
-                    : EDGE_MARGIN + w / 2;
-                y =
-                  introCenterY < centerY
-                    ? stageRect.h - EDGE_MARGIN - h / 2
-                    : EDGE_MARGIN + h / 2;
-              }
-            }
+          if (!found) {
+            wrap.remove();
+            misses++;
+            continue;
           }
 
-          placed.push({ x, y, w, h });
+          {
+            const box = boxOf(found);
+            const tail = tailFor(
+              (found.left + found.right) / 2,
+              (found.top + found.bottom) / 2,
+              w,
+              btnH,
+            ).rect;
+            placed.push({ box, text: textOf(box), tail });
+          }
+          shown.push(msg);
 
-          const dir = y < centerY ? "dir-b" : "dir-t";
-
-          // 吹き出しが中心より左にあるなら右寄り、右にあるなら左寄りにする
-          const norm = Math.max(
-            -1,
-            Math.min(1, (centerX - x) / (stageRect.w / 2)),
-          );
-          const tailX = 50 + norm * 30;
-          const clampedTailX = Math.min(80, Math.max(20, tailX));
+          // 格子に揃いすぎないよう、隙間の範囲内で少しずらす
+          // (傾き・ずらしで文字領域に食い込まないよう、小さめに)
+          const jitter = 3;
+          const x = (found.left + found.right) / 2 + (Math.random() - 0.5) * jitter;
+          const y = (found.top + found.bottom) / 2 + (Math.random() - 0.5) * jitter;
+          // 傾けると箱が測った矩形より少しはみ出すので、隙間の小さいスマホは控えめに
+          const rot = ((Math.random() - 0.5) * (mobile ? 5 : 6)).toFixed(1) + "deg";
+          const { dir, tailX, tailY } = tailFor(x, y, w, btnH);
 
           wrap.classList.add(dir);
           wrap.style.left = x + "px";
           wrap.style.top = y + "px";
           wrap.style.visibility = "visible";
-          wrap.style.setProperty("--tail-x", clampedTailX + "%");
-          wrap.style.setProperty("--delay", i * 0.07 + "s");
-        });
+          wrap.style.setProperty("--tail-x", tailX + "%");
+          wrap.style.setProperty("--tail-y", tailY + "%");
+          wrap.style.setProperty("--rot", rot);
+          wrap.style.setProperty("--delay", (shown.length - 1) * 0.06 + "s");
+        }
+
+        queue = queue.filter((m) => !shown.includes(m));
+
+        // 全部が一度に収まる時だけボタンを隠す。display を消すと intro パネルの
+        // 高さが変わり、測った除外エリアとずれて吹き出しが隠れるので visibility で消す
+        if (shuffleBtn) {
+          shuffleBtn.style.visibility =
+            shown.length >= pool.length ? "hidden" : "";
+          shuffleBtn.textContent = `他の言葉を見る (${shown.length}/${pool.length})`;
+        }
       }
 
-      // --- ボタンコンテナはここで取得または作成（DOM準備後に一度だけ） ---
-      let buttonsContainer = document.getElementById(".buttons");
-      if (!buttonsContainer) {
-        const intro = stage.querySelector(".intro");
-        buttonsContainer = createButtonsContainer(intro || stage);
-      }
+      // --- ボタンコンテナ(HTML 側に用意済み) ---
+      const buttonsContainer = document.getElementById("buttons");
+      if (!buttonsContainer) return;
 
-      // --- タグ一覧を正しく作る（スプレッドで展開） ---
       const tagSet = new Set(
         (messages || []).map((m) => (m.tag || "UNKNOWN").trim()),
       );
-      const tags = ["ALL", ...Array.from(tagSet)]; // ← 修正点
+      const tags = ["ALL", ...Array.from(tagSet)];
 
-      // --- ボタン生成 ---
-      function createTagButtons(tags) {
+      function createTagButtons(tags: string[]) {
         buttonsContainer.innerHTML = "";
         tags.forEach((tag, idx) => {
           const btn = document.createElement("button");
@@ -1019,47 +1128,57 @@ import PageFrame from "../components/PageFrame.astro";
         });
       }
 
-      // --- クリック処理（デリゲーション） ---
-      function onButtonsClick(e) {
-        const btn = e.target.closest(".button");
+      function onButtonsClick(e: Event) {
+        const btn = (e.target as Element).closest(".button") as HTMLElement | null;
         if (!btn || !buttonsContainer.contains(btn)) return;
         buttonsContainer
           .querySelector(".button.active")
           ?.classList.remove("active");
         btn.classList.add("active");
-        const name = btn.dataset.name;
-        document.querySelectorAll(".bubble-wrap").forEach((c) => {
-          c.classList.toggle("hide", name !== "ALL" && c.dataset.name !== name);
-        });
-      }
-
-      // イベントは一度だけ登録（重複登録を避ける）
-      buttonsContainer.removeEventListener("click", onButtonsClick);
-      buttonsContainer.addEventListener("click", onButtonsClick);
-
-      // --- 実行フロー（フォント待ち→ボタン生成→配置） ---
-      // ボタンを先に作り、ボタン込みの intro の大きさを測ってから吹き出しを避けて配置する
-      const run = () => {
-        createTagButtons(tags);
-        if (typeof layoutBubbles === "function") layoutBubbles();
-      };
-
-      if (document.fonts && document.fonts.status !== "loaded") {
-        document.fonts.ready.then(run);
-      } else {
-        run();
-      }
-
-      // DOM 準備後に初期化（Astroなら client:load / is:client を使ってください）
-      document.addEventListener("DOMContentLoaded", initWordsPage);
-      // Webフォントの読み込みが完了してからサイズを測って配置する
-      // (先に測ってしまうと、後からフォントが差し替わった時に
-      //  箱のサイズが変わり、位置がズレて見える)
-      if (document.fonts && document.fonts.status !== "loaded") {
-        document.fonts.ready.then(layoutBubbles);
-      } else {
+        activeTag = btn.dataset.name || "ALL";
+        queue = [];
         layoutBubbles();
       }
+      buttonsContainer.addEventListener("click", onButtonsClick);
+
+      shuffleBtn?.addEventListener("click", () => layoutBubbles());
+
+      // --- 実行フロー（フォント待ち→ボタン生成→配置） ---
+      // ボタンを先に作り、ボタン込みの intro の大きさを測ってから吹き出しを避けて配置する。
+      // Webフォントの読み込み前に測ると、後でフォントが差し替わって箱のサイズが変わる
+      const run = () => {
+        createTagButtons(tags);
+        layoutBubbles();
+      };
+
+      // キャラ画像の読み込み前に測ると箱が小さく、画像の上に吹き出しが置かれてしまう
+      const charImg = character.querySelector("img");
+      const imgReady =
+        charImg && !charImg.complete
+          ? new Promise<void>((resolve) => {
+              charImg.addEventListener("load", () => resolve(), { once: true });
+              charImg.addEventListener("error", () => resolve(), { once: true });
+            })
+          : Promise.resolve();
+      const fontsReady =
+        document.fonts && document.fonts.status !== "loaded"
+          ? document.fonts.ready
+          : Promise.resolve();
+      Promise.all([fontsReady, imgReady]).then(run);
+
+      // 幅が変わった時(回転・ウィンドウリサイズ)だけ並べ直す。
+      // スマホのアドレスバー伸縮は高さしか変えないので無視される
+      let lastWidth = window.innerWidth;
+      let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+      window.addEventListener("resize", () => {
+        if (window.innerWidth === lastWidth) return;
+        lastWidth = window.innerWidth;
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          queue = [];
+          layoutBubbles();
+        }, 150);
+      });
 
       // ===== モーダル =====
       const content = Object.fromEntries(messages.map((m) => [m.id, m]));

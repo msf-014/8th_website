@@ -122,8 +122,8 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
   <body>
     <PageBackground />
     <ScrollIndicator />
-    <div class="contents-list" transition:name="title--credit">
-      <PageHeader title="CREDIT" label="企画参加者一覧" />
+    <div class="contents-list">
+      <PageHeader title="CREDIT" label="企画参加者一覧" transitionName="title--credit" />
       <PageFrame class="page">
         <div class="page_content">
           <div class="content">

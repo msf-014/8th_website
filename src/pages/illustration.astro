@@ -24,8 +24,8 @@ const allImages = [...image];
 <BaseLayout>
   <body>
     <PageBackground />
-    <div class="contents-list" transition:name="title--illustration">
-      <PageHeader title="ILLUSTRATION" label="お祝いイラスト" />
+    <div class="contents-list">
+      <PageHeader title="ILLUSTRATION" label="お祝いイラスト" transitionName="title--illustration" />
     </div>
     <div class="illust_bord">
       <PageFrame class="illust_contents">
@@ -123,6 +123,24 @@ const allImages = [...image];
       }
 
       /* ==================== スマホ対応 ==================== */
+      /* スマホ以外は画面幅に合わせた2列グリッド（画像幅を vh で決めると縦横比で崩れるため） */
+      @media (min-width: 769px) {
+        .illust_contents {
+          display: block;
+        }
+        .illust_list {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 32px;
+          padding: 16px;
+        }
+        .illust_list img {
+          width: 100%;
+          height: auto;
+          box-sizing: border-box;
+        }
+      }
+
       @media (max-width: 768px) {
 
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
