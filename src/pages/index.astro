@@ -8,42 +8,42 @@ const contents = [
   {
     title: "PROFILE",
     label: "矢車りねについて",
-    bg: "#fff",
+    bg: "rgb(254, 236, 216)",
     hoverBg: "rgb(254, 236, 216)",
     url: "/profile",
   },
   {
     title: "CHRONOLOGY",
     label: "年表",
-    bg: "#fff",
+    bg: "rgb(220, 200, 255)",
     hoverBg: "rgb(220, 200, 255)",
     url: "/chronology",
   },
   {
     title: "WORDS",
     label: "言葉",
-    bg: "#fff",
+    bg: "rgb(181, 230, 198)",
     hoverBg: "rgb(181, 230, 198)",
     url: "/words",
   },
   {
     title: "ILLUSTRATION",
     label: "お祝いイラスト",
-    bg: "#fff",
+    bg: "rgb(200, 220, 255)",
     hoverBg: "rgb(200, 220, 255)",
     url: "/illustration",
   },
   {
     title: "MESSAGE",
     label: "お祝いメッセージ",
-    bg: "#fff",
+    bg: "rgb(252, 226, 237)",
     hoverBg: "rgb(252, 226, 237)",
     url: "/message",
   },
   {
     title: "CREDIT",
     label: "企画参加者一覧",
-    bg: "#fff",
+    bg: "rgb(230, 230, 230)",
     hoverBg: "rgb(230, 230, 230)",
     url: "/credit",
   },
@@ -186,6 +186,11 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       box-shadow: 0 -1px 0 0 #000;
       /* 最後の項目が固定フッターに隠れず、スクロールして押せるようにする */
       padding-bottom: var(--footer-height);
+    }
+    /* 項目は 39px ずつ重ねているが、最後の項目まで負の margin を付けると
+       一覧の高さがその分足りず、最下部までスクロールしても CREDIT がフッターに隠れる */
+    .content_list .contents:last-child {
+      margin-bottom: 0;
     }
 
     a .contents {
@@ -372,6 +377,8 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     }
 
     .main_visual_center {
+      /* 画像が上へスライドした分の下地も、画像・左右と同じ水色で埋める */
+      background: #a0b8f4;
     }
 
     .main_visual_center img {
@@ -412,6 +419,95 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       to {
         transform: translateY(100vh);
         opacity: 0;
+      }
+    }
+
+    /* ==================== PC: メインビジュアルを画面いっぱいに固定 ==================== */
+    /* メインビジュアルを画面の高さいっぱいで sticky にし、その後ろに続く一覧が
+       スクロールで下から画像の上へスライドしてくる。画像は動かない */
+    @media (min-width: 769px) {
+      .main_visual {
+        position: sticky;
+        top: 0;
+        /* 固定フッターに画像の下端が隠れないよう、その分を引く */
+        height: calc(100vh - var(--footer-height));
+        max-height: none;
+        z-index: 0;
+        overflow: hidden; /* 上へスライドした画像を枠内に収める */
+        /* 中央列は画像の幅(高さ 100vh に合わせた幅)にし、残りを左右で分ける */
+        grid-template-columns: 1fr auto 1fr;
+      }
+
+      .main_visual_center {
+        height: 100%;
+        min-height: 0;
+      }
+
+      /* 画像は高さ基準で画面いっぱい(フッター分を除く)。幅は比率どおり(9:16)。
+         --hero-shift はスクロール量に応じて JS が更新し、一覧が上がってくるのに合わせて
+         画像も上へスライドさせる(一覧に隠れる分をずらして見せる) */
+      .main_visual_center img {
+        transform: translateY(var(--hero-shift, 0px));
+        will-change: transform;
+        height: calc(100vh - var(--footer-height));
+        width: auto;
+        max-width: 100%;
+        max-height: none;
+      }
+
+      /* 一覧はメインビジュアルより手前に重なる */
+      .main_container {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* 項目は半透明にして、後ろの画像を透かす。
+         項目同士は 39px 重ねているので、そのままだと重なり帯だけ二重に濃くなり
+         下の項目の文字も透けて見える。そこで次の項目に隠れる下 39px は描かない。
+         上下の罫線(box-shadow 1px)は箱の外側にあるので、その分だけ広げてクリップする */
+      .contents {
+        background: color-mix(in srgb, var(--bg) 30%, transparent);
+        clip-path: inset(-1px 0 39px 0);
+        transition:
+          background 0.1s,
+          transform 0.5s,
+          clip-path 0.5s;
+      }
+      /* 浮いた項目と、下に重なる項目がない最後の項目は全体を描く */
+      .contents:hover,
+      .contents.is-leaving-target,
+      .content_list .contents:last-child {
+        clip-path: inset(-1px 0 -1px 0);
+      }
+
+      /* ホバーしても色だけ変え、画像が透ける 30% は休止時のまま保つ */
+      .contents:hover {
+        background: color-mix(in srgb, var(--hover-bg) 100%, transparent);
+      }
+
+      /* 最後の項目は下に重なる項目がなく、ホバーで 39px 浮くとその下に隙間ができる。
+         項目と同じ背景色の帯(::after)を下に足して、浮いた分を埋める */
+      .content_list .contents:last-child {
+        clip-path: inset(-1px 0 -40px 0); /* 帯(39px)と下の罫線まで描く */
+      }
+      .content_list .contents:last-child::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 39px;
+        background: inherit; /* ホバー色の切り替えにも追従する */
+        box-shadow: 0 1px 0 0 #000;
+        opacity: 0;
+        /* 項目が 0.5s かけて元の位置へ戻る間も帯を残し、戻り終わってから消す */
+        transition: opacity 0s 0.5s;
+        /* 帯の上にマウスがあってもホバーが続くよう、当たり判定に含める(クリックも項目と同じ) */
+      }
+      .content_list .contents:last-child:hover::after,
+      .content_list .contents:last-child.is-leaving-target::after {
+        opacity: 1;
+        transition-delay: 0s; /* 浮き始めと同時に出す */
       }
     }
 
@@ -552,9 +648,63 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       .contents.is-leaving-target {
         transform: translateY(-39px);
       }
+
+      /* スマホの項目は白背景(PC のカラフル半透明は使わない)。選択中はページ色。
+         タップした瞬間にブラウザ標準の青いハイライトが出ないようにする */
+      .contents {
+        background: #fff;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .contents.is-armed,
+      .contents.is-leaving-target {
+        background: var(--hover-bg);
+      }
+
+      /* 最後の項目(CREDIT)が選択で 39px 浮くと下に隙間ができるので、
+         同じ背景色の帯(::after)で埋める。帯にも当たり判定を持たせる */
+      .content_list .contents:last-child::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 39px;
+        background: inherit;
+        box-shadow: 0 1px 0 0 #000;
+        opacity: 0;
+        /* 選択解除で項目が 0.5s かけて戻る間も帯を残し、戻り終わってから消す */
+        transition: opacity 0s 0.5s;
+      }
+      .content_list .contents:last-child.is-armed::after,
+      .content_list .contents:last-child.is-leaving-target::after {
+        opacity: 1;
+        transition-delay: 0s;
+      }
     }
   </style>
   <script data-astro-rerun is:inline>
+    // PC: 一覧が下から上がってくるのに合わせて、メインビジュアルの画像を上へスライドさせる。
+    // スクロール量 × 係数 だけ上へ動かす。一覧が全部出た時に矢車の顔が一覧の上に
+    // 来る量(1 だと普通のスクロールと同じになるので少し控えめに)
+    (function () {
+      const HERO_SHIFT_RATIO = 0.85;
+      const mv = document.querySelector(".main_visual");
+      if (!mv) return;
+      const isPc = window.matchMedia("(min-width: 769px)");
+      let raf = 0;
+      const update = () => {
+        raf = 0;
+        const shift = isPc.matches ? -window.scrollY * HERO_SHIFT_RATIO : 0;
+        mv.style.setProperty("--hero-shift", shift.toFixed(1) + "px");
+      };
+      const onScroll = () => {
+        if (!raf) raf = requestAnimationFrame(update);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      isPc.addEventListener("change", update);
+      update();
+    })();
+
     (function () {
       const MIN_DISPLAY_TIME = 2500;
       const loader = document.getElementById("loading-screen");

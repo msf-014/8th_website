@@ -3,11 +3,15 @@
 interface Props {
   title: string;
   label: string;
+  /* トップのメニュー項目と morph させる View Transition 名。
+     全幅のラッパーではなく最大幅を持つこの帯に付けないと、
+     広い画面では遷移中に最大幅を超えた帯が描かれる */
+  transitionName?: string;
 }
-const { title, label } = Astro.props;
+const { title, label, transitionName } = Astro.props;
 ---
 
-<div class="contents_texto">
+<div class="contents_texto" transition:name={transitionName}>
   <span class="content_label">{label}</span>
   <h2>{title}</h2>
   <a href="/" class="back_btn" aria-label="戻る">
@@ -26,6 +30,7 @@ const { title, label } = Astro.props;
     display: flex;
     align-items: center;
     gap: 24px;
+    overflow: hidden; /* 流れるタイトルを帯の中に収める */
     background: var(--page-color);
     z-index: 1;
     /* 本文の枠と同じ最大幅で中央に揃える */
@@ -37,12 +42,18 @@ const { title, label } = Astro.props;
     border-right: 1px solid #000;
   }
 
+  /* 戻るボタンの左隣。タイトルと重なっても読めるよう、ページ色の縁取りを付ける */
   .content_label {
     position: absolute;
     top: 14px;
-    right: 16px;
+    right: 88px; /* 16px + ボタン 56px + 16px */
+    white-space: nowrap;
+    color: var(--page-color);
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-fill-color: #000;
+    paint-order: stroke fill;
+    z-index: 1;
     font-size: 15px;
-    color: #000;
     font-family: "Zen Kaku Gothic New", sans-serif;
     font-weight: 800;
     padding: 6px 14px;
@@ -60,6 +71,35 @@ const { title, label } = Astro.props;
     line-height: 1;
     letter-spacing: -0.06em;
     position: relative;
+    /* タイトルが残り幅いっぱいに広がり、戻るボタンは右端に寄る。
+       はみ出した分は JS のマーキーで流す */
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  /* タイトルの無限ループ表示（要素はJSで生成） */
+  :global(.marquee-track) {
+    display: inline-flex;
+    white-space: nowrap;
+  }
+  :global(.marquee-track.is-scrolling) {
+    animation-name: marquee-loop;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  :global(.marquee-item) {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  @keyframes marquee-loop {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(var(--marquee-distance, 0px));
+    }
   }
 
   .back_btn {
@@ -90,34 +130,22 @@ const { title, label } = Astro.props;
     .contents_texto {
       padding: 10px 12px;
       gap: 12px;
-      overflow: hidden;
       border-left: 0;
       border-right: 0;
     }
 
     /* 流れる文字が帯の余白で消えないよう、左側だけ画面端まで表示領域を広げる */
     .contents_texto h2 {
-      flex: 1 1 0%;
-      min-width: 0;
       margin-left: -12px;
       padding-left: 12px;
       font-size: 15vw;
-      overflow: hidden;
-      white-space: nowrap;
     }
 
-    /* タイトルと重なっても読めるよう、ページ色の縁取りを付ける */
     .content_label {
       top: 10px;
       right: 66px;
-      white-space: nowrap;
       font-size: 11px;
       padding: 4px 8px;
-      color: var(--page-color);
-      -webkit-text-stroke-width: 2px;
-      -webkit-text-fill-color: #000;
-      paint-order: stroke fill;
-      z-index: 1;
     }
 
     .back_btn {
@@ -128,28 +156,6 @@ const { title, label } = Astro.props;
       font-size: 16px;
     }
 
-    /* はみ出したタイトル・ラベルの無限ループ表示（要素はJSで生成） */
-    :global(.marquee-track) {
-      display: inline-flex;
-      white-space: nowrap;
-    }
-    :global(.marquee-track.is-scrolling) {
-      animation-name: marquee-loop;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-    :global(.marquee-item) {
-      display: inline-block;
-      white-space: nowrap;
-    }
-    @keyframes marquee-loop {
-      from {
-        transform: translateX(0);
-      }
-      to {
-        transform: translateX(var(--marquee-distance, 0px));
-      }
-    }
   }
 </style>
 
@@ -159,11 +165,8 @@ const { title, label } = Astro.props;
   const MARQUEE_SPEED = 60; // 数値を大きくするほど速く流れる（px/秒）
   const MARQUEE_START_DELAY = 1000; // 表示されてから動き出すまでの待ち時間(ms)
 
-  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
-
-  /* スマホでは英字タイトルを長さに関係なく常に流す（日本語ラベルは流さない） */
+  /* 英字タイトルを画面幅に関係なく常に流す（日本語ラベルは流さない） */
   function initAutoScrollTitles() {
-    if (!isMobile()) return;
     const targets = document.querySelectorAll<HTMLElement>(".contents_texto h2");
 
     targets.forEach((el) => {
