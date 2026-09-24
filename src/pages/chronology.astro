@@ -14,7 +14,11 @@ import ScrollIndicator from "../components/ScrollIndicator.astro";
     <PageBackground />
     <ScrollIndicator />
     <div class="contents-list">
-      <PageHeader title="CHRONOLOGY" label="年表" transitionName="title--chronology" />
+      <PageHeader
+        title="CHRONOLOGY"
+        label="年表"
+        transitionName="title--chronology"
+      />
       <PageFrame class="chronology">
         <div class="chronology_title">
           <p class="chronology_subtitle">RINE YAGURUMA</p>
@@ -429,7 +433,6 @@ import ScrollIndicator from "../components/ScrollIndicator.astro";
 
         /* ==================== スマホ対応 ==================== */
         @media (max-width: 768px) {
-
           /* ---- ここから無限ループ・マーキー用のスタイル ---- */
 
           /* ---- ここまで ---- */
@@ -882,7 +885,7 @@ import ScrollIndicator from "../components/ScrollIndicator.astro";
             year: "2025/08/17",
             title: "オーストラリア在住が発覚",
             desc: "日曜日の朝配信にて、あまりにも回線の悪さからプレイを断念。\n急遽「回線ザコすぎ雑談」へ切り替えることに。\nリスナーからサーバー位置は東京かと確認された際、オーストラリア在住であることを白状した。",
-            comment: "comments",
+            comment: "",
             youtube: "vWXsdIE9NeE",
           },
           {
