@@ -350,49 +350,114 @@ import PageFrame from "../components/PageFrame.astro";
             : { w: 150, h: 120 }; // PC用
         }
 
-        const MARGIN = 50;
-        MAX_TRIES = 120;
+        // 板を伸ばす時に付箋の下に足す余白
+        const MARGIN = 24;
+        // 候補位置の格子の間隔(px)
+        const STEP = 8;
 
         // ホバー時に scale(1.06) と translateY(-3px) で少し膨らむ分の余白。
         // この分だけ配置可能エリアを内側に狭めておくことで、
         // ホバーしても画面端からはみ出さないようにする。
         const HOVER_BUFFER = 10;
 
-        // sizes: [{w, h}, ...] 各付箋の「実測サイズ」を渡す。
-        // 固定値ではなく実測値を使うことで、文章が長い付箋も
-        // 正しい大きさとして重なり回避の計算に反映される。
-        function autoPlace(sizes, areaW, areaH) {
-          const placed = [];
-          sizes.forEach((s) => {
-            // ホバー拡大分の余白(HOVER_BUFFER)を残して配置範囲を決める
-            const maxX = Math.max(HOVER_BUFFER, areaW - s.w - HOVER_BUFFER);
-            const maxY = Math.max(HOVER_BUFFER, areaH - s.h - HOVER_BUFFER);
-            let best = null,
-              bestScore = -Infinity;
-            for (let t = 0; t < MAX_TRIES; t++) {
-              const x =
-                HOVER_BUFFER + Math.random() * Math.max(0, maxX - HOVER_BUFFER);
-              const y =
-                HOVER_BUFFER + Math.random() * Math.max(0, maxY - HOVER_BUFFER);
-              let overlap = 0;
-              placed.forEach((p) => {
-                const dx = Math.abs(x - p.x),
-                  dy = Math.abs(y - p.y);
-                // 2つの付箋の「実際の大きさ」の平均＋余白を重なり判定のしきい値にする
-                const gapW = (s.w + p.w) / 2 + MARGIN;
-                const gapH = (s.h + p.h) / 2 + MARGIN;
-                if (dx < gapW && dy < gapH) {
-                  overlap += (gapW - dx) * (gapH - dy);
-                }
-              });
-              if (-overlap > bestScore) {
-                bestScore = -overlap;
-                best = { x, y };
-              }
+        const hits = (a, b) =>
+          a.left < b.right &&
+          a.right > b.left &&
+          a.top < b.bottom &&
+          a.bottom > b.top;
+
+        // [x0, x1] × [y0, y1] の範囲の格子点を返す。
+        // 完全な乱数順だと配置が疎になって板がむやみに伸びるので、
+        // 「上から順」に大きめの乱数を混ぜた順にし、上から密に・ばらけて埋まるようにする
+        const ORDER_JITTER = 400;
+        function makeGrid(x0, y0, x1, y1) {
+          const pts = [];
+          for (let y = y0; y <= y1; y += STEP) {
+            for (let x = x0; x <= x1; x += STEP) {
+              pts.push({ x, y, key: y + Math.random() * ORDER_JITTER });
             }
-            placed.push({ x: best.x, y: best.y, w: s.w, h: s.h });
+          }
+          return pts.sort((a, b) => a.key - b.key);
+        }
+
+        // sizes: [{w, h}, ...] 各付箋の「実測サイズ」。pad: 付箋の padding(文字領域の内側)。
+        // 付箋の箱同士は重なってもよいが、相手の箱が自分の文字領域に乗る(=読めなくなる)
+        // 配置だけを禁止する。板の中に置き場所がなければ板を下に伸ばして続ける。
+        // 戻り値: { placed: [{x, y, w, h}], height: 必要になった板の高さ }
+        function autoPlace(sizes, areaW, areaH, pad) {
+          const edge = HOVER_BUFFER;
+          const textOf = (box) => ({
+            left: box.left + pad.left,
+            top: box.top + pad.top,
+            right: box.right - pad.right,
+            bottom: box.bottom - pad.bottom,
           });
-          return placed;
+          const placed = []; // { box, text }
+          const result = [];
+          let H = areaH;
+          let grid = makeGrid(edge, edge, areaW - edge, H - edge);
+
+          // 候補を先頭(上寄り・乱数混じり)から数十個集め、周囲(板の縁・他の付箋)に
+          // 接している数が多いものを選ぶ。乱数順のまま最初の候補を取ると疎になって
+          // 板がむやみに伸びるので、密に・それでもばらけて埋まるようにする
+          const CANDIDATES = 60;
+          const NEAR = STEP * 2;
+          const pick = (s) => {
+            const found = [];
+            for (const g of grid) {
+              if (g.x > areaW - edge - s.w || g.y > H - edge - s.h) continue;
+              const box = {
+                left: g.x,
+                top: g.y,
+                right: g.x + s.w,
+                bottom: g.y + s.h,
+              };
+              const text = textOf(box);
+              if (
+                !placed.every((p) => !hits(box, p.text) && !hits(text, p.box))
+              )
+                continue;
+              const near = {
+                left: box.left - NEAR,
+                top: box.top - NEAR,
+                right: box.right + NEAR,
+                bottom: box.bottom + NEAR,
+              };
+              let score = 0;
+              if (near.left <= edge) score++;
+              if (near.right >= areaW - edge) score++;
+              if (near.top <= edge) score++;
+              for (const p of placed) if (hits(near, p.box)) score++;
+              found.push({ box, score });
+              if (found.length >= CANDIDATES) break;
+            }
+            if (found.length === 0) return null;
+            let best = found[0];
+            for (const c of found) if (c.score > best.score) best = c;
+            return best.box;
+          };
+
+          sizes.forEach((s) => {
+            let found = null;
+            for (let guard = 0; guard < 50 && !found; guard++) {
+              found = pick(s);
+              if (found) break;
+              // 置き場所がない: 板を付箋1枚分伸ばし、その帯の候補を追加する
+              // (既存領域の候補を先に試すので、伸びた帯は必要な時だけ使われる)
+              const prevH = H;
+              H += s.h + MARGIN;
+              grid = grid.concat(
+                makeGrid(edge, Math.max(edge, prevH - s.h), areaW - edge, H - edge),
+              );
+            }
+            if (!found) {
+              // ここには来ないはずだが、万一の時は左上に置く
+              found = { left: edge, top: edge, right: edge + s.w, bottom: edge + s.h };
+            }
+            placed.push({ box: found, text: textOf(found) });
+            result.push({ x: found.left, y: found.top, w: s.w, h: s.h });
+          });
+          return { placed: result, height: H };
         }
 
         // msg は「段落の配列。各段落はさらに行の配列」という二重構造。
@@ -460,19 +525,23 @@ import PageFrame from "../components/PageFrame.astro";
             w: el.offsetWidth,
             h: el.offsetHeight,
           }));
+          if (els.length === 0) return;
 
-          // スマホは付箋が大きく重なりやすいので、付箋の総面積に合わせてボードを縦に伸ばす
-          if (mobile) {
-            const totalArea = sizes.reduce((sum, sz) => sum + sz.w * sz.h, 0);
-            const needed = Math.ceil((totalArea * 1.25) / W);
-            if (needed > H) {
-              H = needed;
-              board.style.height = H + "px";
-            }
+          // 2. 実測サイズをもとに、文字が隠れない位置を計算する。
+          //    付箋の padding(文字領域の外側)を測って渡す
+          const cs = getComputedStyle(els[0]);
+          const pad = {
+            left: parseFloat(cs.paddingLeft),
+            top: parseFloat(cs.paddingTop),
+            right: parseFloat(cs.paddingRight),
+            bottom: parseFloat(cs.paddingBottom),
+          };
+          const { placed, height } = autoPlace(sizes, W, H, pad);
+          // 置き場所が足りず板が伸びた場合は、その高さにしてページをスクロールさせる
+          if (height > H) {
+            H = height;
+            board.style.height = H + "px";
           }
-
-          // 2. 実測サイズをもとに、重なりが最小になる位置を計算する
-          const placed = autoPlace(sizes, W, H);
 
           // 3. 面積が大きい付箋ほど後ろ（z-indexを小さく）、
           //    小さい付箋ほど手前に来るよう、面積順にz-indexを割り当てる。
@@ -525,6 +594,9 @@ import PageFrame from "../components/PageFrame.astro";
         // ResizeObserverで幅が確定したタイミングを検知する。
         const boardEl = document.getElementById("board");
         let hasBuilt = false;
+        // Webフォントの読み込み前に測ると、後で付箋の高さが変わって文字が隠れる
+        const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+        const build = () => fontsReady.then(buildBoard);
 
         if (boardEl) {
           // buildBoard がボードの高さを変えるため、幅が変わったときだけ配置し直す
@@ -535,7 +607,7 @@ import PageFrame from "../components/PageFrame.astro";
               const h = entry.contentRect.height;
               if (w > 0 && h > 0 && w !== lastWidth) {
                 lastWidth = w;
-                buildBoard();
+                build();
                 hasBuilt = true;
               }
             }
@@ -545,13 +617,13 @@ import PageFrame from "../components/PageFrame.astro";
 
         // 念のためのフォールバック（ResizeObserver未対応環境向け）
         window.addEventListener("load", () => {
-          if (!hasBuilt) buildBoard();
+          if (!hasBuilt) build();
         });
         // ClientRouter での遷移時は load が発火しないので、遷移完了時にも確認する
         document.addEventListener(
           "astro:page-load",
           () => {
-            if (!hasBuilt) buildBoard();
+            if (!hasBuilt) build();
             hasBuilt = true;
           },
           { once: true },
@@ -596,7 +668,8 @@ import PageFrame from "../components/PageFrame.astro";
       .board {
         position: relative; /* ← 付箋の absolute 配置の基準点 */
         width: 100%;
-        height: 1022px; /* ← 高さが必須！ないと付箋が見えない */
+        /* 最低の高さ。付箋が収まらなければ JS が height を伸ばす */
+        min-height: 1022px;
         background: #fce2ed;
         overflow: hidden;
         margin: auto;
