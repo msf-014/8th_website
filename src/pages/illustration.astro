@@ -9,11 +9,11 @@ import PageFrame from "../components/PageFrame.astro";
 
 const image = [
   {
-    src: "IMG_0287.jpg",
+    src: "/IMG_0287.jpg",
     title: "あんこあら",
   },
   {
-    src: "HS68OIza4AAX5c9.jpg",
+    src: "/HS68OIza4AAX5c9.jpg",
     title: "奏音",
   },
 ];
@@ -124,7 +124,6 @@ const allImages = [...image];
 
       /* ==================== スマホ対応 ==================== */
       @media (max-width: 768px) {
-
         /* ---- ここから無限ループ・マーキー用のスタイル ---- */
         :global(.marquee-track) {
           display: inline-flex;

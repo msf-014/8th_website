@@ -103,7 +103,6 @@ import PageFrame from "../components/PageFrame.astro";
       display: block;
     }
 
-
     .stage {
       position: relative;
       height: 1022px;
@@ -450,7 +449,6 @@ import PageFrame from "../components/PageFrame.astro";
 
     /* ==================== スマホ対応 ==================== */
     @media (max-width: 768px) {
-
       /* ===== ここから WORDS ボード(キャラ+吹き出し)のスマホ調整 ===== */
 
       /* 画面の残り高さいっぱいに枠を伸ばし、下部の説明・絞り込みボタンを
@@ -1100,15 +1098,18 @@ import PageFrame from "../components/PageFrame.astro";
       });
 
       // Xでシェア:本文の言葉+このページのURLを添えて投稿画面を開く
+      const SHARE_HASHTAGS = ["矢車りね8周年", "大矢車様のお言葉"];
+
       shareBtn?.addEventListener("click", () => {
         if (!currentMessage) return;
-        const text = currentMessage.title;
-        const hashtag = "矢車りねデビュー8周年記念";
-        const shareUrl = new URL(location.href);
-        const tweetBody = `${text}\n#${hashtag}\n${shareUrl}`;
+        const hashtagLine = SHARE_HASHTAGS.map((t) => "#" + t).join(" ");
+        const shareUrl = new URL(location.href).toString();
+        const composed = [currentMessage.title, hashtagLine, shareUrl].join(
+          "\n",
+        );
         const intentUrl =
           "https://twitter.com/intent/tweet?text=" +
-          encodeURIComponent(tweetBody);
+          encodeURIComponent(composed);
         window.open(intentUrl, "_blank", "noopener,noreferrer");
       });
 
