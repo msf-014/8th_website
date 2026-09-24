@@ -8,42 +8,42 @@ const contents = [
   {
     title: "PROFILE",
     label: "矢車りねについて",
-    bg: "#fff",
+    bg: "rgb(254, 236, 216)",
     hoverBg: "rgb(254, 236, 216)",
     url: "/profile",
   },
   {
     title: "CHRONOLOGY",
     label: "年表",
-    bg: "#fff",
+    bg: "rgb(220, 200, 255)",
     hoverBg: "rgb(220, 200, 255)",
     url: "/chronology",
   },
   {
     title: "WORDS",
     label: "言葉",
-    bg: "#fff",
+    bg: "rgb(181, 230, 198)",
     hoverBg: "rgb(181, 230, 198)",
     url: "/words",
   },
   {
     title: "ILLUSTRATION",
     label: "お祝いイラスト",
-    bg: "#fff",
+    bg: "rgb(200, 220, 255)",
     hoverBg: "rgb(200, 220, 255)",
     url: "/illustration",
   },
   {
     title: "MESSAGE",
     label: "お祝いメッセージ",
-    bg: "#fff",
+    bg: "rgb(252, 226, 237)",
     hoverBg: "rgb(252, 226, 237)",
     url: "/message",
   },
   {
     title: "CREDIT",
     label: "企画参加者一覧",
-    bg: "#fff",
+    bg: "rgb(230, 230, 230)",
     hoverBg: "rgb(230, 230, 230)",
     url: "/credit",
   },
@@ -459,7 +459,7 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
          下の項目の文字も透けて見える。そこで次の項目に隠れる下 39px は描かない。
          上下の罫線(box-shadow 1px)は箱の外側にあるので、その分だけ広げてクリップする */
       .contents {
-        background: color-mix(in srgb, var(--bg) 50%, transparent);
+        background: color-mix(in srgb, var(--bg) 30%, transparent);
         clip-path: inset(-1px 0 39px 0);
         transition:
           background 0.1s,
@@ -475,7 +475,7 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
 
       /* ホバーしても色だけ変え、画像が透ける 30% は休止時のまま保つ */
       .contents:hover {
-        background: color-mix(in srgb, var(--hover-bg) 90%, transparent);
+        background: color-mix(in srgb, var(--hover-bg) 100%, transparent);
       }
 
       /* 最後の項目は下に重なる項目がなく、ホバーで 39px 浮くとその下に隙間ができる。
