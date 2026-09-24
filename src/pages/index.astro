@@ -493,7 +493,7 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         background: inherit; /* ホバー色の切り替えにも追従する */
         box-shadow: 0 1px 0 0 #000;
         opacity: 0;
-        pointer-events: none;
+        /* 帯の上にマウスがあってもホバーが続くよう、当たり判定に含める(クリックも項目と同じ) */
       }
       .content_list .contents:last-child:hover::after,
       .content_list .contents:last-child.is-leaving-target::after {
