@@ -500,11 +500,14 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         background: inherit; /* ホバー色の切り替えにも追従する */
         box-shadow: 0 1px 0 0 #000;
         opacity: 0;
+        /* 項目が 0.5s かけて元の位置へ戻る間も帯を残し、戻り終わってから消す */
+        transition: opacity 0s 0.5s;
         /* 帯の上にマウスがあってもホバーが続くよう、当たり判定に含める(クリックも項目と同じ) */
       }
       .content_list .contents:last-child:hover::after,
       .content_list .contents:last-child.is-leaving-target::after {
         opacity: 1;
+        transition-delay: 0s; /* 浮き始めと同時に出す */
       }
     }
 
@@ -669,10 +672,13 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         background: inherit;
         box-shadow: 0 1px 0 0 #000;
         opacity: 0;
+        /* 選択解除で項目が 0.5s かけて戻る間も帯を残し、戻り終わってから消す */
+        transition: opacity 0s 0.5s;
       }
       .content_list .contents:last-child.is-armed::after,
       .content_list .contents:last-child.is-leaving-target::after {
         opacity: 1;
+        transition-delay: 0s;
       }
     }
   </style>
