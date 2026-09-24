@@ -453,6 +453,25 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
         position: relative;
         z-index: 1;
       }
+
+      /* 項目は半透明にして、後ろの画像を透かす。
+         項目同士は 39px 重ねているので、そのままだと重なり帯だけ二重に濃くなり
+         下の項目の文字も透けて見える。そこで次の項目に隠れる下 39px は描かない。
+         上下の罫線(box-shadow 1px)は箱の外側にあるので、その分だけ広げてクリップする */
+      .contents {
+        background: color-mix(in srgb, var(--bg) 50%, transparent);
+        clip-path: inset(-1px 0 39px 0);
+        transition:
+          background 0.1s,
+          transform 0.5s,
+          clip-path 0.5s;
+      }
+      /* 浮いた項目と、下に重なる項目がない最後の項目は全体を描く */
+      .contents:hover,
+      .contents.is-leaving-target,
+      .content_list .contents:last-child {
+        clip-path: inset(-1px 0 -1px 0);
+      }
     }
 
     /* ==================== スマホ対応 ==================== */
