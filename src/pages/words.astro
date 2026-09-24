@@ -1221,12 +1221,12 @@ import Footer from "../components/footer.astro";
       shareBtn?.addEventListener("click", () => {
         if (!currentMessage) return;
         const text = currentMessage.title;
+        const hashtag = "矢車りねデビュー8周年記念";
         const shareUrl = new URL(location.href);
+        const tweetBody = `${text}\n#${hashtag}\n${shareUrl}`;
         const intentUrl =
           "https://twitter.com/intent/tweet?text=" +
-          encodeURIComponent(text) +
-          "&url=" +
-          encodeURIComponent(shareUrl.toString());
+          encodeURIComponent(tweetBody);
         window.open(intentUrl, "_blank", "noopener,noreferrer");
       });
 

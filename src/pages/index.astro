@@ -35,14 +35,14 @@ const contents = [
   },
   {
     title: "ILLUSTRATION",
-    label: "記念イラスト",
+    label: "お祝いイラスト",
     bg: "#fff",
     hoverBg: "rgb(200, 220, 255)",
     url: "/illustration",
   },
   {
     title: "MESSAGE",
-    label: "記念メッセージ",
+    label: "お祝いメッセージ",
     bg: "#fff",
     hoverBg: "rgb(252, 226, 237)",
     url: "/message",
@@ -77,11 +77,21 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     <!-- メインビジュアル -->
     <main class="main" id="main-home">
       <section class="main_visual">
-        <div class="main_visual_left"></div>
+        <div class="main_visual_left">
+          <div class="panel panel-left-a"></div>
+          <div class="panel panel-left-b"></div>
+          <div class="panel panel-left-c"></div>
+          <div class="panel panel-left-d"></div>
+          <span class="border-left"></span>
+        </div>
         <div class="main_visual_center">
           <img src="/8th_2026_main_2.webp" alt="main_visual" />
         </div>
-        <div class="main_visual_right"></div>
+        <div class="main_visual_right">
+          <div class="panel panel-right-a"></div>
+          <div class="panel panel-right-b"></div><span class="border-right"
+          ></span>
+        </div>
       </section>
       <div class="main_container">
         <div class="content_list">
@@ -311,10 +321,35 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
     /* メインビジュアルは退場中にゆっくり沈めて、視線をタイトルへ寄せる */
     .main_visual {
       display: grid;
-      grid-template-columns: 1fr 33.333% 1fr; /* 左・中央1/3・右 */
+      grid-template-columns: 1fr 1fr 1fr; /* 左・中央1/3・右 */
       width: 100%;
       max-height: calc(100vh - var(--footer-height));
-      overflow: ciu;
+    }
+
+    /* 左のライン */
+    .main_visual::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 50px; /* 太さ */
+      background: #fff; /* 色 */
+      pointer-events: none;
+      border-right: 1px solid #000;
+    }
+
+    /* 右のライン */
+    .main_visual::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 50px; /* 太さ */
+      background: #fff; /* 色 */
+      pointer-events: none;
+      border-left: 1px solid #000;
     }
 
     .main_visual_left {
@@ -420,6 +455,16 @@ const ARROW_RETRACT_MS = 250; // CSSのtransition時間(0.25s)と合わせる
       .main_visual_left,
       .main_visual_right {
         display: none; /* 左右カラムを非表示 */
+      }
+
+      /* 左のライン */
+      .main_visual::before {
+        display: none;
+      }
+
+      /* 右のライン */
+      .main_visual::after {
+        display: none;
       }
 
       .main_visual_center img {

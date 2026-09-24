@@ -527,7 +527,7 @@ const allImages = [...leftImages, ...rightImages];
       overflow: hidden;
       padding: 0 16px;
       box-sizing: border-box;
-      background: rgb(255, 249, 158);
+      background: #fff99e;
       width: 1900px;
       margin: 0 auto;
     }
@@ -773,6 +773,11 @@ const allImages = [...leftImages, ...rightImages];
         white-space: nowrap;
         font-size: 11px;
         padding: 4px 8px;
+        color: #fff99e;
+        -webkit-text-stroke-width: 2px;
+        -webkit-text-fill-color: #000;
+        paint-order: stroke fill;
+        z-index: 1;
       }
 
       .back_btn {
@@ -816,10 +821,10 @@ const allImages = [...leftImages, ...rightImages];
 
       @keyframes scrollUpMobile {
         from {
-          transform: translateY(0);
+          transform: translateY(-50%);
         }
         to {
-          transform: translateY(-50%);
+          transform: translateY(0%);
         }
       }
 
