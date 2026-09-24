@@ -1441,21 +1441,24 @@ import Footer from "../components/footer.astro";
         function observeItems() {
           const itemObserver = new IntersectionObserver(
             (entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  (entry.target as HTMLElement).classList.add("is-visible");
-                  itemObserver.unobserve(entry.target);
-                }
-              });
+              /* 同時に画面へ入った項目の中だけで順番に遅らせる
+                 (通し番号で遅らせると下の項目ほど表示が遅れるため) */
+              entries
+                .filter((entry) => entry.isIntersecting)
+                .forEach((entry, i) => {
+                  const el = entry.target as HTMLElement;
+                  el.style.transitionDelay = `${Math.min(i, 4) * 60}ms`;
+                  el.classList.add("is-visible");
+                  itemObserver.unobserve(el);
+                });
             },
             { threshold: 0.08 },
           );
 
           requestAnimationFrame(() => {
-            document.querySelectorAll(".timeline-item").forEach((el, i) => {
-              (el as HTMLElement).style.transitionDelay = `${i * 60}ms`;
-              itemObserver.observe(el);
-            });
+            document
+              .querySelectorAll(".timeline-item")
+              .forEach((el) => itemObserver.observe(el));
           });
 
           const ytObserver = new IntersectionObserver(
@@ -1477,7 +1480,7 @@ import Footer from "../components/footer.astro";
             .forEach((el) => ytObserver.observe(el));
         }
 
-        const BG_REVEAL_MS = 400;
+        const BG_REVEAL_MS = 600;
         renderTimeline(timelineData);
         window.addEventListener("resize", updateTimelineLine);
         setTimeout(observeItems, BG_REVEAL_MS);
