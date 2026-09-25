@@ -12,7 +12,11 @@ import PageFrame from "../components/PageFrame.astro";
   <body>
     <PageBackground />
     <div class="contents-list">
-      <PageHeader title="DISCLAIMER" label="免責事項" transitionName="title--credit" />
+      <PageHeader
+        title="DISCLAIMER"
+        label="免責事項"
+        transitionName="title--credit"
+      />
       <PageFrame class="page">
         <div class="page_content">
           <div class="content_sub">
@@ -20,26 +24,83 @@ import PageFrame from "../components/PageFrame.astro";
             <div class="page_body">
               <p>
                 本サイト「Rinaria」は、にじさんじ所属
-                矢車りねさんの8周年を記念する非公式のファンサイトです。
-                矢車りね氏本人、および所属する団体・企業とは一切関係がなく、公式の情報提供を行うものではありません。
+                矢車りねさんの8周年を記念する非公式のファンサイトです。<br />
+                矢車りねさん本人、および所属する団体・企業とは一切関係がなく、公式の情報提供を行うものではありません。
               </p>
               <p>
-                掲載されている情報はすべてファンによる調査・編集に基づくものです。
-                内容の正確性・完全性については保証できませんので、あらかじめご了承ください。
+                また、当サイトの内容は、にじさんじ二次創作ガイドラインに基づき制作しています。
               </p>
             </div>
           </div>
           <div class="content_sub">
-            <div class="heading">コンテンツの著作権について</div>
+            <div class="heading">情報の正確性について</div>
             <div class="page_body">
               <p>
-                本サイト「Rinaria」は、にじさんじ所属
-                矢車りねさんの8周年を記念する非公式のファンサイトです。
-                矢車りね氏本人、および所属する団体・企業とは一切関係がなく、公式の情報提供を行うものではありません。
+                当サイトに掲載する情報については、可能な限り正確な内容を提供するよう努めておりますが、<br
+                />内容が古くなっている場合や誤りが含まれる可能性があります。
               </p>
+            </div>
+            <p>掲載情報の正確性・完全性を保証するものではありません。</p>
+          </div>
+          <div class="content_sub">
+            <div class="heading">コンテンツの著作権・肖像権について</div>
+            <div class="page_body">
               <p>
-                掲載されている情報はすべてファンによる調査・編集に基づくものです。
-                内容の正確性・完全性については保証できませんので、あらかじめご了承ください。
+                当サイトに掲載している画像は、当サイト運営者が制作したものです。<br
+                />ただし、権利者の著作権・肖像権を侵害しないよう最大限配慮しております。
+              </p>
+            </div>
+            <p>
+              にじさんじおよび矢車りねさんに関する名称・キャラクター等の権利は、ANYCOLOR株式会社および各権利者に帰属します。<br
+              />
+              無断転載・無断利用（複製・加工・二次利用等）は禁止いたします。
+            </p>
+            <p>
+              万が一問題がある表現・画像等がございましたら、権利者様よりご連絡いただければ速やかに対応いたします。
+            </p>
+          </div>
+          <div class="content_sub">
+            <div class="heading">YouTube埋め込みコンテンツについて</div>
+            <div class="page_body">
+              <p>
+                当サイトでは、YouTubeの埋め込み機能を利用して動画を掲載しています。<br
+                />埋め込み動画の著作権および権利は、各権利者に帰属します。
+              </p>
+            </div>
+            <p>
+              YouTubeの仕様変更や動画の削除等により、正常に再生できない場合がありますが、当サイトはその責任を負いません。
+            </p>
+          </div>
+          <div class="content_sub">
+            <div class="heading">外部リンクについて</div>
+            <div class="page_body">
+              <p>
+                当サイトからリンクやバナー等で移動した外部サイトの内容について、<br
+                />当サイトは一切の責任を負いません。
+              </p>
+            </div>
+            <p>
+              移動先サイトの利用は、利用者ご自身の責任で行っていただくものとします。
+            </p>
+          </div>
+          <div class="content_sub">
+            <div class="heading">責任範囲について</div>
+            <div class="page_body">
+              <p>
+                当サイトの利用により生じた損害・トラブルについて、当サイト運営者は一切の責任を負いません。
+              </p>
+            </div>
+            <p>
+              当サイトの情報利用は、利用者ご自身の判断と責任において行っていただくものとします。
+            </p>
+          </div>
+          <div class="content_sub">
+            <div class="heading">免責事項の変更について</div>
+            <div class="page_body">
+              <p>
+                本免責事項は、必要に応じて予告なく変更される場合があります。<br
+                />
+                変更後の免責事項は、当サイトに掲載された時点で効力を持つものとします。
               </p>
             </div>
           </div>
@@ -48,169 +109,91 @@ import PageFrame from "../components/PageFrame.astro";
     </div>
   </body>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #fff;
-      position: relative;
-    }
-
-    :root {
-      --morph-duration: 0.6s;
-
-      --page-color: #e6e6e6;
-
-      --header-back-color: var(--page-color);
-    }
-
-    ::view-transition-old(title--message),
-    ::view-transition-new(title--message) {
-      animation-duration: var(--morph-duration);
-    }
-
-    .contents-list {
-      display: block;
-    }
-
-    .page {
-      font-family: "Zen Kaku Gothic New", sans-serif;
-    }
-
-    .page_content {
-      padding: 4rem 2.5rem;
-    }
-
-    .content_sub {
-      border-bottom: 1px solid #000;
-      padding: 2rem 0;
-    }
-
-    .heading {
-      font-weight: 800;
-      margin-bottom: 1rem;
-    }
-
-    .page_body {
-      font-family: "Zen Kaku Gothic New", sans-serif;
-      line-height: 2;
-      margin-bottom: 1rem;
-    }
-
-    .page_body p + p {
-      margin-top: 0.75rem;
-    }
-
-    /* ==================== スマホ対応 ==================== */
-    @media (max-width: 768px) {
-
-      /* ---- ここから無限ループ・マーキー用のスタイル ---- */
-      :global(.marquee-track) {
-        display: inline-flex;
-        white-space: nowrap;
-      }
-
-      :global(.marquee-track.is-scrolling) {
-        animation-name: marquee-loop;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-      }
-
-      @keyframes marquee-loop {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(var(--marquee-distance, 0px));
-        }
-      }
-
-      :global(.marquee-item) {
-        display: inline-block;
-        white-space: nowrap;
-      }
-      /* ---- ここまで ---- */
-
-      .chronology {
-        max-width: 50vh;
-        margin: 0 10px;
-      }
-
-      .chronology_title {
-        padding: 16px 1em;
-      }
-      .chronology_subtitle {
-        font-size: 20px;
-        letter-spacing: 0.2em;
-        margin: 0 0 2px 0;
-      }
-      .chronology_title h4 {
-        font-size: 13vw;
-      }
-      .chronology_date {
-        font-size: 15px;
-      }
-
-      :global(.timeline-wrap) {
-        padding: 32px 16px;
-        margin-bottom: 60px;
-      }
-
-      :global(.timeline-line) {
-        left: 8px;
-      }
-
-      :global(.marker-col) {
-        width: 16px;
-        flex: 0 0 16px;
-      }
-
-      :global(.marker-circle) {
-        width: 14px;
-        height: 14px;
-        border-width: 2px;
-      }
-
-      :global(.content-col) {
-        padding-left: 16px;
-        gap: 20px;
-      }
-
-      :global(.item-year) {
-        font-size: 12px;
-      }
-
-      :global(.item-title) {
-        font-size: 17px;
-        padding-bottom: 8px;
-      }
-
-      :global(.item-desc) {
-        font-size: 13px;
-        line-height: 1.8;
-      }
-
-      :global(.item-comment) {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
-
-      :global(.like-btn) {
-        font-size: 12px;
-        padding: 5px 12px;
-      }
-
-      :global(.item-youtube) {
-        border-radius: 6px;
-      }
-
-      :global(.yt-play-btn) {
-        width: 52px;
-        height: 36px;
-      }
-    }
-  </style>
+  <Footer />
 </BaseLayout>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #fff;
+    position: relative;
+  }
+
+  :root {
+    --morph-duration: 0.6s;
+
+    --page-color: #e6e6e6;
+
+    --header-back-color: var(--page-color);
+  }
+
+  ::view-transition-old(title--message),
+  ::view-transition-new(title--message) {
+    animation-duration: var(--morph-duration);
+  }
+
+  .contents-list {
+    display: block;
+  }
+
+  .page {
+    font-family: "Zen Kaku Gothic New", sans-serif;
+  }
+
+  .page_content {
+    padding: 4rem 2.5rem;
+  }
+
+  .content_sub {
+    border-bottom: 1px solid #000;
+    padding: 2rem 0;
+  }
+
+  .heading {
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .page_body {
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    line-height: 2;
+    margin-bottom: 1rem;
+  }
+
+  .page_body p + p {
+    margin-top: 0.75rem;
+  }
+
+  /* ==================== スマホ対応 ==================== */
+  @media (max-width: 768px) {
+    /* ---- ここから無限ループ・マーキー用のスタイル ---- */
+    :global(.marquee-track) {
+      display: inline-flex;
+      white-space: nowrap;
+    }
+
+    :global(.marquee-track.is-scrolling) {
+      animation-name: marquee-loop;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes marquee-loop {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(var(--marquee-distance, 0px));
+      }
+    }
+
+    :global(.marquee-item) {
+      display: inline-block;
+      white-space: nowrap;
+    }
+  }
+</style>
