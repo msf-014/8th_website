@@ -50,7 +50,7 @@ const credits: {
     id: "illustration",
     en: "ILLUSTRATION",
     label: "イラスト",
-    names: ["Masahiro Fujita", "奏音", "あんこあら"], // ← ここに名前を追加
+    names: ["Masahiro Fujita", "奏音", "あんこあら", "にて"], // ← ここに名前を追加
   },
   {
     id: "chronology",
@@ -123,7 +123,11 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
     <PageBackground />
     <ScrollIndicator />
     <div class="contents-list">
-      <PageHeader title="CREDIT" label="企画参加者一覧" transitionName="title--credit" />
+      <PageHeader
+        title="CREDIT"
+        label="企画参加者一覧"
+        transitionName="title--credit"
+      />
       <PageFrame class="page">
         <div class="page_content">
           <div class="content">
@@ -329,7 +333,6 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
 
       /* ==================== スマホ対応 ==================== */
       @media (max-width: 768px) {
-
         .page_content {
           padding: 2.5rem 1rem;
         }
@@ -401,7 +404,6 @@ const normalize = (p: Person) => (typeof p === "string" ? { name: p } : p);
           white-space: nowrap;
         }
         /* ---- ここまで ---- */
-
       }
     </style>
   </body>
