@@ -35,7 +35,7 @@ const profile = [
   { label: "配信タグ", value: "#矢車観察日記" },
   { label: "FAタグ", value: "#りねの自由帳" },
   { label: "エゴサタグ", value: "#りねりねみてね" },
-  { label: "ママ（イラスト）", value: "CH₃(めちるき)" },
+  { label: "ママ", value: "CH₃(めちるき)" },
 ];
 
 const nameChars = ["矢", "車", "り", "ね"];
@@ -45,7 +45,11 @@ const nameChars = ["矢", "車", "り", "ね"];
   <body>
     <PageBackground />
     <div class="contents-list">
-      <PageHeader title="PROFILE" label="矢車りねについて" transitionName="title--profile" />
+      <PageHeader
+        title="PROFILE"
+        label="矢車りねについて"
+        transitionName="title--profile"
+      />
 
       <PageFrame class="about" id="about">
         <!-- ===== 左: イラスト ===== -->
@@ -775,7 +779,6 @@ const nameChars = ["矢", "車", "り", "ね"];
       }
 
       @media (max-width: 768px) {
-
         .about {
           height: auto;
           grid-template-columns: 1fr;
